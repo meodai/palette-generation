@@ -57,8 +57,9 @@ already built for the assignment, then shows why it is still ugly, then fixes
 it. The slides never say "yesterday" or "this morning" — keep it that way on
 stage too; the connection lands harder when they make it themselves. One
 seed runs through it: the three hues you pick on slide 12 are the same three
-on every slide through to 19 and again on the recipe. Reroll anywhere and
-they all move together.
+on every slide through to 21, and the recipe rolls from the same seed. Reroll
+anywhere and they all move together; the *shuffled* toggle and the min-angle
+slider are deck-wide too.
 
 ```
 12  pick 3 hues on a ring      ← their 3.4 — in order, an arc
@@ -91,8 +92,8 @@ move that fixes it.
 - **A confusion I lived in for years:** HSL and HSB. Golan showed them the
   bicones; this is the same fact felt from inside a picker — the pure hue is
   not in the corner. The numbers are on the slide: the same colour is
-  `hsb(h, 100%, 100%)` and `hsl(h, 100%, 50%)`, and HSL's corner is white. *(live: both squares, one slider)* **L is not B** — the
-  seed of slide 18.
+  `hsb(h, 100%, 100%)` and `hsl(h, 100%, 50%)`, and HSL's corner is white.
+  *(live: both squares, one slider)* **L is not B** — the seed of slide 17.
 - What came out of it. They have met several of these — let them recognise
   them rather than telling them. Then: *we are going to rebuild farbvelo.*
 
@@ -125,9 +126,10 @@ move that fixes it.
   and back; Golan already showed them why, so one flick is enough. This is the
   bridge: a gradient is a palette with the resolution turned up, and the next
   slide scatters its stops.
-- **Shuffled** (16). One random number per colour, sort by it: reorders *and*
-  scatters the stops. The last thing farbvelo does. Toggle off and watch it go
-  stiff. Less mechanical. Still unusable.
+- **Thrown out of order** (16). One random number per colour, sort by it:
+  reorders *and* scatters the stops. The last thing farbvelo does. Toggle off
+  and watch it go stiff. Less mechanical. Still unusable — this is where
+  Golan's phrase for it belongs: say it, don't title it.
 
 ### 3 · Why, and the fix — 10 min · slides 17–22 ← the trick
 
@@ -136,16 +138,18 @@ move that fixes it.
   Everything before failed for this one reason.)*
 - **Same numbers, OKLCH** (18). Slide 17 with one word changed. The identical
   triples as OKLCH, desaturated and measured again: one lightness in, one
-  lightness out. This is the answer to 17 — and the setup for the next beat: *correct is not the same as good.* Five colours at one
-  lightness is a flat palette.
+  lightness out. This is the answer to 17 — and the setup for the next beat:
+  *correct is not the same as good.* Five colours at one lightness is a flat
+  palette.
 - Divider: *Stop holding lightness still.*
 - **Lightness gets a range** (20). Same three, same stretch, now in OKLCH.
   Third bar: lightness walks min → max across the anchors before stretching.
   Two sliders. The first thing that actually helps, and it arrives only after
   the audience knows why everything before it failed.
-- **Chroma too** (21). Lightness has its range; give chroma one, and a coin
-  flip for direction. Both axes walking, then stretch.
-
+- **Chroma too** (21). Picks up exactly where 20 left off: row one *is* 20's
+  last bar, same sliders, same defaults. Row two adds the chroma walk and the
+  coin flip for direction. Both axes moving, then the stretch — that is the
+  whole ramp, and 22 is just its source.
 - **randomRamp in full** (22). Point at one line:
   `shuffle(ring).slice(0, count).sort()`. The shuffle *selects* a random
   subset; the sort puts it back in wheel order. Gaps, not an arc. Everything
@@ -164,12 +168,16 @@ move that fixes it.
 
 ### 5 · The recipe — 2 min · slide 26 ← the slide they photograph
 
-Ten lines of p5. `random`, `shuffle`, `lerp` are built-ins;
-`scaleSpreadArray` is the stretch from slide 14 (its walkthrough is parked in `src/slides/_parked/`). It renders its own output on the slide, so it
-cannot lie. Say the connection out loud:
+The real pipeline, on p5 + chroma.js: `randomRamp` and `scaleSpreadArray` in
+full, and `palette(n)` = three to five random stops stretched to n. p5 gives
+`random`, `shuffle`, `min`, `max`, `round`, `floor`; chroma.js — the library
+3.3 already had them load — gives `oklch` and `mix`. It renders its own output
+on the slide (stops, then the stretch), so it cannot lie. *(The
+scaleSpreadArray walkthrough slide is parked in `src/slides/_parked/`.)* Say
+the connection out loud:
 
-> *For 3.6 you need three colours that interrelate, new on every click. That
-> is the three anchors. Stretch only when you want a gradient.*
+> *For 3.6 you need three colours that interrelate, new on every click —
+> that is `palette(3)`, the anchors. `palette(40)` is a gradient.*
 
 ### 6 · Q&A — 10 min · slide 27
 
@@ -181,8 +189,8 @@ hour was about learning to see.
 
 ## If you run long
 
-Cut in this order: **25** (gamut) → section 0's tools montage. Never cut 13,
-16, 17, 18, 20 or 26.
+Cut in this order: **25** (gamut) → **15** (the gradient; 16 stands without
+it) → section 0's tools montage. Never cut 13, 16, 17, 18, 20, 21 or 26.
 
 ## Live slides — rehearse these with the pen open
 
