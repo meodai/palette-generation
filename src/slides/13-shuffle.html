@@ -1,0 +1,114 @@
+<main data-slide>
+  <h2>Now <em>shuffle</em> the ring</h2>
+
+  <div class="stage">
+    <div data-wheel></div>
+    <div data-strip data-tall></div>
+  </div>
+
+  <div class="controls">
+    <label class="check"><input data-shuffled type="checkbox" /><span>shuffled</span></label>
+    <button type="button">reroll</button>
+    <p class="sum"></p>
+  </div>
+
+  <pre><code>const hues = <mark>shuffle(ring).slice(0, count).sort((a, b) =&gt; a - b)</mark>;</code></pre>
+
+  <p class="note">
+    Three in a row is an arc. Shuffle the candidates, take three, put them back
+    in wheel order — <mark>a random subset, with gaps</mark>. The toggle carries
+    through every slide from here on.
+  </p>
+
+  <style>
+    .stage {
+      display: flex;
+      align-items: center;
+      gap: var(--space-l);
+      width: min(100%, 46em);
+    }
+
+    [data-wheel] { flex: none; width: 11em; }
+    [data-strip] { flex: 1; min-width: 0; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-s) var(--space-m);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    .check { display: flex; align-items: center; gap: var(--space-3xs); }
+    .sum { margin: 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--onBg); }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    pre { font-size: var(--step--2); border-left-color: var(--highlight); border-left-width: 2px; }
+    pre mark { background: none; color: var(--highlight); }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    const button = $slide.querySelector('button');
+    const sum = $slide.querySelector('.sum');
+
+    // hues() in the open again — this time with both branches.
+    function hues(count, maxSpacing = spacing()) {
+      const step = Math.min(maxSpacing, 360 / count);
+      const start = rnd(360);
+
+      const ring = Array.from(
+        { length: Math.round(360 / step) },
+        (_, i) => (start + i * step) % 360,
+      );
+
+      const picked = shuffled()
+        ? shuffle(ring).slice(0, count).sort((a, b) => a - b)
+        : ring.slice(0, count);
+
+      picked.ring = ring; // kept for drawing the candidates
+      return picked;
+    }
+
+    let three = hues(3);
+
+    function draw() {
+      // The ring's other candidates as white dots; the picked three on top.
+      wheel([
+        ...three.ring.filter((h) => !three.includes(h)).map((h) => ({ h, hollow: true })),
+        ...three,
+      ]);
+      swatches(three.map((h) => hsl({ h, c: 0.85, l: 0.55 })));
+      sum.textContent = three.map((h) => `${Math.round(h)}°`).join('  ');
+    }
+
+    // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
+    // this changes *which* three, not the roll.
+    const shuffleBox = $slide.querySelector('[data-shuffled]');
+    shuffleBox.checked = shuffled();
+    const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); three = hues(3); draw(); };
+    shuffleBox.addEventListener('input', onShuffle);
+
+    const next = () => { reseed(); three = hues(3); draw(); };
+    button.addEventListener('click', next);
+    draw();
+
+    return () => {
+      shuffleBox.removeEventListener('input', onShuffle);
+      button.removeEventListener('click', next);
+    };
+  </script>
+</main>

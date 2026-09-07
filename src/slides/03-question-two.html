@@ -1,0 +1,71 @@
+<main data-slide data-cols>
+  <h2 class="full">What are all the <em>other</em> numbers for?</h2>
+
+  <figure data-shot>
+    <img src="/picker.png" alt="The Photoshop colour picker" />
+    <div class="placeholder">drop <code>public/picker.png</code> here</div>
+  </figure>
+
+  <div class="aside">
+    <p>
+      One swatch. Four coordinate systems describing it at the same time — HSB,
+      Lab, RGB, CMYK. I grew up in this dialog and had
+      <mark>no idea what any of them were for</mark>.
+    </p>
+    <p class="note">
+      Each one is a different shape wrapped around the same set of colours.
+      Picking the right shape is most of the job.
+    </p>
+  </div>
+
+  <style>
+    :scope {
+      align-content: center;
+      /* The screenshot carries the slide; the text is the caption. */
+      grid-template-columns: 1.35fr 1fr;
+    }
+
+    figure {
+      margin: 0;
+    }
+
+    img {
+      width: 100%;
+      border: 1px solid var(--faint);
+    }
+
+    .placeholder {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 4 / 3;
+      border: 1px dashed var(--hairline);
+      color: var(--muted);
+      font-size: var(--step--1);
+    }
+
+    figure:has(img[data-loaded]) .placeholder {
+      display: none;
+    }
+
+    img:not([data-loaded]) {
+      display: none;
+    }
+
+    .aside {
+      display: grid;
+      gap: var(--space-s);
+      align-content: center;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: var(--step--1);
+    }
+  </style>
+
+  <script>
+    const shot = $slide.querySelector('img');
+    if (shot.complete && shot.naturalWidth) shot.dataset.loaded = '';
+    shot.addEventListener('load', () => { shot.dataset.loaded = ''; });
+  </script>
+</main>

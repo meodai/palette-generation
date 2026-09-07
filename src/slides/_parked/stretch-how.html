@@ -1,0 +1,173 @@
+<main data-slide>
+  <h2>Every anchor owns a <em>run</em></h2>
+
+  <div class="chunks"></div>
+  <div class="tags"></div>
+
+  <div class="controls">
+    <label><span>steps</span><input type="range" min="3" max="20" value="5" /><output></output></label>
+    <p class="sum"></p>
+    <button type="button">reroll</button>
+  </div>
+
+  <pre><code>chunkArray[i % (initial.length - <mark>1</mark>)].push(null);   <span class="c">// deal the spares round-robin</span>
+
+const percent = j / currentChunk.<mark>length</mark>;          <span class="c">// stop just short of the next anchor</span></code></pre>
+
+  <p class="note">
+    Two details carry the whole function. <strong>Only the first n−1 anchors get
+    spares</strong> — the last one is the endpoint, it has nothing to walk
+    toward. And dividing by the chunk's <em>full</em> length instead of
+    <code>length − 1</code> means a run never quite arrives:
+    <mark>the next anchor supplies its own colour</mark>, so nothing is ever
+    duplicated at the join.
+  </p>
+
+  <style>
+    .chunks {
+      display: flex;
+      gap: var(--space-xs);
+      width: min(100%, 46em);
+      height: 5.5em;
+    }
+
+    .chunk {
+      display: flex;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .chunk > * { flex: 1; min-width: 0; }
+
+    .chunk > .anchor {
+      position: relative;
+      outline: 2px solid var(--onBg);
+      outline-offset: -2px;
+    }
+
+    /* Gaps are in em, so the tag row must keep the slide's font-size or it
+       falls out of register with the chunks above it. */
+    .tags {
+      display: flex;
+      gap: var(--space-xs);
+      width: min(100%, 46em);
+      color: var(--muted);
+    }
+
+    .tags > * {
+      min-width: 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-s) var(--space-m);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    label { display: flex; align-items: center; gap: var(--space-2xs); }
+    input { width: 12em; accent-color: var(--highlight); }
+
+    output, .sum {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--onBg);
+      margin: 0;
+    }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    pre { font-size: var(--step--2); }
+    pre .c { color: var(--muted); }
+    pre mark { background: none; color: var(--highlight); }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    const chunksEl = $slide.querySelector('.chunks');
+    const tagsEl = $slide.querySelector('.tags');
+    const steps = $slide.querySelector('input');
+    const readout = $slide.querySelector('output');
+    const sum = $slide.querySelector('.sum');
+    const reroll = $slide.querySelector('button');
+
+    let anchors = [];
+
+    const pickAnchors = () => {
+      anchors = hues(3).map((h) => hsl({ h, c: 0.85, l: 0.55 }));
+    };
+
+    function draw() {
+      const target = Math.max(+steps.value, anchors.length);
+      readout.textContent = target;
+
+      // scaleSpreadArray, kept in its chunks so you can see where they fall.
+      const chunks = anchors.map((value) => [value]);
+      const spares = target - anchors.length;
+
+      for (let i = 0; i < spares; i += 1) chunks[i % (anchors.length - 1)].push(null);
+
+      for (let i = 0; i < chunks.length - 1; i += 1) {
+        for (let j = 1; j < chunks[i].length; j += 1) {
+          chunks[i][j] = mix(chunks[i][0], chunks[i + 1][0], j / chunks[i].length);
+        }
+      }
+
+      sum.textContent = `${anchors.length} anchors + ${spares} spare = ${target}`;
+
+      chunksEl.replaceChildren(
+        ...chunks.map((chunk) => {
+          const group = document.createElement('div');
+          group.className = 'chunk';
+          group.style.flex = String(chunk.length);
+
+          group.replaceChildren(
+            ...chunk.map((color, i) => {
+              const cell = document.createElement('div');
+              cell.style.background = color;
+              if (i === 0) cell.className = 'anchor';
+              return cell;
+            }),
+          );
+
+          return group;
+        }),
+      );
+
+      tagsEl.replaceChildren(
+        ...chunks.map((chunk) => {
+          const tag = document.createElement('span');
+          tag.style.flex = String(chunk.length);
+          tag.textContent = chunk.length;
+          return tag;
+        }),
+      );
+    }
+
+    const next = () => { reseed(); pickAnchors(); draw(); };
+
+    steps.addEventListener('input', draw);
+    reroll.addEventListener('click', next);
+    // Entry must not reseed — that would move every other slide's palette.
+    pickAnchors();
+    draw();
+
+    return () => reroll.removeEventListener('click', next);
+  </script>
+</main>

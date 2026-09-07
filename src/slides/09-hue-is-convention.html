@@ -1,0 +1,27 @@
+<main data-slide data-align="center">
+  <h2>Hue angle is a <em>convention</em>,<br />not a fact</h2>
+
+  <div class="facts">
+    <p>RYB is a <strong>pigment mixing</strong> model. Blue and yellow make green because that is what the paint does.</p>
+    <p>HSL hue is the <strong>RGB cube</strong> spun on its diagonal. Blue and yellow make grey because that is what the light does.</p>
+    <p class="punch">Neither of them is <mark>perceptual</mark>. That is the gap the rest of this talk lives in.</p>
+  </div>
+
+  <style>
+    h2 {
+      max-width: none;
+      font-size: var(--step-4);
+    }
+
+    .facts {
+      display: grid;
+      gap: var(--space-s);
+      max-width: 34em;
+      margin-top: var(--space-m);
+      text-align: left;
+    }
+
+    .facts p { color: var(--muted); }
+    .punch { color: var(--onBg) !important; font-size: var(--step-1); }
+  </style>
+</main>

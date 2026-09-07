@@ -1,0 +1,47 @@
+<main data-slide>
+  <h2>What came out of those two questions</h2>
+
+  <ul class="tools">
+    <li><a href="https://farbvelo.elastiq.ch">farbvelo</a> <span>random palettes that are somehow never ugly</span></li>
+    <li><a href="https://meodai.github.io/poline/">poline</a> <span>a path between two anchor points</span></li>
+    <li><a href="https://meodai.github.io/rampensau/">rampensau</a> <span>hue cycling and easing</span></li>
+    <li><a href="https://albers.elastiq.ch">Albers</a> <span>colour is only ever relative to its neighbour</span></li>
+    <li><a href="https://verloop.xyz">verloop</a> <span>multi-stop gradients as the whole artwork</span></li>
+    <li><a href="https://github.com/meodai/color-names">color-names</a> <span>30 000 colours, each with a human name</span></li>
+  </ul>
+
+  <p class="note">We are going to rebuild the first one, live.</p>
+
+  <style>
+    .tools {
+      display: grid;
+      gap: 0;
+      max-width: 34em;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0 1em;
+      padding: var(--space-2xs) 0;
+      border-top: 1px solid var(--faint);
+    }
+
+    li::before {
+      content: none;
+    }
+
+    li span {
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    .note {
+      margin-top: var(--space-m);
+      color: var(--muted);
+    }
+  </style>
+</main>

@@ -1,0 +1,116 @@
+<main data-slide>
+  <h2>The whole thing, for <em>p5</em></h2>
+
+  <pre><code>function palette(n, stops = 3, spacing = 60) {
+  const start = random(360);
+  const ring = Array.from({ length: 360 / spacing }, (_, i) =&gt; (start + i * spacing) % 360);
+  const hues = <mark>shuffle(ring).slice(0, stops).sort((a, b) =&gt; a - b)</mark>;
+
+  const anchors = hues.map((h, i) =&gt; {
+    const t = i / (stops - 1);
+    return `oklch(${lerp(15, 90, t)}% ${lerp(0.05, 0.18, t)} ${h})`;
+  });
+
+  return <mark>scaleSpreadArray(anchors, n)</mark>;
+}</code></pre>
+
+  <div class="rows">
+    <div class="row"><span>3 stops</span><div data-strip id="stops"></div></div>
+    <div class="row"><span>→ 5</span><div data-strip id="out"></div></div>
+  </div>
+
+  <div class="foot">
+    <p class="note">
+      <code>random</code>, <code>shuffle</code>, <code>lerp</code> are p5 built-ins;
+      <code>scaleSpreadArray</code> is the stretch. For 3.6 you need
+      <mark>three colours that interrelate, new on every click</mark> — that is
+      the anchors. Stretch only when you want a gradient.
+    </p>
+    <button type="button">reroll</button>
+  </div>
+
+  <style>
+    pre {
+      font-size: var(--step--2);
+      line-height: 1.5;
+      border-left-color: var(--highlight);
+      border-left-width: 2px;
+    }
+
+    pre mark { background: none; color: var(--highlight); }
+
+    .rows { display: grid; gap: var(--space-2xs); width: min(100%, 42em); }
+
+    .row {
+      display: grid;
+      grid-template-columns: 4.5em 1fr;
+      align-items: center;
+      gap: var(--space-s);
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+      color: var(--muted);
+    }
+
+    [data-strip] { height: 2.6em; }
+
+    .foot {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-s) var(--space-m);
+    }
+
+    .note {
+      flex: 1;
+      min-width: 20em;
+      max-width: 38em;
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      font-size: var(--step--1);
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+  </style>
+
+  <script>
+    // Runs exactly what the slide shows. The shims give p5's argument order —
+    // p5's lerp takes the amount last, unlike ours.
+    function palette(n, stops = 3, spacing = 60) {
+      const lerp = (a, b, t) => a + t * (b - a);
+      const random = (max) => rnd(max);
+
+      const start = random(360);
+      const ring = Array.from({ length: 360 / spacing }, (_, i) => (start + i * spacing) % 360);
+      const hues = shuffle(ring).slice(0, stops).sort((a, b) => a - b);
+
+      const anchors = hues.map((h, i) => {
+        const t = i / (stops - 1);
+        return `oklch(${lerp(15, 90, t)}% ${lerp(0.05, 0.18, t)} ${h})`;
+      });
+
+      // stretch() is scaleSpreadArray. Both stages shown, so the point lands.
+      swatches(anchors, $slide.querySelector('#stops'));
+      return stretch(anchors, n, (t, a, b) => mix(a, b, t));
+    }
+
+    const button = $slide.querySelector('button');
+
+    const draw = () => swatches(palette(5), $slide.querySelector('#out'));
+    const next = () => { reseed(); draw(); };
+
+    button.addEventListener('click', next);
+    draw();
+
+    return () => button.removeEventListener('click', next);
+  </script>
+</main>

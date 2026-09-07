@@ -1,0 +1,127 @@
+<main data-slide>
+  <h2>Add a <em>lightness</em> ramp</h2>
+
+  <div class="stage">
+    <div data-wheel></div>
+    <div class="rows">
+      <div class="row"><span>3</span><div data-strip id="anchors"></div></div>
+      <div class="row"><span>→ 5</span><div data-strip id="flat"></div></div>
+      <div class="row"><span>+ L</span><div data-strip id="ramped"></div></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <label><span>min</span><input data-l0 type="range" min="0" max="100" value="15" /><output></output></label>
+    <label><span>max</span><input data-l1 type="range" min="0" max="100" value="90" /><output></output></label>
+    <label class="check"><input data-shuffled type="checkbox" /><span>shuffled</span></label>
+    <button type="button">reroll</button>
+  </div>
+
+  <p class="note">
+    Same three, same stretch. The only change: instead of one lightness for
+    all three anchors, <mark>walk from a minimum to a maximum</mark> across
+    them, then stretch. Two numbers.
+  </p>
+
+  <style>
+    .stage {
+      display: flex;
+      align-items: center;
+      gap: var(--space-l);
+      width: min(100%, 46em);
+    }
+
+    [data-wheel] { flex: none; width: 7em; }
+    .rows { flex: 1; min-width: 0; display: grid; gap: var(--space-xs); }
+
+    .row {
+      display: grid;
+      grid-template-columns: 3em 1fr;
+      align-items: center;
+      gap: var(--space-s);
+      font-family: var(--font-mono);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    #anchors, #flat { height: 3.2em; }
+    #ramped { height: 6em; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-s) var(--space-m);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    label { display: flex; align-items: center; gap: var(--space-2xs); }
+    input[type='range'] { width: 9em; accent-color: var(--highlight); }
+    .check { gap: var(--space-3xs); }
+
+    output {
+      min-width: 2.6em;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--onBg);
+    }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    const q = (sel) => $slide.querySelector(sel);
+    const l0 = q('[data-l0]');
+    const l1 = q('[data-l1]');
+    const outs = $slide.querySelectorAll('output');
+    const button = q('button');
+
+    let three = hues(3);
+
+    function draw() {
+      const min = +l0.value / 100;
+      const max = +l1.value / 100;
+      outs[0].textContent = `${l0.value}%`;
+      outs[1].textContent = `${l1.value}%`;
+
+      wheel(three);
+
+      // Rows one and two are the previous slide, unchanged.
+      const flat = three.map((h) => hsl({ h, c: 0.85, l: 0.55 }));
+      swatches(flat, q('#anchors'));
+      swatches(stretch(flat, 5, (t, a, b) => mix(a, b, t)), q('#flat'));
+
+      // Row three: lightness walks min → max across the anchors. Nothing else moves.
+      const ramped = three.map((h, i) => hsl({ h, c: 0.85, l: lerp(i / 2, min, max) }));
+      swatches(stretch(ramped, 5, (t, a, b) => mix(a, b, t)), q('#ramped'));
+    }
+
+    // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
+    // this changes *which* three, not the roll.
+    const shuffleBox = $slide.querySelector('[data-shuffled]');
+    shuffleBox.checked = shuffled();
+    const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); three = hues(3); draw(); };
+    shuffleBox.addEventListener('input', onShuffle);
+    const next = () => { reseed(); three = hues(3); draw(); };
+
+    l0.addEventListener('input', draw);
+    l1.addEventListener('input', draw);
+    button.addEventListener('click', next);
+    draw();
+
+    return () => button.removeEventListener('click', next);
+  </script>
+</main>

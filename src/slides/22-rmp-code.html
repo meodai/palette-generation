@@ -1,0 +1,43 @@
+<main data-slide>
+  <h2>All of it, in one <em>function</em></h2>
+
+  <pre><code>function randomRamp(count, maxSpacing = 60) {
+  const spacing = Math.min(maxSpacing, 360 / count);
+  const start = rnd() * 360;
+
+  const ring = Array.from({ length: Math.round(360 / spacing) },
+    (_, i) =&gt; (start + i * spacing) % 360);
+
+  <mark>const hues = shuffle(ring).slice(0, count).sort((a, b) =&gt; a - b);</mark>
+
+  const minL = 0.05 + rnd() * 0.2,   maxL = 1 - rnd() * 0.15;
+  const minC = 0.005 + rnd() * 0.25, maxC = 1 - rnd();
+  const rangeL = Math.max(maxL - minL, 0.1);
+  const rangeC = Math.max(maxC - minC, 0.1);
+  const flip = rnd() &lt; 0.5;
+
+  return hues.map((h, i) =&gt; {
+    const t = i / (count - 1);
+    return { h, li: minL + t * rangeL, ch: minC + (flip ? 1 - t : t) * rangeC };
+  });
+}</code></pre>
+
+  <p class="note">
+    The marked line is the one that matters: a <mark>random subset</mark> of
+    the ring, put back in wheel order. Gaps round the wheel, not one arc.
+    Everything after it is two linear walks and a coin flip.
+  </p>
+
+  <style>
+    pre {
+      font-size: var(--step--2);
+      line-height: 1.5;
+      border-left-color: var(--highlight);
+      border-left-width: 2px;
+    }
+
+    pre mark { background: none; color: var(--highlight); }
+
+    .note { max-width: 40em; font-size: var(--step--1); color: var(--muted); }
+  </style>
+</main>

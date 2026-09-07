@@ -1,0 +1,124 @@
+<main data-slide>
+  <h2>I confused HSL with HSB<br />for <em>years</em></h2>
+
+  <div class="squares">
+    <figure>
+      <div class="square square--hsb">
+        <span class="dot" style="right: 0; top: 0"></span>
+      </div>
+      <figcaption><code>HSB</code> — the pure hue is in the corner, where you reach for it</figcaption>
+      <p class="values">pure hue · hsb(<span data-h></span>, 100%, <b>100%</b>) · corner</p>
+    </figure>
+
+    <figure>
+      <div class="square square--hsl">
+        <span class="dot" style="right: 0; top: 50%"></span>
+      </div>
+      <figcaption><code>HSL</code> — the corner is white. The pure hue is <em>halfway down</em></figcaption>
+      <p class="values">pure hue · hsl(<span data-h></span>, 100%, <b>50%</b>) · corner is hsl(<span data-h></span>, 100%, <b>100%</b>) = white</p>
+    </figure>
+  </div>
+
+  <label class="control">
+    <span>hue</span>
+    <input type="range" min="0" max="359" value="0" />
+    <output></output>
+  </label>
+
+  <p class="note">
+    I only noticed when I built a picker myself, and the most saturated colour
+    refused to sit in the top right. <mark>L is not B.</mark>
+  </p>
+
+  <style>
+    :scope {
+      --h: 0;
+    }
+
+    .squares {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-m);
+      width: min(100%, 24em);
+    }
+
+    figure { margin: 0; display: grid; gap: var(--space-2xs); }
+
+    .square {
+      position: relative;
+      aspect-ratio: 1;
+      border: 1px solid var(--faint);
+    }
+
+    /* Saturation left to right, brightness bottom to top. Corner = pure hue. */
+    .square--hsb {
+      background:
+        linear-gradient(to top, #000, rgb(0 0 0 / 0)),
+        linear-gradient(to right, #fff, rgb(255 255 255 / 0)),
+        hsl(var(--h) 100% 50%);
+    }
+
+    /* Saturation left to right, lightness bottom to top. Corner = white. */
+    .square--hsl {
+      background:
+        linear-gradient(to top, #000, rgb(0 0 0 / 0) 50%),
+        linear-gradient(to bottom, #fff, rgb(255 255 255 / 0) 50%),
+        linear-gradient(to right, #808080, hsl(var(--h) 100% 50%));
+    }
+
+    .dot {
+      position: absolute;
+      width: 1.1em;
+      height: 1.1em;
+      margin: -0.55em -0.55em 0 0;
+      border: 2px solid var(--white);
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgb(0 0 0 / 0.4);
+    }
+
+    figcaption em { color: var(--highlight); font-style: normal; }
+
+    .values {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+      color: var(--muted);
+    }
+
+    .values b { font-weight: var(--weight-medium); color: var(--highlight); }
+
+    .control {
+      display: flex;
+      align-items: center;
+      gap: var(--space-s);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    .control input { width: min(20em, 45vw); accent-color: var(--highlight); }
+
+    output {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--onBg);
+    }
+
+    .note { max-width: 38em; color: var(--muted); }
+  </style>
+
+  <script>
+    const slider = $slide.querySelector('input');
+    const readout = $slide.querySelector('output');
+
+    function draw() {
+      $slide.style.setProperty('--h', slider.value);
+      readout.textContent = `${String(slider.value).padStart(3, '0')}°`;
+      $slide.querySelectorAll('[data-h]').forEach((el) => { el.textContent = slider.value; });
+    }
+
+    slider.addEventListener('input', draw);
+    draw();
+
+    return () => slider.removeEventListener('input', draw);
+  </script>
+</main>

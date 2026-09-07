@@ -1,0 +1,98 @@
+<main data-slide>
+  <h2>Equal steps in.<br />Unequal steps <em>out</em>.</h2>
+
+  <div class="chart">
+    <div data-strip data-flush></div>
+    <div class="deltas"></div>
+    <div class="mark" hidden><span></span></div>
+  </div>
+
+  <p class="note">
+    Lightness and hue held still; chroma rising in <mark>48 identical steps</mark>.
+    The bars are how much each step actually changed on screen. Past the mark the
+    display has run out of green, and the numbers keep climbing into colours it
+    cannot make.
+  </p>
+
+  <style>
+    .chart {
+      position: relative;
+      width: min(100%, 46em);
+    }
+
+    [data-strip] { height: 9em; }
+
+    .deltas {
+      display: flex;
+      align-items: flex-end;
+      height: 4em;
+      margin-top: 2px;
+      gap: 1px;
+    }
+
+    .deltas > * {
+      flex: 1;
+      background: var(--highlight);
+      min-height: 1px;
+    }
+
+    .mark {
+      position: absolute;
+      inset: 0 auto 0 0;
+      border-left: 1px solid var(--onBg);
+      pointer-events: none;
+    }
+
+    .mark span {
+      position: absolute;
+      top: calc(100% + 0.4em);
+      right: 0.5em;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+      color: var(--muted);
+    }
+
+    .note { max-width: 38em; color: var(--muted); }
+  </style>
+
+  <script>
+    const LIGHTNESS = 0.7;
+    const HUE = 150;
+    const MAX_CHROMA = 0.45;
+    const STEPS = 48;
+
+    const asked = Array.from({ length: STEPS }, (_, i) => (i / (STEPS - 1)) * MAX_CHROMA);
+    const colors = asked.map((c) => `oklch(${LIGHTNESS * 100}% ${c.toFixed(4)} ${HUE})`);
+
+    swatches(colors);
+
+    // How far each step actually travelled on screen, in plain RGB distance.
+    const rendered = colors.map(rgb);
+    const deltas = rendered.map((c, i) =>
+      i === 0 ? 0 : Math.hypot(...c.map((v, k) => v - rendered[i - 1][k])),
+    );
+
+    const peak = Math.max(...deltas);
+
+    $slide.querySelector('.deltas').replaceChildren(
+      ...deltas.map((d) => {
+        const bar = document.createElement('div');
+        bar.style.height = `${(d / peak) * 100}%`;
+        return bar;
+      }),
+    );
+
+    // The mark: from here on, every step moves less than a fifth of the best one.
+    const FADED = 0.2;
+    let clip = STEPS - 1;
+    while (clip > 1 && deltas[clip - 1] < peak * FADED) clip -= 1;
+
+    if (clip < STEPS - 1) {
+      const mark = $slide.querySelector('.mark');
+      mark.hidden = false;
+      mark.style.left = `${(clip / (STEPS - 1)) * 100}%`;
+      mark.querySelector('span').textContent = `c ${asked[clip].toFixed(2)}`;
+    }
+  </script>
+</main>

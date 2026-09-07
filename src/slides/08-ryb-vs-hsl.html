@@ -1,0 +1,71 @@
+<main data-slide>
+  <h2>Two wheels that <em>disagree</em></h2>
+
+  <div class="wheels">
+    <figure>
+      <div class="pair" data-ryb></div>
+      <figcaption>RYB — Itten. What you were taught to paint with.</figcaption>
+    </figure>
+    <figure>
+      <div class="pair" data-hsl></div>
+      <figcaption>HSL — a rotation of the RGB cube. What your code does.</figcaption>
+    </figure>
+  </div>
+
+  <label class="control">
+    <span>hue</span>
+    <input type="range" min="0" max="359" value="240" step="1" />
+    <output></output>
+  </label>
+
+  <style>
+    .wheels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+      width: min(100%, 46em);
+    }
+
+    figure { margin: 0; display: grid; gap: var(--space-2xs); }
+
+    .pair { display: flex; height: 9em; }
+    .pair > * { flex: 1; }
+
+    .control {
+      display: flex;
+      align-items: center;
+      gap: var(--space-s);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    .control input { width: min(24em, 50vw); accent-color: var(--highlight); }
+
+    output {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--onBg);
+    }
+  </style>
+
+  <script>
+    const slider = $slide.querySelector('input');
+    const readout = $slide.querySelector('output');
+    const paint = (target, angles) =>
+      swatches(angles.map((h) => hsl({ h, c: 0.75, l: 0.5 })), $slide.querySelector(target));
+
+    function draw() {
+      const h = Number(slider.value);
+      readout.textContent = `${String(h).padStart(3, '0')}°`;
+
+      // Complements: 180° apart on each wheel, then read in HSL for the screen.
+      paint('[data-ryb]', [rybHue(h), rybHue(h + 180)]);
+      paint('[data-hsl]', [h, (h + 180) % 360]);
+    }
+
+    slider.addEventListener('input', draw);
+    draw();
+
+    return () => slider.removeEventListener('input', draw);
+  </script>
+</main>

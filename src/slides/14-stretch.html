@@ -1,0 +1,139 @@
+<main data-slide>
+  <h2>Stretch three to <em>five</em></h2>
+
+  <div class="stage">
+    <div data-wheel></div>
+    <div class="rows">
+      <div class="row"><span>3</span><div data-strip id="anchors"></div></div>
+      <div class="row"><span id="n">→ 5</span><div data-strip id="out"></div></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <label><span>steps</span><input type="range" min="3" max="12" value="5" /></label>
+    <label class="check"><input type="checkbox" /><span>as a gradient</span></label>
+    <label class="check"><input data-shuffled type="checkbox" /><span>shuffled</span></label>
+    <button type="button">reroll</button>
+  </div>
+
+  <p class="note">
+    Same three, interpolated between — in
+    <select>
+      <option>oklab</option>
+      <option>oklch</option>
+      <option>lab</option>
+      <option>lch</option>
+      <option>srgb</option>
+      <option>srgb-linear</option>
+      <option>hsl</option>
+    </select>.
+    <mark><code>chroma.scale()</code> through four stops is exactly this.</mark>
+    The anchors are the design; the steps are only resolution.
+  </p>
+
+  <style>
+    .stage {
+      display: flex;
+      align-items: center;
+      gap: var(--space-l);
+      width: min(100%, 46em);
+    }
+
+    [data-wheel] { flex: none; width: 7em; }
+    .rows { flex: 1; min-width: 0; display: grid; gap: var(--space-xs); }
+
+    .row {
+      display: grid;
+      grid-template-columns: 3em 1fr;
+      align-items: center;
+      gap: var(--space-s);
+      font-family: var(--font-mono);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    #anchors { height: 4em; }
+    #out { height: 7em; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-s) var(--space-m);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    label { display: flex; align-items: center; gap: var(--space-2xs); }
+    input[type='range'] { width: 12em; accent-color: var(--highlight); }
+    .check { gap: var(--space-3xs); }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    /* The space is a word in the sentence that happens to be a control. */
+    select {
+      appearance: none;
+      border: 0;
+      border-bottom: 1px solid var(--highlight);
+      padding: 0 0.2em;
+      background: none;
+      color: var(--highlight);
+      font: inherit;
+      font-family: var(--font-mono);
+      font-size: 0.86em;
+      cursor: pointer;
+    }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    const steps = $slide.querySelector('input[type="range"]');
+    const smooth = $slide.querySelector('input[type="checkbox"]:not([data-shuffled])');
+    const space = $slide.querySelector('select');
+    const button = $slide.querySelector('button');
+    const label = $slide.querySelector('#n');
+    const out = $slide.querySelector('#out');
+
+    let three = hues(3);
+
+    function draw() {
+      const anchors = three.map((h) => hsl({ h, c: 0.85, l: 0.55 }));
+      const n = +steps.value;
+
+      wheel(three);
+      swatches(anchors, $slide.querySelector('#anchors'));
+      label.textContent = `→ ${n}`;
+      out.style.background = '';
+
+      if (smooth.checked) return gradient(anchors, { target: out, space: space.value });
+      swatches(stretch(anchors, n, (t, a, b) => mix(a, b, t, space.value)), out);
+    }
+
+    // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
+    // this changes *which* three, not the roll.
+    const shuffleBox = $slide.querySelector('[data-shuffled]');
+    shuffleBox.checked = shuffled();
+    const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); three = hues(3); draw(); };
+    shuffleBox.addEventListener('input', onShuffle);
+    const next = () => { reseed(); three = hues(3); draw(); };
+
+    steps.addEventListener('input', draw);
+    smooth.addEventListener('input', draw);
+    space.addEventListener('input', draw);
+    button.addEventListener('click', next);
+    draw();
+
+    return () => button.removeEventListener('click', next);
+  </script>
+</main>

@@ -1,0 +1,68 @@
+<main data-slide>
+  <h2>Every "harmony rule" is just <em>spacing</em></h2>
+
+  <div class="rules"></div>
+
+  <p class="note">
+    Complementary, triadic, tetradic, analogous. Four names, one number.
+    <mark>Harmony is spacing, not magic</mark> — and none of these rules knows
+    anything about how light or dark the result will be.
+  </p>
+
+  <style>
+    .rules {
+      display: grid;
+      gap: var(--space-xs);
+      width: min(100%, 44em);
+    }
+
+    .rule {
+      display: grid;
+      grid-template-columns: 9em 3.8em 1fr;
+      align-items: center;
+      gap: var(--space-s);
+    }
+
+    .rule [data-wheel] { width: 3.8em; }
+
+    .rule dt {
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    .rule dt b { color: var(--onBg); font-weight: var(--weight-medium); }
+
+    .rule dd { display: flex; gap: 2px; height: 3.8em; margin: 0; }
+    .rule dd > * { flex: 1; }
+
+    .note { max-width: 36em; color: var(--muted); }
+  </style>
+
+  <script>
+    const RULES = [
+      ['complementary', 2, 180],
+      ['triadic', 3, 120],
+      ['tetradic', 4, 90],
+      ['analogous', 5, 25],
+    ];
+
+    const base = rnd(360);
+    const container = $slide.querySelector('.rules');
+
+    container.replaceChildren(
+      ...RULES.map(([name, count, step]) => {
+        const row = document.createElement('dl');
+        row.className = 'rule';
+        row.innerHTML = `<dt><b>${name}</b> · ${step}°</dt><div data-wheel></div><dd></dd>`;
+
+        const angles = Array.from({ length: count }, (_, i) => (base + i * step) % 360);
+
+        // The rule, as positions on the ring — and then as colours.
+        wheel(angles, row.querySelector('[data-wheel]'));
+        swatches(angles.map((h) => hsl({ h, c: 0.7, l: 0.5 })), row.querySelector('dd'));
+
+        return row;
+      }),
+    );
+  </script>
+</main>

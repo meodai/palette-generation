@@ -1,0 +1,43 @@
+<main data-slide>
+  <h2>This is the <em>vomit</em></h2>
+
+  <div data-strip data-tall></div>
+
+  <div class="controls">
+    <label class="check"><input data-shuffled type="checkbox" /><span>shuffled</span></label>
+  </div>
+
+  <p class="lead">
+    Look at what we just made. Correctly spaced hues. Correct interpolation, in
+    the correct space. Every rule followed — and it still looks like a crayon
+    accident.
+  </p>
+
+  <style>
+    [data-strip] { width: min(100%, 46em); }
+    .lead { max-width: 34em; }
+
+    .controls { font-size: var(--step--1); color: var(--muted); }
+    .check { display: flex; align-items: center; gap: var(--space-3xs); }
+  </style>
+
+  <script>
+    // Nothing new here. It is the five from the slide before, given a name.
+    let three = hues(3);
+
+    function draw() {
+      const anchors = three.map((h) => hsl({ h, c: 0.85, l: 0.55 }));
+      swatches(stretch(anchors, 5, (t, a, b) => mix(a, b, t)));
+    }
+
+    // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
+    // this changes *which* three, not the roll.
+    const shuffleBox = $slide.querySelector('[data-shuffled]');
+    shuffleBox.checked = shuffled();
+    const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); three = hues(3); draw(); };
+    shuffleBox.addEventListener('input', onShuffle);
+    draw();
+
+    return () => shuffleBox.removeEventListener('input', onShuffle);
+  </script>
+</main>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Palette Generation</title>
+  </head>
+  <body>
+    <div class="deck" id="deck"></div>
+
+    <nav class="steps" aria-label="Slides">
+      <button class="steps__button" id="previous" type="button" title="Previous slide — ←" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7" /></svg>
+      </button>
+      <button class="steps__button" id="next" type="button" title="Next slide — →" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 5 7 7-7 7" /></svg>
+      </button>
+    </nav>
+
+    <footer class="chrome">
+      <p class="chrome__count">
+        <span id="chromeCurrent">1</span><span class="chrome__slash">/</span><span id="chromeTotal">1</span>
+      </p>
+      <button class="chrome__pen" id="pen" type="button" title="Edit this slide — e" aria-label="Edit this slide">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 20h4L19.5 8.5a2.8 2.8 0 0 0-4-4L4 16v4Z" />
+          <path d="m14.5 5.5 4 4" />
+        </svg>
+      </button>
+    </footer>
+
+    <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+    <aside class="editor" id="editor" hidden>
+      <header class="editor__bar">
+        <p class="editor__file" id="editorFile"></p>
+        <p class="editor__status" id="editorStatus"></p>
+        <button class="editor__close" id="editorClose" type="button">esc</button>
+      </header>
+      <div class="editor__body" id="editorBody"></div>
+      <footer class="editor__hint">
+        <kbd>⌘S</kbd> save &amp; render · <kbd>esc</kbd> close · styles are scoped to this slide, use
+        <code>:scope</code> for the slide itself
+      </footer>
+    </aside>
+
+    <div class="help" id="help" hidden>
+      <dl class="help__list">
+        <dt><kbd>→</kbd> <kbd>space</kbd> <kbd>j</kbd></dt><dd>next slide</dd>
+        <dt><kbd>←</kbd> <kbd>k</kbd></dt><dd>previous slide</dd>
+        <dt><kbd>home</kbd> <kbd>end</kbd></dt><dd>first / last</dd>
+        <dt><kbd>e</kbd></dt><dd>edit this slide</dd>
+        <dt><kbd>i</kbd></dt><dd>invert the deck</dd>
+        <dt><kbd>?</kbd></dt><dd>this list</dd>
+      </dl>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

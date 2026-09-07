@@ -1,0 +1,26 @@
+{
+  "name": "palette-generation",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Lecture slides: palette generation",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.11.0",
+    "@codemirror/lang-html": "^6.4.12",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.4",
+    "@codemirror/view": "^6.43.11",
+    "@fontsource/aboreto": "^5.3.0",
+    "@fontsource/work-sans": "^5.3.0",
+    "@lezer/highlight": "^1.2.3",
+    "codemirror": "^6.0.2"
+  }
+}

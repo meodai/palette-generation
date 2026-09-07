@@ -1,0 +1,90 @@
+<main data-slide data-cols>
+  <h2 class="full">The same 24 steps,<br />two different <em>wheels</em></h2>
+
+  <div class="wheel">
+    <div class="ring" data-ring></div>
+    <div class="spokes"></div>
+    <div class="disc" data-disc></div>
+    <div class="spokes spokes--inner"></div>
+  </div>
+
+  <div class="legend">
+    <p><strong>Outer ring — RYB.</strong> Itten's wheel. The one from every colour theory class, built out of how paint mixes.</p>
+    <p><strong>Inner disc — HSL.</strong> Straight off the RGB cube. The one your code has.</p>
+    <p class="note">
+      They agree at red, at twelve o'clock, and drift from there. RYB's
+      green-to-blue span is stretched across <mark>twice as much</mark> of the
+      HSL wheel — which is why the two rings are furthest apart down the bottom.
+    </p>
+  </div>
+
+  <style>
+    :scope {
+      grid-template-columns: 1fr 1fr;
+      align-content: center;
+      column-gap: var(--space-2xl);
+    }
+
+    .wheel {
+      position: relative;
+      width: min(100%, 17em);
+      aspect-ratio: 1;
+      justify-self: center;
+    }
+
+    .wheel > * {
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .ring {
+      inset: 0;
+      /* closest-side pins 100% to the radius, so the hole is exactly 57% of it */
+      mask: radial-gradient(circle closest-side, #0000 0 57%, #000 57.5%);
+    }
+
+    .disc {
+      inset: 24%;
+    }
+
+    /* 24 hairlines, so "discrete" is visible rather than asserted */
+    .spokes {
+      inset: 0;
+      background: repeating-conic-gradient(
+        var(--bg) 0 0.4deg,
+        #0000 0.4deg 15deg
+      );
+      mask: radial-gradient(circle closest-side, #0000 0 57%, #000 57.5%);
+    }
+
+    .spokes--inner {
+      inset: 24%;
+      mask: none;
+    }
+
+    .legend {
+      display: grid;
+      gap: var(--space-s);
+      align-content: center;
+    }
+
+    .legend p { max-width: 24em; }
+    .note { color: var(--muted); }
+  </style>
+
+  <script>
+    const STEPS = 24;
+
+    // One segment per step, coloured from the middle of the segment.
+    const conic = (hueAt) =>
+      `conic-gradient(${Array.from({ length: STEPS }, (_, i) => {
+        const from = (i / STEPS) * 360;
+        const to = ((i + 1) / STEPS) * 360;
+        const color = hsl({ h: hueAt(((i + 0.5) / STEPS) * 360), c: 0.85, l: 0.5 });
+        return `${color} ${from}deg ${to}deg`;
+      }).join(', ')})`;
+
+    $slide.querySelector('[data-ring]').style.background = conic(rybHue);
+    $slide.querySelector('[data-disc]').style.background = conic((h) => h);
+  </script>
+</main>

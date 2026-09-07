@@ -1,0 +1,610 @@
+/* ---------------------------------------------------------------- tokens - */
+
+:root {
+  --black: #202126;
+  --white: #fff;
+  --red: tomato;
+
+  --onBg: var(--black);
+  --bg: var(--white);
+  --highlight: var(--red);
+
+  /* derived, so slides never hard-code a grey */
+  --muted: color-mix(in oklab, var(--onBg) 45%, var(--bg));
+  --faint: color-mix(in oklab, var(--onBg) 14%, var(--bg));
+  --hairline: color-mix(in oklab, var(--onBg) 22%, var(--bg));
+
+  --font-display: 'Aboreto', 'Times New Roman', serif;
+  --font-text: 'Work Sans', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Menlo', monospace;
+
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+
+  /* type scale, ratio 1.26 — relative to the slide's own font-size */
+  --step--2: 0.63em;
+  --step--1: 0.79em;
+  --step-0: 1em;
+  --step-1: 1.26em;
+  --step-2: 1.59em;
+  --step-3: 2em;
+  --step-4: 2.52em;
+  --step-5: 3.18em;
+  --step-6: 4em;
+
+  --space-3xs: 0.25em;
+  --space-2xs: 0.5em;
+  --space-xs: 0.75em;
+  --space-s: 1em;
+  --space-m: 1.5em;
+  --space-l: 2.25em;
+  --space-xl: 3.5em;
+  --space-2xl: 5em;
+
+  --measure: 26em;
+  --editor-size: min(58vh, 42rem);
+  --editor-height: 0px;
+  --pad: clamp(2rem, 6vmin, 6rem);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  color-scheme: light;
+}
+
+/* While the pen is open the deck gives up the bottom of the screen. */
+:root[data-editing] {
+  --editor-height: var(--editor-size);
+}
+
+/* the whole deck inverted — `i` */
+:root[data-invert] {
+  --onBg: var(--white);
+  --bg: var(--black);
+  color-scheme: dark;
+}
+
+/* a single slide inverted — <main data-slide data-invert> */
+[data-slide][data-invert] {
+  --onBg: var(--white);
+  --bg: var(--black);
+}
+:root[data-invert] [data-slide][data-invert] {
+  --onBg: var(--black);
+  --bg: var(--white);
+}
+
+/* ----------------------------------------------------------------- base - */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Every panel below sets `display`, which would otherwise beat [hidden]. */
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--onBg);
+  font-family: var(--font-text);
+  font-weight: var(--weight-light);
+  font-size: 100%;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+
+::selection {
+  background: var(--highlight);
+  color: var(--bg);
+}
+
+.deck {
+  position: fixed;
+  inset: 0 0 var(--editor-height) 0;
+  transition: bottom 0.22s var(--ease);
+}
+
+/* ---------------------------------------------------------------- slides - */
+
+main[data-slide] {
+  position: absolute;
+  inset: 0;
+  /* Presenting must never scroll: a scrollbar here would narrow the slide,
+     rewrap the balanced headings, shrink the height, remove the scrollbar,
+     and start over. Scrolling is only offered while the pen is open, and the
+     gutter is reserved there so the width cannot oscillate. */
+  overflow: hidden;
+  display: grid;
+  align-content: safe center;
+  justify-items: start;
+  gap: var(--space-m);
+  padding: var(--pad);
+  background: var(--bg);
+  color: var(--onBg);
+  /* Everything downstream is sized in em, so this one line is the master dial.
+     Both axes feed in: a 4:3 projector is short before it is narrow. */
+  font-size: clamp(0.95rem, 1.3vw + 1vh, 3rem);
+  animation: slide-in 0.4s var(--ease) both;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+}
+
+:root[data-editing] main[data-slide] {
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+/* layout modifiers */
+[data-slide][data-align='center'] {
+  justify-items: center;
+  text-align: center;
+}
+[data-slide][data-align='end'] {
+  align-content: end;
+}
+[data-slide][data-bleed] {
+  padding: 0;
+  gap: 0;
+}
+[data-slide][data-cols] {
+  grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
+  align-content: center;
+  /* Columns are meant to be filled, unlike the shrink-to-fit default. */
+  justify-items: stretch;
+  column-gap: var(--space-xl);
+}
+[data-slide][data-cols] > :where(h1, h2, .full) {
+  grid-column: 1 / -1;
+}
+
+/* ------------------------------------------------------------ typography - *
+
+   Everything below is a DEFAULT. The `:where([data-slide])` prefix contributes
+   no specificity, so a slide's own <style> can override any of it with a plain
+   selector — which is the whole point of per-slide CSS. */
+
+:where([data-slide]) :where(h1, h2, h3) {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  max-width: 18ch;
+}
+
+:where([data-slide]) h1 {
+  font-size: var(--step-5);
+}
+:where([data-slide]) h2 {
+  font-size: var(--step-3);
+}
+:where([data-slide]) h3 {
+  font-size: var(--step-1);
+}
+
+:where([data-slide]) :where(p, ul, ol, dl) {
+  margin: 0;
+  max-width: var(--measure);
+  font-size: var(--step-0);
+  text-wrap: pretty;
+}
+
+:where([data-slide]) .lead {
+  font-size: var(--step-2);
+  line-height: 1.3;
+  font-weight: var(--weight-light);
+}
+
+:where([data-slide]) mark {
+  background: none;
+  color: var(--highlight);
+}
+
+:where([data-slide]) em {
+  font-style: italic;
+}
+
+/* Aboreto has no italic, so <em> in a heading is a synthesised slant — and
+   the deck's emphasis device is colour anyway. Upright, tomato. */
+:where([data-slide]) :where(h1, h2, h3) em {
+  font-style: normal;
+  color: var(--highlight);
+}
+
+:where([data-slide]) strong {
+  font-weight: var(--weight-medium);
+}
+
+:where([data-slide]) a {
+  color: inherit;
+  text-decoration-color: var(--highlight);
+  text-underline-offset: 0.2em;
+}
+
+:where([data-slide]) :where(ul, ol) {
+  display: grid;
+  gap: var(--space-2xs);
+  padding-left: 1.2em;
+}
+
+:where([data-slide]) ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+:where([data-slide]) ul > li {
+  padding-left: 1.4em;
+  position: relative;
+}
+
+:where([data-slide]) ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.5em;
+  border-top: 1px solid var(--highlight);
+}
+
+:where([data-slide]) :where(code, kbd, samp) {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+
+:where([data-slide]) pre {
+  margin: 0;
+  max-width: 100%;
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  line-height: 1.6;
+  border-left: 1px solid var(--hairline);
+  padding-left: var(--space-s);
+  tab-size: 2;
+}
+
+:where([data-slide]) figcaption,
+:where([data-slide]) .caption {
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+:where([data-slide]) hr {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--hairline);
+}
+
+:where([data-slide]) img,
+:where([data-slide]) canvas,
+:where([data-slide]) svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Output surfaces the toolkit paints into — swatches(), gradient(). */
+:where([data-slide]) [data-strip] {
+  display: flex;
+  width: 100%;
+  height: 8em;
+  gap: 2px;
+  border-radius: 1px;
+}
+
+:where([data-slide]) [data-strip] > * {
+  flex: 1;
+  min-width: 0;
+}
+
+:where([data-slide]) [data-strip][data-tall] {
+  height: 13em;
+}
+
+:where([data-slide]) [data-strip][data-flush] {
+  gap: 0;
+}
+
+/* wheel() — a bare outline and one dot per hue */
+:where([data-slide]) [data-wheel] svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+:where([data-slide]) .wheel-ring {
+  fill: none;
+  stroke: var(--onBg);
+  stroke-width: 0.6;
+}
+
+:where([data-slide]) .wheel-dot {
+  stroke: var(--bg);
+  stroke-width: 1.2;
+}
+
+:where([data-slide]) .wheel-hollow {
+  fill: var(--bg);
+  stroke: var(--hairline);
+  stroke-width: 0.8;
+}
+
+/* the runtime paints script errors here rather than only in the console */
+[data-slide] .slide-error {
+  position: absolute;
+  left: var(--pad);
+  right: var(--pad);
+  bottom: var(--pad);
+  padding: var(--space-2xs) var(--space-xs);
+  border-left: 2px solid var(--highlight);
+  background: var(--bg);
+  color: var(--highlight);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+}
+
+/* ---------------------------------------------------------------- chrome - */
+
+.steps {
+  position: fixed;
+  left: clamp(1rem, 2.5vmin, 2rem);
+  bottom: calc(clamp(1rem, 2.5vmin, 2rem) + var(--editor-height));
+  z-index: 10;
+  display: flex;
+  gap: 0.25em;
+  font-size: 0.8rem;
+}
+
+.steps__button {
+  display: grid;
+  place-items: center;
+  width: 2.4em;
+  height: 2.4em;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.steps, .chrome, .progress {
+  transition: bottom 0.22s var(--ease);
+}
+
+.steps__button:hover:not(:disabled) {
+  color: var(--highlight);
+  border-color: var(--hairline);
+}
+
+.steps__button:disabled {
+  color: var(--faint);
+  cursor: default;
+}
+
+.steps__button svg {
+  width: 1.4em;
+  height: 1.4em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chrome {
+  position: fixed;
+  right: clamp(1rem, 2.5vmin, 2rem);
+  bottom: calc(clamp(1rem, 2.5vmin, 2rem) + var(--editor-height));
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.chrome__count {
+  margin: 0;
+  letter-spacing: 0.08em;
+}
+
+.chrome__slash {
+  margin: 0 0.3em;
+  color: var(--faint);
+}
+
+.chrome__pen {
+  display: grid;
+  place-items: center;
+  width: 2.2em;
+  height: 2.2em;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+
+.chrome__pen:hover,
+.chrome__pen[aria-pressed='true'] {
+  color: var(--highlight);
+  background: var(--faint);
+}
+
+.chrome__pen svg {
+  width: 1.3em;
+  height: 1.3em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.progress {
+  position: fixed;
+  inset: auto 0 var(--editor-height) 0;
+  height: 2px;
+  z-index: 10;
+  background: var(--faint);
+}
+
+.progress__bar {
+  height: 100%;
+  width: 0;
+  background: var(--highlight);
+  transition: width 0.3s var(--ease);
+}
+
+/* ---------------------------------------------------------------- editor - */
+
+.editor {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 20;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: var(--editor-size);
+  background: var(--bg);
+  border-top: 1px solid var(--hairline);
+  box-shadow: 0 -1.5rem 3rem -1rem color-mix(in oklab, var(--black) 18%, transparent);
+  animation: editor-in 0.22s var(--ease) both;
+}
+
+@keyframes editor-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+.editor__bar,
+.editor__hint {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  padding: 0.6rem clamp(1rem, 2.5vmin, 2rem);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.editor__bar {
+  border-bottom: 1px solid var(--faint);
+}
+
+.editor__hint {
+  border-top: 1px solid var(--faint);
+}
+
+.editor__file {
+  margin: 0;
+  font-family: var(--font-mono);
+  color: var(--onBg);
+}
+
+.editor__status {
+  margin: 0;
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.editor__status[data-state='error'] {
+  color: var(--highlight);
+}
+
+.editor__close {
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.1em 0.5em;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+
+.editor__close:hover {
+  color: var(--highlight);
+  border-color: var(--highlight);
+}
+
+.editor__body {
+  min-height: 0;
+  overflow: hidden;
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--onBg);
+}
+
+/* ------------------------------------------------------------------ help - */
+
+.help {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background: color-mix(in oklab, var(--bg) 92%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+.help__list {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 0.6em 2em;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.help__list dt {
+  justify-self: end;
+  display: flex;
+  gap: 0.4em;
+}
+
+.help__list dd {
+  margin: 0;
+  color: var(--muted);
+}
+
+.help__list kbd {
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  padding: 0.05em 0.4em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

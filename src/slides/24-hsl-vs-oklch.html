@@ -1,0 +1,102 @@
+<main data-slide>
+  <h2>The <em>identical</em> numbers</h2>
+
+  <div class="pair">
+    <figure>
+      <div data-strip id="a"></div>
+      <div data-strip id="a-grey" class="grey"></div>
+      <div class="numbers" id="a-num"></div>
+      <figcaption><code>hsl(h, c, l)</code> — the ladder lurches</figcaption>
+    </figure>
+    <figure>
+      <div data-strip id="b"></div>
+      <div data-strip id="b-grey" class="grey"></div>
+      <div class="numbers" id="b-num"></div>
+      <figcaption><code>oklch(l, c, h)</code> — the ladder climbs evenly</figcaption>
+    </figure>
+  </div>
+
+  <button type="button">reroll</button>
+
+  <p class="note">
+    Below each palette, the same palette desaturated. In OKLCH,
+    <mark>L is lightness</mark>, C is chroma, H is hue — your intent is one axis
+    instead of three. <span class="aside">HSV and LCH are the same idea with
+    different trade-offs.</span>
+  </p>
+
+  <style>
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-m);
+      width: min(100%, 48em);
+    }
+
+    figure { margin: 0; display: grid; gap: 2px; }
+    [data-strip] { height: 4.4em; gap: 2px; }
+    .grey { height: 1.6em; }
+
+    .numbers {
+      display: flex;
+      gap: 2px;
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+      color: var(--muted);
+    }
+
+    .numbers > * { flex: 1; text-align: center; }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      font-size: var(--step--1);
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    const button = $slide.querySelector('button');
+    const into = (id) => $slide.querySelector(id);
+
+    function draw() {
+      // One palette. Two readings of the very same {h, c, l} triples.
+      const palette = ramp(hues(6, 50), {
+        lightness: [0.15, 0.9],
+        chroma: [0.35, 0.85],
+        flip: false,
+      });
+
+      for (const [space, id] of [[hsl, '#a'], [oklch, '#b']]) {
+        const colors = palette.map(space);
+        swatches(colors, into(id));
+        swatches(colors.map(grey), into(`${id}-grey`));
+
+        // The step sizes are the argument. Print them; don't claim them.
+        const measured = colors.map((color) => Math.round(luma(color) * 100));
+        into(`${id}-num`).replaceChildren(
+          ...measured.map((value, i) => {
+            const cell = document.createElement('span');
+            cell.textContent = i === 0 ? `${value}%` : `+${value - measured[i - 1]}`;
+            return cell;
+          }),
+        );
+      }
+    }
+
+    const next = () => { reseed(); draw(); };
+
+    button.addEventListener('click', next);
+    draw();
+
+    return () => button.removeEventListener('click', next);
+  </script>
+</main>

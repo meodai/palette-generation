@@ -1,0 +1,101 @@
+<main data-slide>
+  <h2>Same hues, thrown <em>out of order</em></h2>
+
+  <div class="out" data-shuffled></div>
+
+  <div class="controls">
+    <label class="check"><input type="checkbox" checked /><span>random positions</span></label>
+    <label class="check"><input data-shuffled type="checkbox" /><span>shuffled hues</span></label>
+    <button type="button">reroll</button>
+  </div>
+
+  <p class="note">
+    Every colour gets one random number. Sorting by it <mark>reorders the palette
+    and spaces the stops unevenly at the same time</mark> — one line doing two
+    jobs, and it is the last thing farbvelo does. Less mechanical. Still
+    unusable, because the lightness is still flat.
+  </p>
+
+  <style>
+    .out {
+      width: min(100%, 46em);
+      height: 13em;
+      border-radius: 1px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-s) var(--space-m);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    .check { display: flex; align-items: center; gap: var(--space-3xs); }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    const out = $slide.querySelector('.out');
+    const scatter = $slide.querySelector('input:not([data-shuffled])');
+    const reroll = $slide.querySelector('button');
+
+    let palette = [];
+    let scattered = [];
+
+    // Still the exact five from the slide before — nothing else has changed yet.
+    function build() {
+      const anchors = hues(3).map((h) => hsl({ h, c: 0.85, l: 0.55 }));
+      palette = stretch(anchors, 5, (t, a, b) => mix(a, b, t));
+
+      // The one random number per colour. Drawn once, so the checkbox is a
+      // clean A/B rather than a reroll in disguise.
+      scattered = palette
+        .map((color) => ({ color, pos: rnd() }))
+        .sort((a, b) => a.pos - b.pos)
+        .map((stop, i, all) => ({
+          color: stop.color,
+          pos: i === 0 ? 0 : i === all.length - 1 ? 1 : stop.pos,
+        }));
+    }
+
+    function draw() {
+      const stops = scatter.checked
+        ? scattered
+        : palette.map((color, i) => ({ color, pos: i / (palette.length - 1) }));
+
+      out.style.background = `linear-gradient(90deg in oklab, ${stops
+        .map(({ color, pos }) => `${color} ${(pos * 100).toFixed(1)}%`)
+        .join(', ')})`;
+    }
+
+    // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
+    // this changes *which* three, not the roll.
+    const shuffleBox = $slide.querySelector('[data-shuffled]');
+    shuffleBox.checked = shuffled();
+    const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); build(); draw(); };
+    shuffleBox.addEventListener('input', onShuffle);
+    const next = () => { reseed(); build(); draw(); };
+
+    scatter.addEventListener('input', draw);
+    reroll.addEventListener('click', next);
+    build();
+    draw();
+
+    return () => reroll.removeEventListener('click', next);
+  </script>
+</main>
