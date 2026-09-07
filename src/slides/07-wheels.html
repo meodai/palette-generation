@@ -3,9 +3,7 @@
 
   <div class="wheel">
     <div class="ring" data-ring></div>
-    <div class="spokes"></div>
     <div class="disc" data-disc></div>
-    <div class="spokes spokes--inner"></div>
   </div>
 
   <div class="legend">
@@ -39,28 +37,15 @@
 
     .ring {
       inset: 0;
-      /* closest-side pins 100% to the radius, so the hole is exactly 57% of it */
-      mask: radial-gradient(circle closest-side, #0000 0 57%, #000 57.5%);
+      /* closest-side pins 100% to the radius; the hole meets the disc exactly */
+      /* half a percent under the disc, so the mask edge never shows as a seam */
+      mask: radial-gradient(circle closest-side, #0000 0 49.5%, #000 49.5%);
     }
 
     .disc {
-      inset: 24%;
+      inset: 25%;
     }
 
-    /* 24 hairlines, so "discrete" is visible rather than asserted */
-    .spokes {
-      inset: 0;
-      background: repeating-conic-gradient(
-        var(--bg) 0 0.4deg,
-        #0000 0.4deg 15deg
-      );
-      mask: radial-gradient(circle closest-side, #0000 0 57%, #000 57.5%);
-    }
-
-    .spokes--inner {
-      inset: 24%;
-      mask: none;
-    }
 
     .legend {
       display: grid;
