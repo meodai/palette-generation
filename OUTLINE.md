@@ -64,16 +64,16 @@ they all move together.
 12  pick 3 hues on a ring      ← their 3.4 — in order, an arc
 13  shuffle the ring           random subset, gaps — the toggle carries on
 14  stretch 3 → 5              ← their 3.3
-15  + a lightness ramp         third bar, min and max only
-16  every rule followed        same five, named
-17  shuffled                   same five, reordered — still vomit
-19  why                        measure the five: five lightnesses
-20  same numbers, OKHSL        measure again: one lightness
-21  ramp, then stretch         same three, finally good
-22  randomRamp, in full
+15  thrown out of order        same five, scattered — still bad
+16  why                        measure the five: five lightnesses
+17  same numbers, OKLCH        measure again: one lightness — correct, flat
+18  ─── stop holding lightness still
+19  lightness gets a range     third bar, min and max, in OKLCH
+20  chroma too                 both axes walking, then stretch
+21  randomRamp, in full
 ```
 
-Nothing works until 21. That is deliberate: they try the two things they
+Nothing works until 19. That is deliberate: they try the two things they
 already know, watch both fail for one measurable reason, and then see the one
 move that fixes it.
 
@@ -108,7 +108,7 @@ move that fixes it.
 - Every named harmony is spacing on a ring. **Harmony is spacing, not magic.**
   *(Bridge: their split complements are exactly this.)*
 
-### 2 · Build it — 11 min · slides 11–17
+### 2 · Build it — 8 min · slides 11–15
 
 - **Pick three hues** (12). Evenly spaced candidates from a random start, the
   first three — an arc. Split complements are exactly this; say so without
@@ -121,39 +121,34 @@ move that fixes it.
   this. The interpolation space is a dropdown in the sentence — flip it to
   srgb once and back; Golan already showed them why, so one flick is enough.
   The anchors are the design; the steps are only resolution.
-- **Add a lightness ramp** (15). Same three, same stretch, third bar: lightness
-  walks min → max across the anchors before stretching. Two sliders, nothing
-  else moves. *(The first thing that visibly helps — note that it comes before
-  the vomit slide, so decide on stage whether 16–17 still read as "still bad"
-  or as "here is what we had before 14".)*
-- **Every rule followed** (16). Same five. Correct hues, correct interpolation,
-  correct space. Still a crayon accident. This is where Golan's phrase belongs
-  — say it, don't title it.
-- **Shuffled** (17). One random number per colour, sort by it: reorders *and*
+- **Shuffled** (15). One random number per colour, sort by it: reorders *and*
   scatters the stops. The last thing farbvelo does. Toggle off and watch it go
   stiff. Less mechanical. Still unusable.
 
-### 3 · Why, and the fix — 8 min · slides 18–22 ← the trick
+### 3 · Why, and the fix — 10 min · slides 16–21 ← the trick
 
-- Divider: *Stop holding lightness still.*
-- **Measure it** (19). The same five, desaturated, with the luminance under
+- **Measure it** (16). The same five, desaturated, with the luminance under
   each. Every one was asked for the same L. None obeyed. *(The pivot.
   Everything before failed for this one reason.)*
-- **Same numbers, OKHSL** (20). Slide 18 with one word changed. The identical
-  triples through Ottosson's OKHSL, desaturated and measured again: one
-  lightness in, one lightness out. This is the answer to 18, and the reason
-  the ramp is done in an OK space. *(Ported reference conversion — CSS has no
-  `okhsl()`.)*
-- **Ramp** (21). Walk a lightness range and a chroma range across the three
-  anchors, *then* stretch. Same hues. Now it works. *(This is the payoff
-  slide of the whole talk. Let it sit.)*
-- **randomRamp in full** (22). Point at one line:
+- **Same numbers, OKLCH** (17). Slide 16 with one word changed. The identical
+  triples as OKLCH, desaturated and measured again: one lightness in, one
+  lightness out. This is the answer to 16 — and the setup for the next beat: *correct is not the same as good.* Five colours at one
+  lightness is a flat palette.
+- Divider: *Stop holding lightness still.*
+- **Lightness gets a range** (19). Same three, same stretch, now in OKLCH.
+  Third bar: lightness walks min → max across the anchors before stretching.
+  Two sliders. The first thing that actually helps, and it arrives only after
+  the audience knows why everything before it failed.
+- **Chroma too** (20). Lightness has its range; give chroma one, and a coin
+  flip for direction. Both axes walking, then stretch.
+
+- **randomRamp in full** (21). Point at one line:
   `shuffle(ring).slice(0, count).sort()`. The shuffle *selects* a random
   subset; the sort puts it back in wheel order. Gaps, not an arc. Everything
   after it is two linear walks and a coin flip.
 - **Takeaway — a palette is a path, and you own its endpoints.**
 
-### 4 · Same path, different solid — 5 min · slides 23–25
+### 4 · Same path, different solid — 5 min · slides 22–24
 
 - The identical numbers, HSL on the left, OKLCH on the right, with the step
   sizes printed under each ladder. One lurches, one climbs. In OKLCH your
@@ -163,7 +158,7 @@ move that fixes it.
   gamut video.)*
 - **Takeaway — work in the space where what you want is one axis.**
 
-### 5 · The recipe — 2 min · slide 26 ← the slide they photograph
+### 5 · The recipe — 2 min · slide 25 ← the slide they photograph
 
 Ten lines of p5. `random`, `shuffle`, `lerp` are built-ins;
 `scaleSpreadArray` is the stretch from slide 14 (its walkthrough is parked in `src/slides/_parked/`). It renders its own output on the slide, so it
@@ -172,7 +167,7 @@ cannot lie. Say the connection out loud:
 > *For 3.6 you need three colours that interrelate, new on every click. That
 > is the three anchors. Stretch only when you want a gradient.*
 
-### 6 · Q&A — 10 min · slide 27
+### 6 · Q&A — 10 min · slide 26
 
 Vibecoding will come up. Colour is a domain where a model has no perception —
 only numbers that look plausible, which is the failure mode the last half
@@ -182,12 +177,12 @@ hour was about learning to see.
 
 ## If you run long
 
-Cut in this order: **25** (gamut) → section 0's tools montage. Never cut 13,
-16, 19, 20, 21 or 26.
+Cut in this order: **24** (gamut) → section 0's tools montage. Never cut 13,
+15, 16, 17, 19 or 25.
 
 ## Live slides — rehearse these with the pen open
 
-02, 04, 07, 08, 12, 13, 14, 15, 17, 19, 20, 21, 24, 26.
+02, 04, 07, 08, 12, 13, 14, 15, 16, 17, 19, 20, 23, 25.
 
 ## Exercise proposals for Golan
 

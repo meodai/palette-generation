@@ -1,5 +1,5 @@
 <main data-slide>
-  <h2>Same numbers. <em>OKHSL.</em></h2>
+  <h2>Same numbers. <em>OKLCH.</em></h2>
 
   <div class="stack">
     <div data-strip data-flush class="row"></div>
@@ -13,10 +13,10 @@
 
   <p class="note">
     The identical triples — same three hues, <code>l: 0.55</code> for every
-    anchor — read through Ottosson's OKHSL instead of HSL, then stretched the
-    same way. Desaturated, the measured lightness runs from
+    anchor — read as OKLCH instead of HSL, then stretched the same way. Desaturated, the measured lightness runs from
     <mark data-low></mark> to <mark data-high></mark>.
-    <mark>Asked for one lightness, got one.</mark>
+    <mark>Asked for one lightness, got one.</mark> Correct — and, with every
+    colour at the same lightness, flat.
   </p>
 
   <style>
@@ -40,11 +40,11 @@
   </style>
 
   <script>
-    // Exactly the slide before, with one word changed: hsl → okhsl.
+    // Exactly the slide before, with one word changed: hsl → oklch.
     let three = hues(3);
 
     function draw() {
-      const anchors = three.map((h) => okhsl({ h, c: 0.85, l: 0.55 }));
+      const anchors = three.map((h) => oklch({ h, c: 0.5, l: 0.55 }));
       const colors = stretch(anchors, 5, (t, a, b) => mix(a, b, t));
 
       swatches(colors, $slide.querySelector('.row'));

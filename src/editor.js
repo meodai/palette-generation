@@ -123,7 +123,26 @@ export class Editor {
     this.#panel.hidden = false;
     document.documentElement.dataset.editing = '';
     this.#view.requestMeasure();
+    this.#jumpToScript(entry.source);
     this.#view.focus();
+  }
+
+  /**
+   * Land on the JS, not line 1: the markup and styles are context, the
+   * <script> is what gets edited on stage. Falls back to the top if a slide
+   * has no script.
+   */
+  #jumpToScript(source) {
+    const tag = source.indexOf('<script>');
+    if (tag === -1) return;
+
+    const lineEnd = source.indexOf('\n', tag);
+    const pos = Math.min(source.length, lineEnd === -1 ? tag : lineEnd + 1);
+
+    this.#view.dispatch({
+      selection: { anchor: pos },
+      effects: EditorView.scrollIntoView(pos, { y: 'start', yMargin: 12 }),
+    });
   }
 
   close() {

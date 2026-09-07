@@ -63,7 +63,7 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `stage(name?)` | find or create `[data-<name>]` in the slide |
 
 Colours are `{ h: 0–360, c: 0–1, l: 0–1 }` throughout, so the same triple can be
-handed to `oklch()` or `hsl()` — which is the whole argument of slide 24.
+handed to `oklch()` or `hsl()` — which is the whole argument of slide 23.
 
 The same names are mirrored on `window`, so they work from the devtools console
 mid-lecture too.
@@ -77,7 +77,7 @@ as vomit, shuffled, measured, ramped and finally handed over in the recipe —
 so the sequence reads as one palette being fixed, not eight unrelated demos.
 
 The catch is that it depends on **draw order**. Every slide from 12 (pick
-three) through 21 (ramp), and the recipe on 26, calls `hues(3)` as its first
+three) through 20 (ramp), and the recipe on 25, calls `hues(3)` as its first
 random act. Insert a `rnd()` before that in one of them and it drifts out of
 step with the others. And never call `reseed()` on slide *entry* — only from a
 reroll button — or entering that slide silently moves everyone else's palette.
