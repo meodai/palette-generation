@@ -249,7 +249,7 @@ export function toolkit(slide) {
         const cx = (50 + RADIUS * Math.cos(angle)).toFixed(2);
         const cy = (50 + RADIUS * Math.sin(angle)).toFixed(2);
 
-        if (item.hollow) return `<circle class="wheel-hollow" r="5.5" cx="${cx}" cy="${cy}" />`;
+        if (item.hollow) return `<circle class="wheel-hollow" r="3.2" cx="${cx}" cy="${cy}" />`;
 
         const color = typeof item === 'number' ? hsl({ h, c: 0.85, l: 0.5 }) : toCss(item);
         return `<circle class="wheel-dot" r="5.5" fill="${color}" cx="${cx}" cy="${cy}" />`;

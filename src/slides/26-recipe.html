@@ -1,49 +1,58 @@
 <main data-slide>
   <h2>The whole thing, for <em>p5</em></h2>
 
-  <pre><code>function palette(n, stops = 3, spacing = 60) {
-  const start = random(360);
-  const ring = Array.from({ length: 360 / spacing }, (_, i) =&gt; (start + i * spacing) % 360);
-  const hues = <mark>shuffle(ring).slice(0, stops).sort((a, b) =&gt; a - b)</mark>;
+  <pre><code>function randomRamp(count, maxSpacing = 60) {
+  const spacing = min(maxSpacing, 360 / count), start = random(360);
+  const ring = Array.from({ length: round(360 / spacing) }, (_, i) =&gt; (start + i * spacing) % 360);
+  const hues = <mark>shuffle(ring).slice(0, count).sort((a, b) =&gt; a - b)</mark>;
+  const minL = 0.05 + random(0.2),   maxL = 1 - random(0.15), rangeL = max(maxL - minL, 0.1);
+  const minC = 0.005 + random(0.25), maxC = 1 - random(),     rangeC = max(maxC - minC, 0.1);
+  const flip = random() &lt; 0.5;
+  return hues.map((h, i) =&gt; { const t = i / (count - 1);
+    return chroma.oklch(minL + t * rangeL, 0.4 * (minC + (flip ? 1 - t : t) * rangeC), h); });
+}
 
-  const anchors = hues.map((h, i) =&gt; {
-    const t = i / (stops - 1);
-    return `oklch(${lerp(15, 90, t)}% ${lerp(0.05, 0.18, t)} ${h})`;
-  });
+function scaleSpreadArray(initial, n, fill = (t, a, b) =&gt; chroma.mix(a, b, t, 'oklab')) {
+  const chunks = initial.map((v) =&gt; [v]);
+  for (let i = 0; i &lt; n - initial.length; i++) chunks[i % (initial.length - 1)].push(null);
+  for (let i = 0; i &lt; chunks.length - 1; i++)
+    for (let j = 1; j &lt; chunks[i].length; j++) chunks[i][j] = fill(j / chunks[i].length, chunks[i][0], chunks[i + 1][0]);
+  return chunks.flat();
+}
 
-  return <mark>scaleSpreadArray(anchors, n)</mark>;
-}</code></pre>
+function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(3))), n)</mark>; }</code></pre>
 
   <div class="rows">
-    <div class="row"><span>3 stops</span><div data-strip id="stops"></div></div>
-    <div class="row"><span>→ 5</span><div data-strip id="out"></div></div>
+    <div class="row"><span id="k">stops</span><div data-strip id="stops"></div></div>
+    <div class="row"><span>→ 8</span><div data-strip id="out"></div></div>
   </div>
 
   <div class="foot">
     <p class="note">
-      <code>random</code>, <code>shuffle</code>, <code>lerp</code> are p5 built-ins;
-      <code>scaleSpreadArray</code> is the stretch. For 3.6 you need
-      <mark>three colours that interrelate, new on every click</mark> — that is
-      the anchors. Stretch only when you want a gradient.
+      <code>random</code>, <code>shuffle</code>, <code>min</code>, <code>max</code>,
+      <code>round</code>, <code>floor</code> are p5. <code>chroma.oklch</code> and
+      <code>chroma.mix</code> are the chroma.js you already load. <mark>Three to five
+      random stops, ramped, stretched</mark> — <code>palette(3)</code> for 3.6,
+      <code>palette(40)</code> for a gradient.
     </p>
     <button type="button">reroll</button>
   </div>
 
   <style>
     pre {
-      font-size: var(--step--2);
-      line-height: 1.5;
+      font-size: 0.6em;
+      line-height: 1.4;
       border-left-color: var(--highlight);
       border-left-width: 2px;
     }
 
     pre mark { background: none; color: var(--highlight); }
 
-    .rows { display: grid; gap: var(--space-2xs); width: min(100%, 42em); }
+    .rows { display: grid; gap: 2px; width: min(100%, 44em); }
 
     .row {
       display: grid;
-      grid-template-columns: 4.5em 1fr;
+      grid-template-columns: 4em 1fr;
       align-items: center;
       gap: var(--space-s);
       font-family: var(--font-mono);
@@ -51,7 +60,7 @@
       color: var(--muted);
     }
 
-    [data-strip] { height: 2.6em; }
+    [data-strip] { height: 2.4em; }
 
     .foot {
       display: flex;
@@ -63,8 +72,8 @@
     .note {
       flex: 1;
       min-width: 20em;
-      max-width: 38em;
-      font-size: var(--step--1);
+      max-width: 40em;
+      font-size: var(--step--2);
       color: var(--muted);
     }
 
@@ -83,29 +92,17 @@
   </style>
 
   <script>
-    // Runs exactly what the slide shows. The shims give p5's argument order —
-    // p5's lerp takes the amount last, unlike ours.
-    function palette(n, stops = 3, spacing = 60) {
-      const lerp = (a, b, t) => a + t * (b - a);
-      const random = (max) => rnd(max);
-
-      const start = random(360);
-      const ring = Array.from({ length: 360 / spacing }, (_, i) => (start + i * spacing) % 360);
-      const hues = shuffle(ring).slice(0, stops).sort((a, b) => a - b);
-
-      const anchors = hues.map((h, i) => {
-        const t = i / (stops - 1);
-        return `oklch(${lerp(15, 90, t)}% ${lerp(0.05, 0.18, t)} ${h})`;
-      });
-
-      // stretch() is scaleSpreadArray. Both stages shown, so the point lands.
-      swatches(anchors, $slide.querySelector('#stops'));
-      return stretch(anchors, n, (t, a, b) => mix(a, b, t));
+    // The same pipeline, run with the toolkit so the slide shows real output:
+    // randomRamp() is ramp(hues()) with rolled ranges; stretch() is scaleSpreadArray.
+    function palette(n) {
+      const stops = randomRamp(3 + rndInt(3)).map(oklch);
+      swatches(stops, $slide.querySelector('#stops'));
+      $slide.querySelector('#k').textContent = `${stops.length} stops`;
+      return stretch(stops, n, (t, a, b) => mix(a, b, t));
     }
 
     const button = $slide.querySelector('button');
-
-    const draw = () => swatches(palette(5), $slide.querySelector('#out'));
+    const draw = () => swatches(palette(8), $slide.querySelector('#out'));
     const next = () => { reseed(); draw(); };
 
     button.addEventListener('click', next);

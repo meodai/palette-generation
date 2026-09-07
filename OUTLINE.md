@@ -65,7 +65,7 @@ they all move together.
 13  shuffle the ring           random subset, gaps — the toggle carries on
 14  stretch 3 → 5              ← their 3.3
 15  + a lightness ramp         third bar, min and max only
-16  this is the vomit          same five, named
+16  every rule followed        same five, named
 17  shuffled                   same five, reordered — still vomit
 19  why                        measure the five: five lightnesses
 20  same numbers, OKHSL        measure again: one lightness
@@ -126,9 +126,9 @@ move that fixes it.
   else moves. *(The first thing that visibly helps — note that it comes before
   the vomit slide, so decide on stage whether 16–17 still read as "still bad"
   or as "here is what we had before 14".)*
-- **This is the vomit** (16). Same five. Correct hues, correct interpolation,
-  correct space. Still a crayon accident. Name it — it's what they came in
-  with.
+- **Every rule followed** (16). Same five. Correct hues, correct interpolation,
+  correct space. Still a crayon accident. This is where Golan's phrase belongs
+  — say it, don't title it.
 - **Shuffled** (17). One random number per colour, sort by it: reorders *and*
   scatters the stops. The last thing farbvelo does. Toggle off and watch it go
   stiff. Less mechanical. Still unusable.
