@@ -134,8 +134,10 @@ main[data-slide] {
   background: var(--bg);
   color: var(--onBg);
   /* Everything downstream is sized in em, so this one line is the master dial.
-     Both axes feed in: a 4:3 projector is short before it is narrow. */
-  font-size: clamp(0.95rem, 1.3vw + 1vh, 3rem);
+     The slide's em: on the smaller side of the viewport, so a wide-but-short
+     window (a 16:9 projector, the inspector open) sizes the type to what the
+     height can hold. 2.85vmin ≈ the old 1.3vw + 1vh at 1300×920. */
+  font-size: clamp(0.95rem, 2.85vmin, 3rem);
   animation: slide-in 0.4s var(--ease) both;
 }
 
