@@ -632,10 +632,51 @@ main[data-slide] {
   cursor: pointer;
 }
 
+.inspector__tabs {
+  display: flex;
+  gap: 0.25em;
+}
+
+.inspector__tabs button {
+  padding: 0.15em 0.6em;
+  border: 1px solid transparent;
+  border-radius: 2em;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.inspector__tabs button:hover { color: var(--onBg); }
+.inspector__tabs button[aria-selected='true'] { color: var(--bg); background: var(--onBg); }
+
+.inspector__slice {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.inspector__slice input { width: 9em; accent-color: var(--highlight); }
+
 .inspector__body {
   position: relative;
   min-height: 0;
   overflow: hidden;
+}
+
+/* the distribution view: palette-shader's canvas, kept square, sized by CSS */
+.inspector__dist {
+  display: grid;
+  place-items: center;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.inspector__dist canvas {
+  display: block;
+  height: 100%;
+  aspect-ratio: 1;
+  width: auto;
 }
 
 .inspector__body canvas {

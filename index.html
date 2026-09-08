@@ -65,6 +65,10 @@
     <aside class="editor inspector" id="inspector" hidden>
       <header class="editor__bar">
         <p class="editor__file"><span id="inspectorSlide"></span></p>
+        <div class="inspector__tabs" id="inspectorTabs" role="tablist">
+          <button type="button" role="tab" data-view="3d" aria-selected="true">3d</button>
+          <button type="button" role="tab" data-view="distribution" aria-selected="false">distribution</button>
+        </div>
         <label class="inspector__model">
           <span>in</span>
           <select id="inspectorModel">
@@ -75,7 +79,11 @@
             <option value="hsv">hsv</option>
           </select>
         </label>
-        <p class="editor__status">drag to orbit · scroll to zoom</p>
+        <label class="inspector__slice" id="inspectorSliceLabel" hidden>
+          <span>slice</span>
+          <input type="range" id="inspectorSlice" min="0" max="1" step="0.005" value="0.65" />
+        </label>
+        <p class="editor__status" id="inspectorStatus">drag to orbit · scroll to zoom</p>
         <button class="editor__close" id="inspectorClose" type="button">esc</button>
       </header>
       <div class="inspector__body" id="inspectorBody">
@@ -83,6 +91,7 @@
           This slide registers no colors — call <code>colorDebug(colors, { model })</code> in its script.
         </p>
       </div>
+      <div class="inspector__body inspector__dist" id="inspectorDist" hidden></div>
     </aside>
 
     <div class="help" id="help" hidden>

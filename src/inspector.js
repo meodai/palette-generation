@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { MODELS } from './spaces.js';
 import { getColors, COLORS_EVENT } from './inspect-registry.js';
+import { Distribution } from './distribution.js';
 
 const SIZE = 100;
 const STEPS = 32;  // samples along each edge — the curve is in the model, not the cube
@@ -19,14 +20,23 @@ export class Inspector {
   #renderer; #scene; #camera; #controls;
   #group = null; #id = null; #running = false; #shown = null;
   #preview = false; #model = 'oklab';
+  #tabs; #dist = null; #distBody; #sliceLabel; #status; #view = '3d';
 
   /**
    * `preview: true` mounts a small self-contained view into `body` — no panel
    * chrome, no deck shrink — for a slide that wants to show the inspector inline.
    */
-  constructor({ panel, body, select, title, empty, closeButton, preview = false, model = 'oklab' }) {
+  constructor({ panel, body, select, title, empty, closeButton, tabs, dist, slice, sliceLabel, status, preview = false, model = 'oklab' }) {
     this.#panel = panel ?? body; this.#body = body; this.#select = select; this.#title = title; this.#empty = empty;
     this.#preview = preview; this.#model = model;
+    this.#tabs = tabs; this.#distBody = dist; this.#sliceLabel = sliceLabel; this.#status = status;
+    if (dist && slice) this.#dist = new Distribution({ body: dist, slice });
+
+    // 3d | distribution — two readings of the same registered colors.
+    tabs?.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-view]');
+      if (button) this.view = button.dataset.view;
+    });
 
     this.#renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -56,7 +66,7 @@ export class Inspector {
     document.addEventListener(COLORS_EVENT, ({ detail }) => {
       if (!this.isOpen || detail.slideId !== this.#id || queued) return;
       queued = true;
-      requestAnimationFrame(() => { queued = false; if (this.isOpen) this.#build(); });
+      requestAnimationFrame(() => { queued = false; if (this.isOpen) { this.#build(); this.#dist?.refresh(); } });
     });
   }
 
@@ -89,6 +99,21 @@ export class Inspector {
     this.#running = false;
   }
 
+  /** Switch between the 3D solid and the distribution map. */
+  set view(name) {
+    this.#view = name === 'distribution' && this.#dist ? 'distribution' : '3d';
+    const dist = this.#view === 'distribution';
+    this.#tabs?.querySelectorAll('[data-view]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.view === this.#view)));
+    this.#body.hidden = dist;
+    if (this.#distBody) this.#distBody.hidden = !dist;
+    if (this.#sliceLabel) this.#sliceLabel.hidden = !dist;
+    if (this.#status) this.#status.textContent = dist ? 'each pixel snaps to its nearest color' : 'drag to orbit · scroll to zoom';
+    if (dist) this.#dist.show(this.#id, this.#select?.value ?? this.#model);
+    else this.#resize();
+  }
+
+  get view() { return this.#view; }
+
   /** Pick the model by name — what the dropdown does, for a view without one. */
   set model(name) {
     if (this.#select) this.#select.value = name; else this.#model = name;
@@ -118,6 +143,7 @@ export class Inspector {
     }
     const entry = getColors(this.#id);
     const ink = new THREE.Color(cssVar('--onBg'));
+    if (this.#view === 'distribution') this.#dist?.show(this.#id, this.#select?.value ?? this.#model);
 
     if (this.#group) {
       this.#group.traverse((o) => { o.geometry?.dispose(); o.material?.dispose?.(); });

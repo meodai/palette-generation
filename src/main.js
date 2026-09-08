@@ -75,6 +75,11 @@ async function openInspector() {
       title: document.getElementById('inspectorSlide'),
       empty: document.getElementById('inspectorEmpty'),
       closeButton: document.getElementById('inspectorClose'),
+      tabs: document.getElementById('inspectorTabs'),
+      dist: document.getElementById('inspectorDist'),
+      slice: document.getElementById('inspectorSlice'),
+      sliceLabel: document.getElementById('inspectorSliceLabel'),
+      status: document.getElementById('inspectorStatus'),
     });
   }
 
