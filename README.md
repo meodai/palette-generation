@@ -63,6 +63,14 @@ mountains), rgb, hsl or hsv (both polar).
 Drag to orbit, scroll to zoom. The palette is also drawn as a path, in the
 order it was registered, because that is what a palette is.
 
+The panel has two tabs. **3d** is the solid above. **distribution** is
+[palette-shader](https://github.com/meodai/color-palette-shader): the same
+model laid flat — a wheel for oklch, hsl and hsv, a slice for oklab and rgb —
+where every pixel snaps to the nearest registered color, so each color's
+region is the territory it claims and a sliver means a near-duplicate. The
+slice slider moves through lightness (value, or blue for rgb). Distance is
+oklab for the OK models and plain rgb for rgb, hsl and hsv.
+
 A slide registers its colors from its script:
 
 ```js

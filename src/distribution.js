@@ -9,12 +9,14 @@ import { getColors } from './inspect-registry.js';
 // axis z is the lightness (or value / blue) axis in every model here, and the
 // slider slices along it; palette-shader counts it downwards, so it is inverted
 // to read dark → light left to right.
+// No gamut clipping: with the slice axis inverted, palette-shader clips the
+// wrong slice and leaves a slanted sliver; out-of-gamut pixels clamp instead.
 const VIEWS = {
-  oklab: { colorModel: 'oklab', distanceMetric: 'oklab', gamutClip: true },
-  oklch: { colorModel: 'oklchPolar', distanceMetric: 'oklab', gamutClip: true },
-  rgb: { colorModel: 'rgb', distanceMetric: 'rgb', gamutClip: false },
-  hsl: { colorModel: 'hslPolar', distanceMetric: 'rgb', gamutClip: false },
-  hsv: { colorModel: 'hsvPolar', distanceMetric: 'rgb', gamutClip: false },
+  oklab: { colorModel: 'oklab', distanceMetric: 'oklab' },
+  oklch: { colorModel: 'oklchPolar', distanceMetric: 'oklab' },
+  rgb: { colorModel: 'rgb', distanceMetric: 'rgb' },
+  hsl: { colorModel: 'hslPolar', distanceMetric: 'rgb' },
+  hsv: { colorModel: 'hsvPolar', distanceMetric: 'rgb' },
 };
 
 export class Distribution {
@@ -49,7 +51,6 @@ export class Distribution {
     const view = VIEWS[this.#model];
     this.#viz.colorModel = view.colorModel;
     this.#viz.distanceMetric = view.distanceMetric;
-    this.#viz.gamutClip = view.gamutClip;
     this.#viz.palette = this.#palette();
   }
 
