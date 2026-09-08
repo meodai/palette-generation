@@ -16,14 +16,9 @@
 
   <button type="button">reroll</button>
 
-  <p class="note">
-    Eight hues, the same six-step lightness walk in each row. Under every
-    column: how far the measured lightness drifts across the eight hues.
-    <mark>In OKLCH a number means the same thing whatever the hue</mark> — so
-    a ramp you tuned on one hue survives the reroll.
-  </p>
-
   <style>
+    h2 { max-width: none; }
+
     .pair {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -39,7 +34,7 @@
       gap: 2px;
     }
 
-    .grid > * { aspect-ratio: 2.2 / 1; }
+    .grid > * { aspect-ratio: 2.6 / 1; }
 
     .spread {
       display: grid;
@@ -80,15 +75,21 @@
       const hues = Array.from({ length: HUES }, (_, i) => (start + (i * 360) / HUES) % 360);
       const walk = Array.from({ length: STEPS }, (_, i) => lerp(i / (STEPS - 1), 0.2, 0.85));
 
-      // The same hue in both: HSL's angle converted. fit() keeps OKLCH inside sRGB.
+      // The same hue in both: HSL's angle converted.
+      const okHues = hues.map((h) => toOklch(hsl({ h, c: 0.6, l: 0.55 })).h);
+
+      // One chroma per step, shared by all eight hues: the most every hue can
+      // hold inside sRGB at that lightness — so within a column only h changes.
+      const chromaAt = walk.map((l) => Math.min(...okHues.map((h) => fit({ h, c: 0.6, l }).c)));
+
       const readings = [
         [hsl, '#a', (h, l) => ({ h, c: 0.6, l })],
-        [oklch, '#b', (h, l) => fit({ h: toOklch(hsl({ h, c: 0.6, l: 0.55 })).h, c: 0.6, l })],
+        [oklch, '#b', (h, l, col) => ({ h: okHues[hues.indexOf(h)], c: chromaAt[col], l })],
       ];
 
       const seen = [];
       for (const [space, id, as] of readings) {
-        const rows = hues.map((h) => walk.map((l) => space(as(h, l))));
+        const rows = hues.map((h) => walk.map((l, col) => space(as(h, l, col))));
         seen.push(...rows.flat());
         swatches(rows.flat(), into(id));
 
