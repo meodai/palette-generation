@@ -72,7 +72,7 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `oklch({h, c, l})` · `hsl({h, c, l})` · `okhsl({h, c, l})` | the same normalised color, three solids (`okhsl` via `src/okhsl.js`, Ottosson's reference) |
 | `mix(a, b, t, space?)` | `color-mix`, in oklab unless told otherwise |
 | `rybHue(angle)` | an Itten RYB angle, remapped so a screen can draw it |
-| `ryb({h, c, l}, cube?)` · `rybHsl2rgb` · `cubes` | the same color through [RYBitten](https://github.com/meodai/RYBitten): `cubes` is its Map of historical paint wheels, `cubes.get('munsell').cube` picks one |
+| `ryb({h, c, l}, cube?)` · `rybHsl2rgb` · `cubes` | the same color through [RYBitten](https://rybitten.space/): `cubes` is its Map of historical paint wheels, `cubes.get('munsell').cube` picks one |
 | `spacing(deg?)` | read or set the deck-wide max hue spacing (slide 15's slider) |
 | `shuffled(on?)` | read or set the deck-wide pick mode: first few of the ring, or a random subset (slide 16's toggle) |
 | `rewind()` | rewind the random stream to the current seed — re-pick without re-rolling |
@@ -83,7 +83,7 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `rgb(color)` · `luma(color)` · `lightness(color)` · `grey(color)` | read back through a 1px canvas; `grey` desaturates in OKLab (chroma 0, L kept) |
 | `swatches(colors, target?)` | paint into `[data-strip]` |
 | `gradient(colors, {angle, target, space})` | paint as one gradient |
-| `wheel(items, target?)` | outline circle, one dot per hue, into `[data-wheel]` |
+| `wheel(items, target?)` | outline circle, one dot per hue, into `[data-wheel]`; an item can be a hue, `{h, c, l}`, `{h, color}` (any CSS color) or `{h, hollow: true}` |
 | `stage(name?)` | find or create `[data-<name>]` in the slide |
 | `colorDebug(colors, {model?})` | register this slide's colors for the inspector; returns them |
 

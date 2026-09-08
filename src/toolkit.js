@@ -283,7 +283,8 @@ export function toolkit(slide) {
 
         if (item.hollow) return `<circle class="wheel-hollow" r="3.2" cx="${cx}" cy="${cy}" />`;
 
-        const color = typeof item === 'number' ? hsl({ h, c: 0.85, l: 0.5 }) : toCss(item);
+        // { h, color } paints the dot with any CSS color; { h, c, l } goes through oklch().
+        const color = typeof item === 'number' ? hsl({ h, c: 0.85, l: 0.5 }) : item.color ?? toCss(item);
         return `<circle class="wheel-dot" r="5.5" fill="${color}" cx="${cx}" cy="${cy}" />`;
       })
       .join('');
