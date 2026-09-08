@@ -48,6 +48,7 @@
 
     const base = rnd(360);
     const container = $slide.querySelector('.rules');
+    const everything = [];
 
     container.replaceChildren(
       ...RULES.map(([name, count, step]) => {
@@ -59,10 +60,14 @@
 
         // The rule, as positions on the ring — and then as colours.
         wheel(angles, row.querySelector('[data-wheel]'));
-        swatches(angles.map((h) => hsl({ h, c: 0.7, l: 0.5 })), row.querySelector('dd'));
+        const colors = angles.map((h) => hsl({ h, c: 0.7, l: 0.5 }));
+        everything.push(...colors);
+        swatches(colors, row.querySelector('dd'));
 
         return row;
       }),
     );
+
+    colorDebug(everything, { model: 'hsl' });
   </script>
 </main>

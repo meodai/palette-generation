@@ -29,26 +29,26 @@ is the header image, Verloop is in 3.3:
   on chroma.js multi-hue scales.
 - 3.2 · they have **clicked around Poline and Rampensau**, the chroma palette
   helper, ColorBrewer, and both OK pickers.
-- **3.3 · Four-Colour Gradient — due the morning of your talk.** chroma.js
+- **3.3 · Four-color Gradient — due the morning of your talk.** chroma.js
   `scale()` through four stops, chips shown separately. *This is
   scaleSpreadArray.*
 - **3.4 · Split Complementaries — due the morning of your talk.** A hue and
   its two split complements, in OKLCH, new set on click. *This is three hues
   on a ring.*
 - 3.5 · Albers four-look-like-three, due after.
-- **3.6 · 60-30-10 composition, due after.** Three colours that "interrelate,
+- **3.6 · 60-30-10 composition, due after.** Three colors that "interrelate,
   can't be mutually random", NOT in RGB/HSB/HSL, new set on click. *This is
   `randomRamp(3)`, exactly.*
 
 Golan's framing for the whole set: *"don't show me that you found good
-colours; show me that you figured out how to generate good colour
+colors; show me that you figured out how to generate good color
 relationships."* Your talk is the worked example of that sentence.
 
 They will ask about **vibecoding**. No slide — answer it in Q&A.
 
 ## The one sentence
 
-> **A palette is a path through a colour solid.**
+> **A palette is a path through a color solid.**
 
 ## The build — why the order is what it is
 
@@ -56,48 +56,57 @@ The whole middle of the talk rebuilds farbvelo out of two things they have
 already built for the assignment, then shows why it is still ugly, then fixes
 it. The slides never say "yesterday" or "this morning" — keep it that way on
 stage too; the connection lands harder when they make it themselves. One
-seed runs through it: the three hues you pick on slide 12 are the same three
-on every slide through to 21, and the recipe rolls from the same seed. Reroll
+seed runs through it: the three hues you pick on slide 15 are the same three
+on every slide through to 22, and the recipe rolls from the same seed. Reroll
 anywhere and they all move together; the *shuffled* toggle and the min-angle
 slider are deck-wide too.
 
 ```
-12  pick 3 hues on a ring      ← their 3.4 — in order, an arc
-13  shuffle the ring           random subset, gaps — the toggle carries on
-14  stretch 3 → 5              ← their 3.3
-15  five stops, one gradient   the same five, gaps filled in — space dropdown
-16  thrown out of order        same gradient, stops scattered — still bad
-17  why                        measure the five: five lightnesses
-18  same numbers, OKLCH        measure again: one lightness — correct, flat
-19  ─── stop holding lightness still
-20  lightness gets a range     third bar, min and max, in OKLCH
-21  chroma too                 both axes walking, then stretch
-22  randomRamp, in full
+15  pick 3 hues on a ring      ← their 3.4 — in order, an arc
+16  shuffle the ring           random subset, gaps — the toggle carries on
+17  stretch 3 → 5              ← their 3.3
+18  five stops, one gradient   the same five, gaps filled in — space dropdown
+19  thrown out of order        same gradient, stops scattered — still bad
+20  ─── stop holding lightness still
+21  lightness gets a range     third bar, min and max, in OKLCH
+22  chroma too                 both axes walking, then stretch
+23  randomRamp, in full        verbatim
+24  and what it makes         stripes, and the scattered gradient
 ```
 
-Nothing works until 20. That is deliberate: they try the two things they
-already know, watch both fail for one measurable reason, and then see the one
-move that fixes it.
+Nothing works until 21. That is deliberate: they try the two things they
+already know and watch both fail — for the one reason slides 3 to 5 already
+measured for them — and then see the one move that fixes it.
 
 ---
 
 ## Outline
 
-### 0 · Where I'm coming from — 4 min · slides 01–05
+### 0 · Where I'm coming from — 7 min · slides 01–08
 
 - Title.
-- **Two questions I never got over.** Why does changing only H give me a mess?
-  *(live: six hues, same S and L)* What are all the other numbers in the
-  Photoshop picker for? *(the screenshot)*
+- **Question one.** Why does changing only H give me a mess? *(live: six
+  hues, same S and L)*
+- **The answer, straight away** (03–04). The same six desaturated and
+  measured: asked for one lightness, got six — HSL's L is a coordinate, not a
+  brightness. Then *OKLCH to the rescue*: the same six colours at one OKLCH
+  lightness and one chroma, measured again: one lightness. *The rest of the talk is about earning that.* This is the thesis
+  stated in the first two minutes; everything after is the build.
+- **OKHSL, my favourite** (05). HSL's three handles on OKLab's lightness.
+  Saturation is relative to the gamut, so 100% exists for every hue — the
+  chroma-capping slide 4 had to do by hand, the space does for you. HSL's
+  ease, OKLCH's honesty. One breath, then on to the picker.
+- **Question two.** What are all the other numbers in the Photoshop picker
+  for? *(the screenshot)*
 - **A confusion I lived in for years:** HSL and HSB. Golan showed them the
   bicones; this is the same fact felt from inside a picker — the pure hue is
-  not in the corner. The numbers are on the slide: the same colour is
+  not in the corner. The numbers are on the slide: the same color is
   `hsb(h, 100%, 100%)` and `hsl(h, 100%, 50%)`, and HSL's corner is white.
-  *(live: both squares, one slider)* **L is not B** — the seed of slide 17.
+  *(live: both squares, one slider)* **L is not B** — slide 3, felt.
 - What came out of it. They have met several of these — let them recognise
   them rather than telling them. Then: *we are going to rebuild farbvelo.*
 
-### 1 · The clash — 6 min · slides 06–10 ← the hook
+### 1 · The clash — 6 min · slides 09–13 ← the hook
 
 - Both wheels at once, concentric, 24 steps each. RYB outside, HSL inside.
   They agree at red and drift; RYB's green-to-blue is stretched across twice
@@ -110,53 +119,50 @@ move that fixes it.
 - Every named harmony is spacing on a ring. **Harmony is spacing, not magic.**
   *(Bridge: their split complements are exactly this.)*
 
-### 2 · Build it — 9 min · slides 11–16
+### 2 · Build it — 9 min · slides 14–19
 
-- **Pick three hues** (12). Evenly spaced candidates from a random start, the
+- **Pick three hues** (15). Evenly spaced candidates from a random start, the
   first three — an arc. Split complements are exactly this; say so without
   dating it. The min-angle slider moves the whole chain.
-- **Shuffle the ring** (13). Same function with the one line added:
+- **Shuffle the ring** (16). Same function with the one line added:
   `shuffle(ring).slice(0, 3).sort()`. A random subset with gaps instead of an
   arc. The *shuffled* toggle is deck-wide — every later chain slide has it, so
   you can flip the whole build between the two modes at any point.
-- **Stretch to five** (14). `chroma.scale()` through four stops is exactly
+- **Stretch to five** (17). `chroma.scale()` through four stops is exactly
   this. The anchors are the design; the steps are only resolution.
-- **Five stops, one gradient** (15). The same five with the gaps filled in.
+- **Five stops, one gradient** (18). The same five with the gaps filled in.
   The interpolation space is a dropdown in the sentence — flip it to srgb once
   and back; Golan already showed them why, so one flick is enough. This is the
   bridge: a gradient is a palette with the resolution turned up, and the next
   slide scatters its stops.
-- **Thrown out of order** (16). One random number per colour, sort by it:
+- **Thrown out of order** (19). One random number per color, sort by it:
   reorders *and* scatters the stops. The last thing farbvelo does. Toggle off
   and watch it go stiff. Less mechanical. Still unusable — this is where
-  Golan's phrase for it belongs: say it, don't title it.
+  Golan's phrase for it belongs: say it, don't title it. They already know
+  why, from slide 3; let them say it.
 
-### 3 · Why, and the fix — 10 min · slides 17–22 ← the trick
+### 3 · The fix — 9 min · slides 20–24 ← the trick
 
-- **Measure it** (17). The same five, desaturated, with the luminance under
-  each. Every one was asked for the same L. None obeyed. *(The pivot.
-  Everything before failed for this one reason.)*
-- **Same numbers, OKLCH** (18). Slide 17 with one word changed. The identical
-  triples as OKLCH, desaturated and measured again: one lightness in, one
-  lightness out. This is the answer to 17 — and the setup for the next beat:
-  *correct is not the same as good.* Five colours at one lightness is a flat
-  palette.
-- Divider: *Stop holding lightness still.*
-- **Lightness gets a range** (20). Same three, same stretch, now in OKLCH.
+- Divider: *Stop holding lightness still.* (20) The pivot: they have seen
+  the flat five fail three ways, and slide 4 told them why.
+- **Lightness gets a range** (21). Same three, same stretch, now in OKLCH.
   Third bar: lightness walks min → max across the anchors before stretching.
-  Two sliders. The first thing that actually helps, and it arrives only after
-  the audience knows why everything before it failed.
-- **Chroma too** (21). Picks up exactly where 20 left off: row one *is* 20's
+  Two sliders. The first thing that actually helps.
+- **Chroma too** (22). Picks up exactly where 21 left off: row one *is* 21's
   last bar, same sliders, same defaults. Row two adds the chroma walk and the
   coin flip for direction. Both axes moving, then the stretch — that is the
-  whole ramp, and 22 is just its source.
-- **randomRamp in full** (22). Point at one line:
-  `shuffle(ring).slice(0, count).sort()`. The shuffle *selects* a random
+  whole ramp, and 23 is just its source.
+- **randomRamp in full** (23). Verbatim — the destination of the whole build. Point at one line:
+  `shuffle(hues).slice(0, count).sort()`. The shuffle *selects* a random
   subset; the sort puts it back in wheel order. Gaps, not an arc. Everything
   after it is two linear walks and a coin flip.
+- **And what it makes** (24). The same function running: three to five stops
+  as stripes, and as the gradient with its stops thrown out of order — slide
+  19's move, now on a palette that deserves it. Reroll a few times. This is
+  farbvelo.
 - **Takeaway — a palette is a path, and you own its endpoints.**
 
-### 4 · Same path, different solid — 5 min · slides 23–25
+### 4 · Same path, different solid — 5 min · slides 25–27
 
 - The identical numbers, HSL on the left, OKLCH on the right, with the step
   sizes printed under each ladder. One lurches, one climbs. In OKLCH your
@@ -166,7 +172,7 @@ move that fixes it.
   gamut video.)*
 - **Takeaway — work in the space where what you want is one axis.**
 
-### 5 · The recipe — 2 min · slide 26 ← the slide they photograph
+### 5 · The recipe — 2 min · slide 28 ← the slide they photograph
 
 The real pipeline, on p5 + chroma.js: `randomRamp` and `scaleSpreadArray` in
 full, and `palette(n)` = three to five random stops stretched to n. p5 gives
@@ -176,12 +182,12 @@ on the slide (stops, then the stretch), so it cannot lie. *(The
 scaleSpreadArray walkthrough slide is parked in `src/slides/_parked/`.)* Say
 the connection out loud:
 
-> *For 3.6 you need three colours that interrelate, new on every click —
+> *For 3.6 you need three colors that interrelate, new on every click —
 > that is `palette(3)`, the anchors. `palette(40)` is a gradient.*
 
-### 6 · Q&A — 10 min · slide 27
+### 6 · Q&A — 10 min · slide 29
 
-Vibecoding will come up. Colour is a domain where a model has no perception —
+Vibecoding will come up. color is a domain where a model has no perception —
 only numbers that look plausible, which is the failure mode the last half
 hour was about learning to see.
 
@@ -189,12 +195,13 @@ hour was about learning to see.
 
 ## If you run long
 
-Cut in this order: **25** (gamut) → **15** (the gradient; 16 stands without
-it) → section 0's tools montage. Never cut 13, 16, 17, 18, 20, 21 or 26.
+Cut in this order: **27** (gamut) → **05** (OKHSL) → **18** (the gradient; 19
+stands without it) → section 0's tools montage. Never cut 03, 04, 16, 19, 21,
+22, 24 or 28.
 
 ## Live slides — rehearse these with the pen open
 
-02, 04, 07, 08, 12, 13, 14, 15, 16, 17, 18, 20, 21, 24, 26.
+02, 03, 04, 05, 07, 10, 11, 15, 16, 17, 18, 19, 21, 22, 24, 26, 28.
 
 ## Exercise proposals for Golan
 
@@ -205,7 +212,7 @@ they double as the rubric for the feedback session a week later.
    five share the same perceived lightness ramp. You may not change any hue.
 2. **One knob.** A palette generator with exactly one slider. You choose what
    it controls. Defend the choice in two sentences.
-3. **Steal a palette.** A painting you love; pull five colours; generate forty
+3. **Steal a palette.** A painting you love; pull five colors; generate forty
    more that belong to the family. *(Plays to their painting background.)*
 4. **Blind ramp.** A ten-step ramp that reads evenly spaced *after*
    desaturating. Grayscale is the grader.

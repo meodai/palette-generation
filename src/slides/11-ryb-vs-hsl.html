@@ -61,6 +61,8 @@
       // Complements: 180° apart on each wheel, then read in HSL for the screen.
       paint('[data-ryb]', [rybHue(h), rybHue(h + 180)]);
       paint('[data-hsl]', [h, (h + 180) % 360]);
+
+      colorDebug([rybHue(h), rybHue(h + 180), h, (h + 180) % 360].map((hh) => hsl({ h: hh, c: 0.75, l: 0.5 })), { model: 'hsl' });
     }
 
     slider.addEventListener('input', draw);

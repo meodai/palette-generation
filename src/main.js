@@ -13,6 +13,7 @@ const el = {
   total: document.getElementById('chromeTotal'),
   bar: document.getElementById('progressBar'),
   pen: document.getElementById('pen'),
+  cube: document.getElementById('cube'),
   previous: document.getElementById('previous'),
   next: document.getElementById('next'),
   help: document.getElementById('help'),
@@ -28,6 +29,8 @@ const deck = new Deck(el.deck, loadSlides(), { onChange: render });
 let editor = null;
 
 async function openEditor() {
+  if (inspectorIsOpen()) inspector.close();
+
   if (!editor) {
     const { Editor } = await import('./editor.js');
 
@@ -51,6 +54,36 @@ function closeEditor() {
 
 const editorIsOpen = () => Boolean(editor?.isOpen);
 
+/** The colour inspector — three.js, so it loads on first use like the pen. */
+let inspector = null;
+
+async function openInspector() {
+  if (editorIsOpen()) editor.close();
+
+  if (!inspector) {
+    const { Inspector } = await import('./inspector.js');
+
+    inspector = new Inspector({
+      panel: document.getElementById('inspector'),
+      body: document.getElementById('inspectorBody'),
+      select: document.getElementById('inspectorModel'),
+      title: document.getElementById('inspectorSlide'),
+      empty: document.getElementById('inspectorEmpty'),
+      closeButton: document.getElementById('inspectorClose'),
+    });
+  }
+
+  inspector.open(deck.current.id, `src/slides/${deck.current.file}`);
+  render();
+}
+
+function closeInspector() {
+  inspector?.close();
+  render();
+}
+
+const inspectorIsOpen = () => Boolean(inspector?.isOpen);
+
 el.total.textContent = String(deck.count);
 deck.go(indexFromHash());
 render();
@@ -63,6 +96,8 @@ function render() {
   el.current.textContent = String(human);
   el.bar.style.width = `${(human / deck.count) * 100}%`;
   el.pen.setAttribute('aria-pressed', String(editorIsOpen()));
+  el.cube.setAttribute('aria-pressed', String(inspectorIsOpen()));
+  if (inspectorIsOpen()) inspector.show(deck.current.id, `src/slides/${deck.current.file}`);
   el.previous.disabled = deck.index === 0;
   el.next.disabled = deck.index === deck.count - 1;
 
@@ -72,6 +107,10 @@ function render() {
 
 el.pen.addEventListener('click', () => {
   editorIsOpen() ? closeEditor() : openEditor();
+});
+
+el.cube.addEventListener('click', () => {
+  inspectorIsOpen() ? closeInspector() : openInspector();
 });
 
 // -------------------------------------------------------------- navigation -
@@ -107,6 +146,7 @@ addEventListener('keydown', (event) => {
   // Escape is the one key that reaches us from inside the editor.
   if (event.key === 'Escape') {
     if (editorIsOpen()) closeEditor();
+    else if (inspectorIsOpen()) closeInspector();
     else el.help.hidden = true;
     render();
     return;
@@ -119,6 +159,7 @@ addEventListener('keydown', (event) => {
   else if (event.key === 'Home') deck.go(0);
   else if (event.key === 'End') deck.go(deck.count - 1);
   else if (event.key === 'e') openEditor();
+  else if (event.key === 'c') inspectorIsOpen() ? closeInspector() : openInspector();
   else if (event.key === 'i') document.documentElement.toggleAttribute('data-invert');
   else if (event.key === '?') el.help.hidden = !el.help.hidden;
   else return;

@@ -1,0 +1,112 @@
+<main data-slide>
+  <h2>Five stops, one <em>gradient</em></h2>
+
+  <div class="stage">
+    <div data-wheel></div>
+    <div class="out"></div>
+  </div>
+
+  <div class="controls">
+    <label class="check"><input data-shuffled type="checkbox" /><span>shuffled</span></label>
+    <button type="button">reroll</button>
+  </div>
+
+  <p class="note">
+    The same five, evenly spaced, with the gaps filled in — interpolated in
+    <select>
+      <option>oklab</option>
+      <option>oklch</option>
+      <option>lab</option>
+      <option>lch</option>
+      <option>srgb</option>
+      <option>srgb-linear</option>
+      <option>hsl</option>
+    </select>.
+    <mark>A gradient is a palette with the resolution turned up.</mark> Nothing
+    else has changed yet.
+  </p>
+
+  <style>
+    .stage {
+      display: flex;
+      align-items: center;
+      gap: var(--space-l);
+      width: min(100%, 46em);
+    }
+
+    [data-wheel] { flex: none; width: 7em; }
+    .out { flex: 1; min-width: 0; height: 12em; border-radius: 1px; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-s) var(--space-m);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    .check { display: flex; align-items: center; gap: var(--space-3xs); }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    select {
+      appearance: none;
+      border: 0;
+      border-bottom: 1px solid var(--highlight);
+      padding: 0 0.2em;
+      background: none;
+      color: var(--highlight);
+      font: inherit;
+      font-family: var(--font-mono);
+      font-size: 0.86em;
+      cursor: pointer;
+    }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    const out = $slide.querySelector('.out');
+    const space = $slide.querySelector('select');
+    const button = $slide.querySelector('button');
+
+    let three = hues(3);
+
+    function draw() {
+      wheel(three);
+      // The five from the slide before, as stops of one gradient.
+      const anchors = three.map((h) => hsl({ h, c: 0.85, l: 0.55 }));
+      const five = stretch(anchors, 5, (t, a, b) => mix(a, b, t, space.value));
+      gradient(colorDebug(five), { target: out, space: space.value });
+    }
+
+    // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
+    // this changes *which* three, not the roll.
+    const shuffleBox = $slide.querySelector('[data-shuffled]');
+    shuffleBox.checked = shuffled();
+    const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); three = hues(3); draw(); };
+    shuffleBox.addEventListener('input', onShuffle);
+
+    const next = () => { reseed(); three = hues(3); draw(); };
+
+    space.addEventListener('input', draw);
+    button.addEventListener('click', next);
+    draw();
+
+    return () => {
+      shuffleBox.removeEventListener('input', onShuffle);
+      button.removeEventListener('click', next);
+    };
+  </script>
+</main>

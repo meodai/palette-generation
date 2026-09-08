@@ -99,7 +99,7 @@
         const t = i / 2;
         return oklch({ h, c: lerp(flip ? 1 - t : t, cMin, cMax), l: lerp(t, lMin, lMax) });
       });
-      swatches(stretch(both, 5, (t, a, b) => mix(a, b, t)), q('#both'));
+      swatches(colorDebug(stretch(both, 5, (t, a, b) => mix(a, b, t)), { model: 'oklch' }), q('#both'));
     }
 
     // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping

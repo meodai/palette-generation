@@ -19,6 +19,6 @@
     // Same S, same L — only H moves. This is the whole problem, in one line.
     const flat = Array.from({ length: 6 }, (_, i) => ({ h: i * 60, c: 0.9, l: 0.5 }));
 
-    swatches(flat.map(hsl));
+    swatches(colorDebug(flat.map(hsl), { model: 'hsl' }));
   </script>
 </main>

@@ -1,4 +1,5 @@
 import { okhslToRgb } from './okhsl.js';
+import { registerColors } from './inspect-registry.js';
 
 /**
  * One seed for the whole deck, living at module scope. Every slide resets the
@@ -202,10 +203,31 @@ export function toolkit(slide) {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
 
-  const grey = (color) => {
-    const v = Math.round(luma(color) ** (1 / 2.2) * 255);
-    return `rgb(${v} ${v} ${v})`;
+  /** Any CSS colour → its OKLCH triple in the toolkit's normalised form. */
+  const toOklch = (color) => {
+    const [r, g, b] = rgb(color).map((v) => {
+      const s = v / 255;
+      return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+    });
+    const l_ = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+    const m_ = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+    const s_ = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+    const L = 0.2104542553 * l_ + 0.793617785 * m_ - 0.0040720468 * s_;
+    const A = 1.9779984951 * l_ - 2.428592205 * m_ + 0.4505937099 * s_;
+    const B = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.808675766 * s_;
+    const h = ((Math.atan2(B, A) * 180) / Math.PI + 360) % 360;
+    return { h, c: Math.hypot(A, B) / 0.4, l: L };
   };
+
+  /** OKLab lightness, 0–1 — the perceptual quantity, not photometric luma. */
+  const lightness = (color) => toOklch(color).l;
+
+  /**
+   * Desaturate the perceptual way: chroma to zero, lightness kept. A grey made
+   * from luma() instead would bump by a few percent across hues at equal L —
+   * luminance and perceived lightness are different quantities.
+   */
+  const grey = (color) => `oklch(${(lightness(color) * 100).toFixed(2)}% 0 0)`;
 
   // -- output -------------------------------------------------------------
 
@@ -271,11 +293,27 @@ export function toolkit(slide) {
     return target;
   };
 
+  /**
+   * Hand the inspector this slide's colours. `model` is the solid it opens in —
+   * oklab, oklch, rgb, hsl or hsv — and defaults to oklab. Returns the colours
+   * untouched, so it can sit inline in a chain.
+   */
+  const colorDebug = (colors, { model = 'oklab' } = {}) => {
+    const resolved = colors.map((color) => {
+      const css = toCss(color);
+      const [r, g, b] = rgb(css);
+      return { css, rgb: [r / 255, g / 255, b / 255] };
+    });
+    registerColors(slide.id, resolved, model);
+    return colors;
+  };
+
   return {
     rnd, rndInt, pick, shuffle, reseed, rewind,
+    colorDebug,
     lerp, clamp,
     oklch, hsl, okhsl, mix, rybHue, spacing, shuffled, hues, ramp, randomRamp, stretch,
-    rgb, luma, grey,
+    rgb, luma, lightness, grey, toOklch,
     stage, swatches, gradient, wheel,
   };
 }

@@ -78,6 +78,7 @@
         ? scattered
         : palette.map((color, i) => ({ color, pos: i / (palette.length - 1) }));
 
+      colorDebug(palette, { model: 'hsl' });
       out.style.background = `linear-gradient(90deg in oklab, ${stops
         .map(({ color, pos }) => `${color} ${(pos * 100).toFixed(1)}%`)
         .join(', ')})`;

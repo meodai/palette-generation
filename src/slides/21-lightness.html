@@ -1,24 +1,27 @@
 <main data-slide>
-  <h2>Stretch three to <em>five</em></h2>
+  <h2>Now give lightness a <em>range</em></h2>
 
   <div class="stage">
     <div data-wheel></div>
     <div class="rows">
       <div class="row"><span>3</span><div data-strip id="anchors"></div></div>
-      <div class="row"><span id="n">→ 5</span><div data-strip id="out"></div></div>
+      <div class="row"><span>→ 5</span><div data-strip id="flat"></div></div>
+      <div class="row"><span>+ L</span><div data-strip id="ramped"></div></div>
     </div>
   </div>
 
   <div class="controls">
-    <label><span>steps</span><input type="range" min="3" max="12" value="5" /></label>
+    <label><span>min</span><input data-l0 type="range" min="0" max="100" value="15" /><output></output></label>
+    <label><span>max</span><input data-l1 type="range" min="0" max="100" value="90" /><output></output></label>
     <label class="check"><input data-shuffled type="checkbox" /><span>shuffled</span></label>
     <button type="button">reroll</button>
   </div>
 
   <p class="note">
-    Same three, interpolated between, in oklab.
-    <mark><code>chroma.scale()</code> through four stops is exactly this.</mark>
-    The anchors are the design; the steps are only resolution.
+    Same three, same stretch, in OKLCH — so one lightness really is one
+    lightness. Correct, and flat. The only change: instead of one lightness
+    for all three anchors, <mark>walk from a minimum to a maximum</mark>
+    across them, then stretch. Two numbers.
   </p>
 
   <style>
@@ -42,8 +45,8 @@
       color: var(--muted);
     }
 
-    #anchors { height: 4em; }
-    #out { height: 7em; }
+    #anchors, #flat { height: 3.2em; }
+    #ramped { height: 6em; }
 
     .controls {
       display: flex;
@@ -55,8 +58,15 @@
     }
 
     label { display: flex; align-items: center; gap: var(--space-2xs); }
-    input[type='range'] { width: 12em; accent-color: var(--highlight); }
+    input[type='range'] { width: 9em; accent-color: var(--highlight); }
     .check { gap: var(--space-3xs); }
+
+    output {
+      min-width: 2.6em;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--onBg);
+    }
 
     button {
       border: 1px solid var(--hairline);
@@ -70,26 +80,34 @@
 
     button:hover { color: var(--highlight); border-color: var(--highlight); }
 
-
     .note { max-width: 40em; color: var(--muted); }
   </style>
 
   <script>
-    const steps = $slide.querySelector('input[type="range"]');
-    const button = $slide.querySelector('button');
-    const label = $slide.querySelector('#n');
-    const out = $slide.querySelector('#out');
+    const q = (sel) => $slide.querySelector(sel);
+    const l0 = q('[data-l0]');
+    const l1 = q('[data-l1]');
+    const outs = $slide.querySelectorAll('output');
+    const button = q('button');
 
     let three = hues(3);
 
     function draw() {
-      const anchors = three.map((h) => hsl({ h, c: 0.85, l: 0.55 }));
-      const n = +steps.value;
+      const min = +l0.value / 100;
+      const max = +l1.value / 100;
+      outs[0].textContent = `${l0.value}%`;
+      outs[1].textContent = `${l1.value}%`;
 
       wheel(three);
-      swatches(anchors, $slide.querySelector('#anchors'));
-      label.textContent = `→ ${n}`;
-      swatches(stretch(anchors, n, (t, a, b) => mix(a, b, t)), out);
+
+      // Rows one and two are the previous slide, unchanged.
+      const flat = three.map((h) => oklch({ h, c: 0.5, l: 0.55 }));
+      swatches(flat, q('#anchors'));
+      swatches(stretch(flat, 5, (t, a, b) => mix(a, b, t)), q('#flat'));
+
+      // Row three: lightness walks min → max across the anchors. Nothing else moves.
+      const ramped = three.map((h, i) => oklch({ h, c: 0.5, l: lerp(i / 2, min, max) }));
+      swatches(colorDebug(stretch(ramped, 5, (t, a, b) => mix(a, b, t)), { model: 'oklch' }), q('#ramped'));
     }
 
     // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
@@ -100,7 +118,8 @@
     shuffleBox.addEventListener('input', onShuffle);
     const next = () => { reseed(); three = hues(3); draw(); };
 
-    steps.addEventListener('input', draw);
+    l0.addEventListener('input', draw);
+    l1.addEventListener('input', draw);
     button.addEventListener('click', next);
     draw();
 

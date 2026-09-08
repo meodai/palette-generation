@@ -75,13 +75,15 @@
         flip: false,
       });
 
+      const seen = [];
       for (const [space, id] of [[hsl, '#a'], [oklch, '#b']]) {
         const colors = palette.map(space);
+        seen.push(...colors);
         swatches(colors, into(id));
         swatches(colors.map(grey), into(`${id}-grey`));
 
         // The step sizes are the argument. Print them; don't claim them.
-        const measured = colors.map((color) => Math.round(luma(color) * 100));
+        const measured = colors.map((color) => Math.round(lightness(color) * 100));
         into(`${id}-num`).replaceChildren(
           ...measured.map((value, i) => {
             const cell = document.createElement('span');
@@ -90,6 +92,8 @@
           }),
         );
       }
+
+      colorDebug(seen, { model: 'oklch' });
     }
 
     const next = () => { reseed(); draw(); };

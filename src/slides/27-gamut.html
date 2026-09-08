@@ -65,7 +65,7 @@
     const asked = Array.from({ length: STEPS }, (_, i) => (i / (STEPS - 1)) * MAX_CHROMA);
     const colors = asked.map((c) => `oklch(${LIGHTNESS * 100}% ${c.toFixed(4)} ${HUE})`);
 
-    swatches(colors);
+    swatches(colorDebug(colors, { model: 'oklch' }));
 
     // How far each step actually travelled on screen, in plain RGB distance.
     const rendered = colors.map(rgb);

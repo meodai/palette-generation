@@ -1,0 +1,141 @@
+<main data-slide>
+  <h2>And what it <em>makes</em></h2>
+
+  <div class="rows">
+    <div class="row"><span id="k">stops</span><div data-strip id="stripes"></div></div>
+    <div class="row"><span>→ ∞</span><div class="out" id="grad"></div></div>
+  </div>
+
+  <div class="controls">
+    <label class="check"><input data-scatter type="checkbox" checked /><span>random positions</span></label>
+    <button type="button">reroll</button>
+  </div>
+
+  <p class="note">
+    <code>randomRamp(3 + rnd() * 3)</code>, straight from the slide before. As
+    stripes, and as the gradient with its stops thrown out of order — the last
+    thing farbvelo does. <mark>Every reroll is a new palette that belongs
+    together.</mark>
+  </p>
+
+  <style>
+    .rows { display: grid; gap: var(--space-xs); width: min(100%, 46em); }
+
+    .row {
+      display: grid;
+      grid-template-columns: 3.5em 1fr;
+      align-items: center;
+      gap: var(--space-s);
+      font-family: var(--font-mono);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    #stripes { height: 5em; }
+    .out { height: 9em; border-radius: 1px; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-s) var(--space-m);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    .check { display: flex; align-items: center; gap: var(--space-3xs); }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    // The function from the slide before, verbatim. rnd() and shuffle() are the
+    // toolkit's — same shape, seeded, so reroll moves the whole deck.
+    function randomRamp(count, maxSpacing = 60) {
+      const spacing = Math.min(maxSpacing, 360 / count);
+      const startHue = rnd() * 360;
+
+      const hues = Array.from(
+        { length: Math.round(360 / spacing) },
+        (_, i) => (startHue + i * spacing) % 360,
+      );
+
+      const selectedHues = shuffle(hues)
+        .slice(0, count)
+        .sort((a, b) => a - b);
+
+      const minLightness = 0.05 + rnd() * 0.2;
+      const maxLightness = 1 - rnd() * 0.15;
+      const minChroma = 0.005 + rnd() * 0.25;
+      const maxChroma = 1 - rnd();
+
+      const lightnessRange = Math.max(maxLightness - minLightness, 0.1);
+      const chromaRange = Math.max(maxChroma - minChroma, 0.1);
+      const reverseChroma = rnd() < 0.5;
+
+      return selectedHues.map((hue, index) => {
+        const t = index / (count - 1);
+        return {
+          h: hue,
+          li: minLightness + t * lightnessRange,
+          ch: minChroma + (reverseChroma ? 1 - t : t) * chromaRange,
+        };
+      });
+    }
+
+    const scatter = $slide.querySelector('[data-scatter]');
+    const button = $slide.querySelector('button');
+    const out = $slide.querySelector('#grad');
+
+    let palette = [];
+    let scattered = [];
+
+    function build() {
+      // { h, li, ch } → the same triple the toolkit reads: { h, c, l }.
+      palette = randomRamp(3 + Math.floor(rnd() * 3)).map(({ h, li, ch }) => oklch({ h, c: ch, l: li }));
+
+      // One random number per colour: reorders and spaces the stops at once.
+      scattered = palette
+        .map((color) => ({ color, pos: rnd() }))
+        .sort((a, b) => a.pos - b.pos)
+        .map((stop, i, all) => ({
+          color: stop.color,
+          pos: i === 0 ? 0 : i === all.length - 1 ? 1 : stop.pos,
+        }));
+    }
+
+    function draw() {
+      $slide.querySelector('#k').textContent = `${palette.length} stops`;
+      swatches(colorDebug(palette, { model: 'oklch' }), $slide.querySelector('#stripes'));
+
+      const stops = scatter.checked
+        ? scattered
+        : palette.map((color, i) => ({ color, pos: i / (palette.length - 1) }));
+
+      out.style.background = `linear-gradient(90deg in oklab, ${stops
+        .map(({ color, pos }) => `${color} ${(pos * 100).toFixed(1)}%`)
+        .join(', ')})`;
+    }
+
+    const next = () => { reseed(); build(); draw(); };
+
+    scatter.addEventListener('input', draw);
+    button.addEventListener('click', next);
+    build();
+    draw();
+
+    return () => button.removeEventListener('click', next);
+  </script>
+</main>

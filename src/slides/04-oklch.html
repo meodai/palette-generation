@@ -1,0 +1,60 @@
+<main data-slide>
+  <h2>OKLCH to the <em>rescue</em></h2>
+
+  <div class="stack">
+    <div data-strip data-flush class="row"></div>
+    <div data-strip data-flush class="row" id="greys"></div>
+    <div class="numbers"></div>
+  </div>
+
+  <p class="note">
+    The same six colours, moved into OKLCH and given <em>one</em> lightness
+    and <em>one</em> chroma. Desaturated, the measured lightness runs from
+    <mark data-low></mark> to <mark data-high></mark>.
+    <mark>Asked for one lightness, got one.</mark> The rest of this talk is
+    about earning that.
+  </p>
+
+  <style>
+    .stack { display: grid; gap: 2px; width: min(100%, 46em); }
+    .row { height: 6em; }
+
+    .numbers {
+      display: flex;
+      gap: 2px;
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+      color: var(--muted);
+    }
+
+    .numbers > * { flex: 1; text-align: center; }
+
+    .note { max-width: 38em; color: var(--muted); }
+  </style>
+
+  <script>
+    // Slide 2's six, by their OKLCH hue — HSL's 60° steps are not OKLCH's.
+    const hues6 = Array.from({ length: 6 }, (_, i) => toOklch(hsl({ h: i * 60, c: 0.9, l: 0.5 })).h);
+
+    // One lightness, one chroma. The chroma is the largest every one of these
+    // hues can still reach at this lightness inside sRGB — go higher and the
+    // browser pulls blue back in, and it is no longer one chroma.
+    const colors = hues6.map((h) => oklch({ h, c: 0.35, l: 0.75 }));
+
+    swatches(colorDebug(colors, { model: 'oklch' }), $slide.querySelector('.row'));
+    swatches(colors.map(grey), $slide.querySelector('#greys'));
+
+    const measured = colors.map((color) => Math.round(lightness(color) * 100));
+
+    $slide.querySelector('.numbers').replaceChildren(
+      ...measured.map((value) => {
+        const cell = document.createElement('span');
+        cell.textContent = `${value}%`;
+        return cell;
+      }),
+    );
+
+    $slide.querySelector('[data-low]').textContent = `${Math.min(...measured)}%`;
+    $slide.querySelector('[data-high]').textContent = `${Math.max(...measured)}%`;
+  </script>
+</main>

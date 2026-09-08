@@ -102,7 +102,7 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
     }
 
     const button = $slide.querySelector('button');
-    const draw = () => swatches(palette(8), $slide.querySelector('#out'));
+    const draw = () => swatches(colorDebug(palette(8), { model: 'oklch' }), $slide.querySelector('#out'));
     const next = () => { reseed(); draw(); };
 
     button.addEventListener('click', next);

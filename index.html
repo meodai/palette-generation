@@ -21,6 +21,12 @@
       <p class="chrome__count">
         <span id="chromeCurrent">1</span><span class="chrome__slash">/</span><span id="chromeTotal">1</span>
       </p>
+      <button class="chrome__pen" id="cube" type="button" title="Colour inspector — c" aria-label="Colour inspector">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3 4 7.5v9l8 4.5 8-4.5v-9L12 3Z" />
+          <path d="M4 7.5 12 12l8-4.5M12 12v9" />
+        </svg>
+      </button>
       <button class="chrome__pen" id="pen" type="button" title="Edit this slide — e" aria-label="Edit this slide">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M4 20h4L19.5 8.5a2.8 2.8 0 0 0-4-4L4 16v4Z" />
@@ -44,12 +50,36 @@
       </footer>
     </aside>
 
+    <aside class="editor inspector" id="inspector" hidden>
+      <header class="editor__bar">
+        <p class="editor__file"><span id="inspectorSlide"></span></p>
+        <label class="inspector__model">
+          <span>in</span>
+          <select id="inspectorModel">
+            <option value="oklab">oklab</option>
+            <option value="oklch">oklch</option>
+            <option value="rgb">rgb</option>
+            <option value="hsl">hsl</option>
+            <option value="hsv">hsv</option>
+          </select>
+        </label>
+        <p class="editor__status">drag to orbit · scroll to zoom</p>
+        <button class="editor__close" id="inspectorClose" type="button">esc</button>
+      </header>
+      <div class="inspector__body" id="inspectorBody">
+        <p class="inspector__empty" id="inspectorEmpty" hidden>
+          This slide registers no colours — call <code>colorDebug(colors, { model })</code> in its script.
+        </p>
+      </div>
+    </aside>
+
     <div class="help" id="help" hidden>
       <dl class="help__list">
         <dt><kbd>→</kbd> <kbd>space</kbd> <kbd>j</kbd></dt><dd>next slide</dd>
         <dt><kbd>←</kbd> <kbd>k</kbd></dt><dd>previous slide</dd>
         <dt><kbd>home</kbd> <kbd>end</kbd></dt><dd>first / last</dd>
         <dt><kbd>e</kbd></dt><dd>edit this slide</dd>
+        <dt><kbd>c</kbd></dt><dd>colour inspector</dd>
         <dt><kbd>i</kbd></dt><dd>invert the deck</dd>
         <dt><kbd>?</kbd></dt><dd>this list</dd>
       </dl>

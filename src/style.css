@@ -51,8 +51,9 @@
   color-scheme: light;
 }
 
-/* While the pen is open the deck gives up the bottom of the screen. */
-:root[data-editing] {
+/* While the pen or the inspector is open the deck gives up the bottom. */
+:root[data-editing],
+:root[data-inspecting] {
   --editor-height: var(--editor-size);
 }
 
@@ -208,7 +209,6 @@ main[data-slide] {
 }
 
 :where([data-slide]) .lead {
-  font-size: var(--step-2);
   line-height: 1.3;
   font-weight: var(--weight-light);
 }
@@ -236,7 +236,8 @@ main[data-slide] {
 :where([data-slide]) a {
   color: inherit;
   text-decoration-color: var(--highlight);
-  text-underline-offset: 0.2em;
+  text-underline-offset: 0.125em;
+  text-decoration-thickness: 1px;
 }
 
 :where([data-slide]) :where(ul, ol) {
@@ -554,6 +555,51 @@ main[data-slide] {
 .editor__body {
   min-height: 0;
   overflow: hidden;
+}
+
+/* --------------------------------------------------------------- inspector - */
+
+.inspector {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.inspector__model {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.inspector__model select {
+  appearance: none;
+  border: 0;
+  border-bottom: 1px solid var(--highlight);
+  padding: 0 0.2em;
+  background: none;
+  color: var(--highlight);
+  font: inherit;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+
+.inspector__body {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.inspector__body canvas {
+  display: block;
+}
+
+.inspector__empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  pointer-events: none;
 }
 
 kbd {

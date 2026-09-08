@@ -71,5 +71,10 @@
 
     $slide.querySelector('[data-ring]').style.background = conic(rybHue);
     $slide.querySelector('[data-disc]').style.background = conic((h) => h);
+
+    // Both wheels, for the inspector: 24 RYB steps then 24 HSL steps.
+    const steps = (hueAt) =>
+      Array.from({ length: STEPS }, (_, i) => hsl({ h: hueAt(((i + 0.5) / STEPS) * 360), c: 0.85, l: 0.5 }));
+    colorDebug([...steps(rybHue), ...steps((h) => h)], { model: 'hsl' });
   </script>
 </main>
