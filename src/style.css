@@ -146,7 +146,8 @@ main[data-slide] {
   }
 }
 
-:root[data-editing] main[data-slide] {
+:root[data-editing] main[data-slide],
+:root[data-inspecting] main[data-slide] {
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
