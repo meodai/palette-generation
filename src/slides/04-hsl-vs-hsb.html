@@ -35,7 +35,7 @@
 
   <section data-notes>
     <p class="note">
-      Bulding stuff like a color picker using these models made me play with these models and understand them better.
+      Building stuff like a color picker using these models made me play with these models and understand them better.
     </p>
   </section>
 
@@ -89,6 +89,9 @@
     /* Top view. Hue round the rim, 0° at twelve o'clock, clockwise — same as the wheels later. */
     .disk {
       border-radius: 50%;
+      cursor: crosshair;
+      touch-action: none;
+      user-select: none;
       --ring: conic-gradient(in hsl longer hue, hsl(0 100% 50%), hsl(360 100% 50%));
     }
 
@@ -170,9 +173,35 @@
       colorDebug([...grid(hsv), ...grid(hsl)], { model: 'hsl' });
     }
 
+    // Click or drag on either disk sets the hue too — 0° at twelve o'clock, clockwise.
+    const disks = [...$slide.querySelectorAll('.disk')];
+    let held = false;
+    const onPointer = (event) => {
+      if (event.type === 'pointerdown') {
+        held = true;
+        try { event.currentTarget.setPointerCapture(event.pointerId); } catch {}
+      } else if (!held) return;
+      const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
+      const x = event.clientX - (left + width / 2);
+      const y = event.clientY - (top + height / 2);
+      const angle = Math.round((((Math.atan2(x, -y) * 180) / Math.PI) + 360) % 360) % 360;
+      if (angle === Number(slider.value)) return;
+      slider.value = angle;
+      draw();
+    };
+    const release = () => { held = false; };
+
     slider.addEventListener('input', draw);
+    disks.forEach((disk) => { disk.addEventListener('pointerdown', onPointer); disk.addEventListener('pointermove', onPointer); });
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
     draw();
 
-    return () => slider.removeEventListener('input', draw);
+    return () => {
+      slider.removeEventListener('input', draw);
+      disks.forEach((disk) => { disk.removeEventListener('pointerdown', onPointer); disk.removeEventListener('pointermove', onPointer); });
+      removeEventListener('pointerup', release);
+      removeEventListener('pointercancel', release);
+    };
   </script>
 </main>
