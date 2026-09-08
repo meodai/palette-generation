@@ -36,6 +36,15 @@ send('hello');
 const beat = setInterval(() => send('beat'), 1000);
 addEventListener('pagehide', () => { clearInterval(beat); send('bye'); });
 
+// A link in the notes opens from the deck's tab, so it lands on the projector.
+// Modifier-click keeps the browser's default and opens it here.
+el.body.addEventListener('click', (event) => {
+  const link = event.target.closest('a[href]');
+  if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  send('open', { href: link.href });
+});
+
 el.previous.addEventListener('click', () => send('previous'));
 el.nextButton.addEventListener('click', () => send('next'));
 

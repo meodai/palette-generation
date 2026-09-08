@@ -454,6 +454,23 @@ main[data-slide] {
   display: none !important;
 }
 
+/* a link from the notes window, offered when the popup was blocked */
+.offer {
+  position: fixed;
+  left: 50%;
+  bottom: calc(clamp(1rem, 2.5vmin, 2rem) + var(--editor-height));
+  z-index: 10;
+  transform: translateX(-50%);
+  padding: 0.5em 1.2em;
+  border-radius: 2em;
+  background: var(--onBg);
+  color: var(--bg);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.offer::before { content: '↗ '; color: var(--highlight); }
+
 /* the inspector as a tooltip: drops in above the cube while it is hovered */
 .peek {
   position: fixed;

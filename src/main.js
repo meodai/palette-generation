@@ -15,6 +15,7 @@ const el = {
   pen: document.getElementById('pen'),
   cube: document.getElementById('cube'),
   notes: document.getElementById('notes'),
+  offer: document.getElementById('offer'),
   peek: document.getElementById('peek'),
   peekBody: document.getElementById('peekBody'),
   previous: document.getElementById('previous'),
@@ -164,7 +165,28 @@ channel.addEventListener('message', ({ data }) => {
   else if (data.type === 'next') { deck.next(); render(); }
   else if (data.type === 'previous') { deck.previous(); render(); }
   else if (data.type === 'go') { deck.go(data.index); render(); }
+  else if (data.type === 'open') openFromNotes(data.href);
 });
+
+/**
+ * A link clicked in the notes window opens from this tab. Browsers only let a
+ * tab open a popup on its own user gesture, so the first time Chrome may block
+ * it; then the link is offered as a pill at the bottom to click here instead.
+ */
+let offerTimer = null;
+
+function openFromNotes(href) {
+  const opened = window.open(href, '_blank');
+  if (opened) { opened.opener = null; return; }
+
+  el.offer.href = href;
+  el.offer.textContent = href.replace(/^https?:\/\//, '');
+  el.offer.hidden = false;
+  clearTimeout(offerTimer);
+  offerTimer = setTimeout(() => { el.offer.hidden = true; }, 12000);
+}
+
+el.offer.addEventListener('click', () => { el.offer.hidden = true; });
 
 // Notes that a script fills in (measured numbers) reach the other screen too.
 const notesWatcher = new MutationObserver(() => broadcast());

@@ -48,7 +48,9 @@ and its arrow keys drive the deck. The two tabs talk over a `BroadcastChannel`
 alive the deck hides every `[data-notes]`, so the room sees only the slide;
 close the window and the notes come back, so the published deck still reads
 on its own. Notes are sent as HTML, so marks, links and the numbers a slide's
-script fills in carry over live.
+script fills in carry over live. A link clicked in the notes opens from the
+deck's tab, so it lands on the projector; if the browser blocks that popup
+(allow popups for the site once), the deck offers the link as a pill to click.
 
 ## The color inspector
 
