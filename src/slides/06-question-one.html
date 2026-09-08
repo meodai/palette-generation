@@ -1,8 +1,10 @@
 <main data-slide>
   <h2>Why does changing <em>only</em> the hue<br />give me a mess?</h2>
 
-  <div data-strip data-tall></div>
-  <div class="labels"></div>
+  <div class="stack">
+    <div data-strip data-tall></div>
+    <div class="numbers"></div>
+  </div>
 
   <section data-notes>
     <p class="note">
@@ -12,17 +14,18 @@
   </section>
 
   <style>
-    .labels {
+    .stack { display: grid; gap: var(--space-2xs); width: 100%; }
+
+    .numbers {
       display: flex;
       gap: 2px;
-      margin-top: var(--space-2xs);
       font-family: var(--font-mono);
       font-size: var(--step--2);
       font-variant-numeric: tabular-nums;
       color: var(--muted);
     }
 
-    .labels > * { flex: 1; min-width: 0; text-align: center; white-space: nowrap; }
+    .numbers > * { flex: 1; min-width: 0; text-align: center; white-space: nowrap; }
 
     .note {
       max-width: 38em;
@@ -37,7 +40,7 @@
     swatches(colorDebug(flat.map(hsl), { model: 'hsl' }));
 
     // The numbers under each swatch: h° s% l% — the same two, six times.
-    $slide.querySelector('.labels').replaceChildren(
+    $slide.querySelector('.numbers').replaceChildren(
       ...flat.map(({ h, c, l }) => Object.assign(document.createElement('span'), {
         textContent: `${h}° ${Math.round(c * 100)}% ${Math.round(l * 100)}%`,
       })),
