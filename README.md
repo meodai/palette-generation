@@ -40,7 +40,9 @@ has focus.
 
 ## The color inspector
 
-The cube next to the pen (or `c`, or `⌘I` from anywhere including the editor) opens a 3D view of the current slide's
+Hovering the cube peeks: a small version of the same view drops in above it,
+in the slide's own model, and goes away when the pointer leaves. Clicking the
+cube (or `c`, or `⌘I` from anywhere including the editor) opens a 3D view of the current slide's
 colors inside a wireframe of the sRGB gamut, in a chosen solid: oklab, oklch
 (a terrain — hue round, lightness outward, chroma up, so the cusps are
 mountains), rgb, hsl or hsv (both polar).
