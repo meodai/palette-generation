@@ -1,7 +1,7 @@
 <main data-slide>
   <h2>The <em>identical</em> numbers</h2>
 
-  <div class="pair">
+  <div class="pair" data-pair>
     <figure>
       <div data-strip id="a"></div>
       <div data-strip id="a-grey" class="grey"></div>
@@ -28,14 +28,8 @@
 
   <style>
     .pair {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: var(--space-m);
       width: min(100%, 48em);
-    }
-
-    @media (max-width: 56em) {
-      .pair { grid-template-columns: minmax(0, 1fr); }
     }
 
     figure { margin: 0; display: grid; gap: 2px; }

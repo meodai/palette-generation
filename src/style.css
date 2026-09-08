@@ -325,6 +325,20 @@ main[data-slide] {
   gap: 0;
 }
 
+/* [data-pair] — two things side by side (two ramps, two wheels, two
+   squares), one under the other when the window is narrow. */
+:where([data-slide]) [data-pair] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-m);
+}
+
+@media (max-width: 56em) {
+  :where([data-slide]) [data-pair] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* qr() — an SVG QR code, sized by its box. Restyle .qr-light (the quiet
    zone, a fill) and .qr-dark (the modules, a stroke) from the slide. */
 :where([data-slide]) [data-qr] svg {

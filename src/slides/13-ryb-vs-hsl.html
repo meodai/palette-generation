@@ -1,7 +1,7 @@
 <main data-slide>
   <h2>Two wheels that <em>disagree</em></h2>
 
-  <div class="wheels">
+  <div class="wheels" data-pair>
     <figure>
       <div class="pair" data-ryb></div>
       <figcaption>RYB — Itten. What you were taught to paint with.</figcaption>
@@ -20,14 +20,8 @@
 
   <style>
     .wheels {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: var(--space-xl);
       width: min(100%, 46em);
-    }
-
-    @media (max-width: 56em) {
-      .wheels { grid-template-columns: minmax(0, 1fr); }
     }
 
     figure { margin: 0; display: grid; gap: var(--space-2xs); }

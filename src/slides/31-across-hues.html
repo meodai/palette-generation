@@ -1,7 +1,7 @@
 <main data-slide>
   <h2>Predictable <em>across</em> hues</h2>
 
-  <div class="pair">
+  <div class="pair" data-pair>
     <figure>
       <div class="grid" id="a"></div>
       <div class="spread" id="a-spread"></div>
@@ -20,17 +20,8 @@
     h2 { max-width: none; }
 
     .pair {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: var(--space-m);
       width: min(100%, 48em);
-    }
-
-
-    @media (max-width: 56em) {
-
-      .pair { grid-template-columns: minmax(0, 1fr); }
-
     }
 
     figure { margin: 0; display: grid; gap: 2px; }

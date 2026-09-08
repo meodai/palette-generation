@@ -1,7 +1,7 @@
 <main data-slide>
   <h2>I confused HSL with HSB<br />for <em>years</em></h2>
 
-  <div class="models">
+  <div class="models" data-pair>
     <figure>
       <div class="views">
         <div class="square square--hsb">
@@ -47,18 +47,8 @@
     h2 { max-width: none; }
 
     .models {
-      display: grid;
-      /* minmax(0, …) so the caption text can never widen a column. */
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: var(--space-m);
       width: min(100%, 44em);
-    }
-
-
-    @media (max-width: 56em) {
-
-      .models { grid-template-columns: minmax(0, 1fr); }
-
     }
 
     figure { margin: 0; min-width: 0; display: grid; gap: var(--space-2xs); }
