@@ -38,7 +38,6 @@ export class Distribution {
       this.#viz = new PaletteViz({
         container: this.#body,
         observeResize: true,
-        outlineWidth: 2,
         axis: 'z',
         invertAxes: ['z'],
         position: Number(this.#slice.value),
