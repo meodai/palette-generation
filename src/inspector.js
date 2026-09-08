@@ -7,7 +7,7 @@ const SIZE = 100;
 const STEPS = 32;  // samples along each edge — the curve is in the model, not the cube
 
 /**
- * The colour inspector: the current slide's registered colours as spheres
+ * The color inspector: the current slide's registered colors as spheres
  * inside a wireframe of the sRGB gamut, in whichever solid is selected. The
  * wireframe is the same in every model — a grid drawn on the six faces of the
  * RGB cube — it is the model's transform that bends it into a bicone, a cone,
@@ -101,7 +101,7 @@ export class Inspector {
 
       // Build the material from the resolved sRGB triple, not the CSS string:
       // three only parses legacy comma syntax, so oklch()/color-mix() strings
-      // silently become white. Tag it sRGB so colour management keeps it so.
+      // silently become white. Tag it sRGB so color management keeps it so.
       entry.colors.forEach(({ rgb }, i) => {
         const color = new THREE.Color().setRGB(rgb[0], rgb[1], rgb[2], THREE.SRGBColorSpace);
         const dot = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color }));

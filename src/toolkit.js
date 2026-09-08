@@ -27,7 +27,7 @@ const stream = (a) => () => {
 /**
  * Everything in here is in lexical scope inside every slide's <script>, so a
  * live demo can start at the interesting line. Names and argument orders follow
- * the farbvelo source — `lerp(t, a, b)`, colours as normalised `{ h, c, l }` —
+ * the farbvelo source — `lerp(t, a, b)`, colors as normalised `{ h, c, l }` —
  * so what is typed on stage matches what is in the repo.
  */
 export function toolkit(slide) {
@@ -73,20 +73,20 @@ export function toolkit(slide) {
   const lerp = (t, a, b) => a + t * (b - a);
   const clamp = (v, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 
-  // -- colour -------------------------------------------------------------
+  // -- color -------------------------------------------------------------
 
-  /** The same normalised colour, written into two different solids. */
+  /** The same normalised color, written into two different solids. */
   const oklch = ({ h, c, l }) => `oklch(${(l * 100).toFixed(1)}% ${(c * 0.4).toFixed(4)} ${h.toFixed(1)})`;
   const hsl = ({ h, c, l }) => `hsl(${h.toFixed(1)} ${(c * 100).toFixed(1)}% ${(l * 100).toFixed(1)}%)`;
   /** …and a third solid for the same triple. Ottosson's OKHSL, via okhsl.js. */
   const okhsl = ({ h, c, l }) => `rgb(${okhslToRgb(h, c, l).join(' ')})`;
 
-  /** Blend two CSS colours in any space color-mix() knows. */
+  /** Blend two CSS colors in any space color-mix() knows. */
   const mix = (a, b, t, space = 'oklab') =>
     `color-mix(in ${space}, ${b} ${(t * 100).toFixed(2)}%, ${a})`;
 
   /**
-   * Itten's RYB wheel and the RGB cube put the same colour names at different
+   * Itten's RYB wheel and the RGB cube put the same color names at different
    * angles. Piecewise-linear through the twelve positions everyone agrees on,
    * so an RYB angle can be drawn on a screen at all.
    */
@@ -185,7 +185,7 @@ export function toolkit(slide) {
   const probe = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
   probe.canvas.width = probe.canvas.height = 1;
 
-  /** Any CSS colour — oklch() included — resolved to [r, g, b] 0–255. */
+  /** Any CSS color — oklch() included — resolved to [r, g, b] 0–255. */
   const rgb = (color) => {
     probe.clearRect(0, 0, 1, 1);
     probe.fillStyle = '#000';
@@ -203,7 +203,7 @@ export function toolkit(slide) {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
 
-  /** Any CSS colour → its OKLCH triple in the toolkit's normalised form. */
+  /** Any CSS color → its OKLCH triple in the toolkit's normalised form. */
   const toOklch = (color) => {
     const [r, g, b] = rgb(color).map((v) => {
       const s = v / 255;
@@ -237,10 +237,10 @@ export function toolkit(slide) {
     slide.querySelector(`[data-${name}]`) ??
     slide.appendChild(Object.assign(document.createElement('div'), { dataset: { [name]: '' } }));
 
-  /** Paint an array of colours into the slide's strip. The live-coding workhorse. */
+  /** Paint an array of colors into the slide's strip. The live-coding workhorse. */
   const swatches = (colors, target = stage()) => {
     // Flex cells land on fractional pixels and leave hairlines between them;
-    // a same-colour ring of half a pixel closes the seam without moving anything.
+    // a same-color ring of half a pixel closes the seam without moving anything.
     const flush = target.hasAttribute('data-flush');
 
     target.replaceChildren(
@@ -258,7 +258,7 @@ export function toolkit(slide) {
   /**
    * Where the hues actually sit. A bare outline circle with one dot per hue,
    * 0° at twelve o'clock running clockwise — same convention as the wheels on
-   * slide 7. Accepts hue angles or full { h, c, l } colours.
+   * slide 7. Accepts hue angles or full { h, c, l } colors.
    */
   const wheel = (items, target = stage('wheel')) => {
     const RADIUS = 42;
@@ -285,7 +285,7 @@ export function toolkit(slide) {
     return target;
   };
 
-  /** Same colours, as one continuous gradient — farbvelo's actual output. */
+  /** Same colors, as one continuous gradient — farbvelo's actual output. */
   const gradient = (colors, { angle = 90, target = stage(), space = 'oklab' } = {}) => {
     target.replaceChildren();
     target.style.background =
@@ -294,8 +294,8 @@ export function toolkit(slide) {
   };
 
   /**
-   * Hand the inspector this slide's colours. `model` is the solid it opens in —
-   * oklab, oklch, rgb, hsl or hsv — and defaults to oklab. Returns the colours
+   * Hand the inspector this slide's colors. `model` is the solid it opens in —
+   * oklab, oklch, rgb, hsl or hsv — and defaults to oklab. Returns the colors
    * untouched, so it can sit inline in a chain.
    */
   const colorDebug = (colors, { model = 'oklab' } = {}) => {

@@ -1,4 +1,4 @@
-/** Colours each slide has asked to have inspected, by slide id. */
+/** Colors each slide has asked to have inspected, by slide id. */
 const entries = new Map();
 
 export function registerColors(slideId, colors, model) {

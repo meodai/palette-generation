@@ -106,7 +106,7 @@
       // { h, li, ch } → the same triple the toolkit reads: { h, c, l }.
       palette = randomRamp(3 + Math.floor(rnd() * 3)).map(({ h, li, ch }) => oklch({ h, c: ch, l: li }));
 
-      // One random number per colour: reorders and spaces the stops at once.
+      // One random number per color: reorders and spaces the stops at once.
       scattered = palette
         .map((color) => ({ color, pos: rnd() }))
         .sort((a, b) => a.pos - b.pos)

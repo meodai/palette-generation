@@ -223,7 +223,7 @@ main[data-slide] {
 }
 
 /* Aboreto has no italic, so <em> in a heading is a synthesised slant — and
-   the deck's emphasis device is colour anyway. Upright, tomato. */
+   the deck's emphasis device is color anyway. Upright, tomato. */
 :where([data-slide]) :where(h1, h2, h3) em {
   font-style: normal;
   color: var(--highlight);

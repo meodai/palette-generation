@@ -58,7 +58,7 @@
 
         const angles = Array.from({ length: count }, (_, i) => (base + i * step) % 360);
 
-        // The rule, as positions on the ring — and then as colours.
+        // The rule, as positions on the ring — and then as colors.
         wheel(angles, row.querySelector('[data-wheel]'));
         const colors = angles.map((h) => hsl({ h, c: 0.7, l: 0.5 }));
         everything.push(...colors);

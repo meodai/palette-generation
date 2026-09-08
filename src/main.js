@@ -54,7 +54,7 @@ function closeEditor() {
 
 const editorIsOpen = () => Boolean(editor?.isOpen);
 
-/** The colour inspector — three.js, so it loads on first use like the pen. */
+/** The color inspector — three.js, so it loads on first use like the pen. */
 let inspector = null;
 
 async function openInspector() {
@@ -152,7 +152,7 @@ addEventListener('keydown', (event) => {
     return;
   }
 
-  // ⌘I / Ctrl+I toggles the colour inspector from anywhere, editor included.
+  // ⌘I / Ctrl+I toggles the color inspector from anywhere, editor included.
   if ((event.metaKey || event.ctrlKey) && !event.altKey && event.key.toLowerCase() === 'i') {
     event.preventDefault();
     inspectorIsOpen() ? closeInspector() : openInspector();

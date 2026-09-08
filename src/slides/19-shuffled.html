@@ -10,7 +10,7 @@
   </div>
 
   <p class="note">
-    Every colour gets one random number. Sorting by it <mark>reorders the palette
+    Every color gets one random number. Sorting by it <mark>reorders the palette
     and spaces the stops unevenly at the same time</mark> — one line doing two
     jobs, and it is the last thing farbvelo does. Less mechanical. Still
     unusable, because the lightness is still flat.
@@ -62,7 +62,7 @@
       const anchors = hues(3).map((h) => hsl({ h, c: 0.85, l: 0.55 }));
       palette = stretch(anchors, 5, (t, a, b) => mix(a, b, t));
 
-      // The one random number per colour. Drawn once, so the checkbox is a
+      // The one random number per color. Drawn once, so the checkbox is a
       // clean A/B rather than a reroll in disguise.
       scattered = palette
         .map((color) => ({ color, pos: rnd() }))

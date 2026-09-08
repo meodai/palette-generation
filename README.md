@@ -30,28 +30,28 @@ The pen (bottom right, or `e`) opens the slide's source. `⌘S` renders it and
 writes it back to `src/slides/`, so an edit made on stage is a real commit.
 While it is open the deck shrinks and the slide scrolls. `esc` closes.
 
-Keys: `→ space j` next · `← k` previous · `home` `end` · `e` edit · `c` or `⌘I` colour
+Keys: `→ space j` next · `← k` previous · `home` `end` · `e` edit · `c` or `⌘I` color
 inspector · `i` invert the deck · `?` help. None of them fire while the editor
 has focus.
 
-## The colour inspector
+## The color inspector
 
 The cube next to the pen (or `c`, or `⌘I` from anywhere including the editor) opens a 3D view of the current slide's
-colours inside a wireframe of the sRGB gamut, in a chosen solid: oklab, oklch
+colors inside a wireframe of the sRGB gamut, in a chosen solid: oklab, oklch
 (a terrain — hue round, lightness outward, chroma up, so the cusps are
 mountains), rgb, hsl or hsv (both polar).
 Drag to orbit, scroll to zoom. The palette is also drawn as a path, in the
 order it was registered, because that is what a palette is.
 
-A slide registers its colours from its script:
+A slide registers its colors from its script:
 
 ```js
 colorDebug(colors, { model: 'oklch' });   // model optional, defaults to oklab
 ```
 
-It returns the colours untouched, so it slots inline: `swatches(colorDebug(five))`.
+It returns the colors untouched, so it slots inline: `swatches(colorDebug(five))`.
 The model is the one the inspector opens in for that slide; the dropdown can
-change it. Colours can be CSS strings or the toolkit's `{ h, c, l }` triples.
+change it. Colors can be CSS strings or the toolkit's `{ h, c, l }` triples.
 The wireframe is one drawing for every model — a grid on the six faces of the
 RGB cube, each vertex pushed through the model's transform — which is what
 bends it into the bicone, the cone, or the OKLab blob.
@@ -69,7 +69,7 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `reseed()` | new seed for the whole deck; what a "reroll" button calls |
 | `rndInt(a, b)` · `pick(list)` · `shuffle(list)` | |
 | `lerp(t, a, b)` · `clamp(v, min, max)` | |
-| `oklch({h, c, l})` · `hsl({h, c, l})` · `okhsl({h, c, l})` | the same normalised colour, three solids (`okhsl` via `src/okhsl.js`, Ottosson's reference) |
+| `oklch({h, c, l})` · `hsl({h, c, l})` · `okhsl({h, c, l})` | the same normalised color, three solids (`okhsl` via `src/okhsl.js`, Ottosson's reference) |
 | `mix(a, b, t, space?)` | `color-mix`, in oklab unless told otherwise |
 | `rybHue(angle)` | an Itten RYB angle, remapped so a screen can draw it |
 | `spacing(deg?)` | read or set the deck-wide max hue spacing (slide 15's slider) |
@@ -84,9 +84,9 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `gradient(colors, {angle, target, space})` | paint as one gradient |
 | `wheel(items, target?)` | outline circle, one dot per hue, into `[data-wheel]` |
 | `stage(name?)` | find or create `[data-<name>]` in the slide |
-| `colorDebug(colors, {model?})` | register this slide's colours for the inspector; returns them |
+| `colorDebug(colors, {model?})` | register this slide's colors for the inspector; returns them |
 
-Colours are `{ h: 0–360, c: 0–1, l: 0–1 }` throughout, so the same triple can be
+Colors are `{ h: 0–360, c: 0–1, l: 0–1 }` throughout, so the same triple can be
 handed to `oklch()` or `hsl()` — which is the whole argument of slide 26.
 
 The same names are mirrored on `window`, so they work from the devtools console

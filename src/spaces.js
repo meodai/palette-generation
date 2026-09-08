@@ -1,5 +1,5 @@
 /**
- * Where a colour sits in each solid the inspector can show. Every model maps
+ * Where a color sits in each solid the inspector can show. Every model maps
  * an sRGB triple (0–1) to a point in a unit cube centred on the origin, y up,
  * so the same scene code draws all of them. Polar models put lightness on y
  * and hue round it.
