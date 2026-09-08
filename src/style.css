@@ -479,6 +479,12 @@ main[data-slide] {
   transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
 }
 
+/* speaker notes on the slide: a step smaller than the body — they are for
+   reading afterwards, not for the room. The notes window sizes its own. */
+:where([data-slide]) [data-notes] {
+  font-size: var(--step--1);
+}
+
 /* speaker notes: <section data-notes> lives in the slide, and leaves the
    screen while a notes window is open on the other display */
 :root[data-notes-away] [data-slide] [data-notes] {
