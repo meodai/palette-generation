@@ -1,4 +1,6 @@
 import { okhslToRgb } from './okhsl.js';
+import { rybHsl2rgb } from 'rybitten';
+import { cubes } from 'rybitten/cubes';
 import { registerColors } from './inspect-registry.js';
 
 /**
@@ -80,6 +82,14 @@ export function toolkit(slide) {
   const hsl = ({ h, c, l }) => `hsl(${h.toFixed(1)} ${(c * 100).toFixed(1)}% ${(l * 100).toFixed(1)}%)`;
   /** …and a third solid for the same triple. Ottosson's OKHSL, via okhsl.js. */
   const okhsl = ({ h, c, l }) => `rgb(${okhslToRgb(h, c, l).join(' ')})`;
+
+  /**
+   * RYBitten: the same {h, c, l}, read as a paint wheel. `cube` is one of the
+   * historical color cubes from `cubes` (Itten by default) — every wheel from
+   * Harris 1766 to a 1982 Marvel newsprint chart, as eight corner colors.
+   */
+  const ryb = ({ h, c, l }, cube) =>
+    `rgb(${rybHsl2rgb([h, c, l], cube ? { cube } : undefined).map((v) => Math.round(v * 255)).join(' ')})`;
 
   /** Blend two CSS colors in any space color-mix() knows. */
   const mix = (a, b, t, space = 'oklab') =>
@@ -312,7 +322,7 @@ export function toolkit(slide) {
     rnd, rndInt, pick, shuffle, reseed, rewind,
     colorDebug,
     lerp, clamp,
-    oklch, hsl, okhsl, mix, rybHue, spacing, shuffled, hues, ramp, randomRamp, stretch,
+    oklch, hsl, okhsl, ryb, rybHsl2rgb, cubes, mix, rybHue, spacing, shuffled, hues, ramp, randomRamp, stretch,
     rgb, luma, lightness, grey, toOklch,
     stage, swatches, gradient, wheel,
   };
