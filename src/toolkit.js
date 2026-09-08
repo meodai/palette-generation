@@ -84,6 +84,13 @@ export function toolkit(slide) {
   /** …and a third solid for the same triple. Ottosson's OKHSL, via okhsl.js. */
   const okhsl = ({ h, c, l }) => `rgb(${okhslToRgb(h, c, l).join(' ')})`;
 
+  /** HSV / HSB — the picker's square: c is saturation, l is value (brightness). CSS has no hsv(), so via hsl. */
+  const hsv = ({ h, c, l }) => {
+    const light = l * (1 - c / 2);
+    const sat = light === 0 || light === 1 ? 0 : (l - light) / Math.min(light, 1 - light);
+    return hsl({ h, c: sat, l: light });
+  };
+
   /**
    * RYBitten: the same {h, c, l}, read as a paint wheel. `cube` is one of the
    * historical color cubes from `cubes` (Itten by default) — every wheel from
@@ -325,6 +332,19 @@ export function toolkit(slide) {
    * oklab, oklch, rgb, hsl or hsv — and defaults to oklab. Returns the colors
    * untouched, so it can sit inline in a chain.
    */
+  /**
+   * A small inspector, mounted into `target` — the same 3D view the cube opens,
+   * showing this slide's colorDebug() colors. Returns { close(), dispose() }.
+   * three.js loads on first use, so the promise resolves once it is drawing.
+   */
+  const inspect3d = async (target, { model } = {}) => {
+    const { Inspector } = await import('./inspector.js');
+    const view = new Inspector({ body: target, preview: true, model: model ?? 'oklab' });
+    view.open(slide.id, '');
+    if (model) view.model = model;
+    return view;
+  };
+
   const colorDebug = (colors, { model = 'oklab' } = {}) => {
     const resolved = colors.map((color) => {
       const css = toCss(color);
@@ -337,9 +357,9 @@ export function toolkit(slide) {
 
   return {
     rnd, rndInt, pick, shuffle, reseed, rewind,
-    colorDebug,
+    colorDebug, inspect3d,
     lerp, clamp,
-    oklch, hsl, okhsl, ryb, rybHsl2rgb, cubes, mix, rybHue, spacing, shuffled, hues, ramp, randomRamp, stretch,
+    oklch, hsl, hsv, okhsl, ryb, rybHsl2rgb, cubes, mix, rybHue, spacing, shuffled, hues, ramp, randomRamp, stretch,
     rgb, luma, lightness, grey, toOklch, fit,
     stage, swatches, gradient, wheel,
   };

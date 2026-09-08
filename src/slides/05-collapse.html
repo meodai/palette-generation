@@ -1,0 +1,143 @@
+<main data-slide>
+  <h2>Most models <em>collapse</em> towards black</h2>
+
+  <div class="shapes">
+    <figure>
+      <svg viewBox="0 0 100 100" data-shape="cylinder"></svg>
+      <figcaption><b>what the numbers say</b> — a cylinder: every lightness, the full width.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 100 100" data-shape="cone"></svg>
+      <figcaption><b>HSB</b> from the side — a cone. One point at black</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 100 100" data-shape="bicone"></svg>
+      <figcaption><b>HSL</b> from the side — a double cone. A point at black <em>and</em> at white</figcaption>
+    </figure>
+  </div>
+
+  <label class="control">
+    <span>hue</span>
+    <input type="range" min="0" max="359" value="0" />
+    <output></output>
+  </label>
+
+  <p class="note">
+    One half of each shape, axis to edge, stretched square; the other half is
+    the complement. Rungs at equal lightness steps: their length is the range
+    you actually get. Near black every model pinches to a point — <mark>a
+    hundred coordinates, a handful of colors you can tell apart</mark>. The
+    numbers promise a range the shape does not deliver.
+  </p>
+
+  <style>
+    :scope { --h: 0; }
+
+    h2 { max-width: none; }
+
+    .shapes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-m);
+      width: min(100%, 44em);
+    }
+
+    figure { margin: 0; display: grid; gap: var(--space-2xs); }
+
+    svg { display: block; width: 100%; height: auto; }
+
+    figcaption { font-size: var(--step--1); color: var(--muted); }
+    figcaption b { font-weight: var(--weight-medium); color: var(--onBg); }
+    figcaption em { color: var(--highlight); font-style: normal; }
+
+    .rung { stroke: var(--bg); stroke-width: 0.8; opacity: 0.9; }
+    .outline { fill: none; stroke: var(--onBg); stroke-width: 0.5; }
+
+    .control {
+      display: flex;
+      align-items: center;
+      gap: var(--space-s);
+      font-size: var(--step--1);
+      color: var(--muted);
+    }
+
+    .control input { width: min(20em, 45vw); accent-color: var(--highlight); }
+
+    output {
+      min-width: 3em;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--onBg);
+    }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    const slider = $slide.querySelector('input');
+    const readout = $slide.querySelector('output');
+    const RUNGS = 10;
+
+    // Half of each shape, cut through the axis: x is saturation (axis on the
+    // left = grey/white, edge on the right = the pure hue), y is lightness or
+    // brightness (bottom = black). The other half would be the complementary
+    // hue, so it is left out and this half is stretched to a square. The fill
+    // is one gradient per shape; the shape itself is a clip path.
+    const SHAPES = {
+      // the cylinder: what the coordinates claim — every lightness, the full width
+      cylinder: { path: 'M5 5 H95 V95 H5 Z', width: (t) => 1 },
+      // HSB: a cone — brightness 0 is a single point on the axis
+      cone: { path: 'M5 5 H95 L5 95 Z', width: (t) => 1 - t },
+      // HSL: a double cone — lightness 0 and lightness 1 are single points on the axis
+      bicone: { path: 'M5 5 L95 50 L5 95 Z', width: (t) => 1 - Math.abs(2 * t - 1) },
+    };
+
+    function draw() {
+      const h = slider.value;
+      $slide.style.setProperty('--h', h);
+      readout.textContent = `${String(h).padStart(3, '0')}°`;
+      const hue = `hsl(${h} 100% 50%)`;
+
+      // The shapes sampled, 10 × 10 each: the cone (HSB) and the double cone (HSL).
+      // The cylinder is the same HSL numbers — the inspector shows where they really land.
+      const grid = (space) => Array.from({ length: 100 }, (_, i) => space({ h: +h, c: (i % 10) / 9, l: Math.floor(i / 10) / 9 }));
+      colorDebug([...grid(hsv), ...grid(hsl)], { model: 'hsl' });
+
+      for (const [name, { path, width }] of Object.entries(SHAPES)) {
+        const svg = $slide.querySelector(`[data-shape="${name}"]`);
+        const id = `${$slide.id}-${name}`;
+        const vertical = name === 'bicone'
+          ? `<stop offset="0" stop-color="#fff" /><stop offset="0.5" stop-color="#fff" stop-opacity="0" /><stop offset="0.5" stop-color="#000" stop-opacity="0" /><stop offset="1" stop-color="#000" />`
+          : `<stop offset="0" stop-color="#000" stop-opacity="0" /><stop offset="1" stop-color="#000" />`;
+        const centre = name === 'bicone' ? '#808080' : '#fff';
+
+        // t runs top (0) to bottom (1); a rung runs from the axis out to the shape's edge there.
+        const rungs = Array.from({ length: RUNGS - 1 }, (_, i) => {
+          const t = (i + 1) / RUNGS;
+          const y = 5 + t * 90;
+          return `<line class="rung" x1="5" x2="${(5 + 90 * width(t)).toFixed(2)}" y1="${y}" y2="${y}" />`;
+        }).join('');
+
+        svg.innerHTML = `
+          <defs>
+            <clipPath id="${id}-clip"><path d="${path}" /></clipPath>
+            <linearGradient id="${id}-sat" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0.05" stop-color="${centre}" /><stop offset="0.95" stop-color="${hue}" />
+            </linearGradient>
+            <linearGradient id="${id}-val" x1="0" x2="0" y1="0" y2="1">${vertical}</linearGradient>
+          </defs>
+          <g clip-path="url(#${id}-clip)">
+            <rect x="0" y="0" width="100" height="100" fill="url(#${id}-sat)" />
+            <rect x="0" y="0" width="100" height="100" fill="url(#${id}-val)" />
+            ${rungs}
+          </g>
+          <path class="outline" d="${path}" />`;
+      }
+    }
+
+    slider.addEventListener('input', draw);
+    draw();
+
+    return () => slider.removeEventListener('input', draw);
+  </script>
+</main>

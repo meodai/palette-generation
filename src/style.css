@@ -437,10 +437,17 @@ main[data-slide] {
   transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
 }
 
+/* a slide can ask for the chrome to stand out — the "every slide is live" slide does */
+:root[data-spotlight] .chrome__pen,
+:root[data-spotlight] .chrome__count,
+:root[data-spotlight] .steps button {
+  color: var(--onBg);
+}
+
 .chrome__pen:hover,
 .chrome__pen[aria-pressed='true'] {
-  color: var(--highlight);
-  background: var(--faint);
+  color: var(--bg);
+  background: var(--onBg);
 }
 
 .chrome__pen svg {

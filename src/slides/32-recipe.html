@@ -24,7 +24,7 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
       <code>random</code>, <code>shuffle</code>, <code>min</code>, <code>max</code>,
       <code>round</code>, <code>floor</code> are p5. <code>chroma.oklch</code> and
       <code>chroma.mix</code> are the chroma.js you already load;
-      <code>scaleSpreadArray</code> is the stretch from slide 17, in this slide's
+      <code>scaleSpreadArray</code> is the stretch from slide 19, in this slide's
       source. <mark>Three to five random stops, ramped, stretched</mark> —
       <code>palette(3)</code> for 3.6, <code>palette(40)</code> for a gradient.
     </p>
@@ -85,7 +85,7 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
   </style>
 
   <script>
-    // scaleSpreadArray, as it is in farbvelo — the stretch from slide 17.
+    // scaleSpreadArray, as it is in farbvelo — the stretch from slide 19.
     // Not on the slide, so it fits; it is here for whoever opens the source.
     function scaleSpreadArray(initial, n, fill = (t, a, b) => mix(a, b, t)) {
       const chunks = initial.map((v) => [v]);

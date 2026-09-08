@@ -1,5 +1,5 @@
 <main data-slide>
-  <h2>But I asked for one Lightness!</h2>
+  <h2>OKHSL, my <em>favourite</em></h2>
 
   <div class="stack">
     <div data-strip data-flush class="row"></div>
@@ -8,8 +8,12 @@
   </div>
 
   <p class="note">
-    The measured lightness runs from <mark data-low></mark>
-    to <mark data-high></mark>. HSL's L is a coordinate, not a brightness.
+    Ottosson's picker space: HSL's three handles, on OKLab's lightness. The same
+    six, <code>s: 1</code>, one lightness. Saturation is <mark>relative to the
+    gamut</mark>, so 100% exists for every hue — no chroma to cap for blue.
+    Measured: <mark data-low></mark> to <mark data-high></mark>.
+    <mark>HSL's ease, OKLCH's honesty.</mark>
+    <a href="https://codepen.io/meodai/full/JxgjNX" target="_blank" rel="noopener">See it on CodePen</a>.
   </p>
 
   <style>
@@ -26,17 +30,20 @@
 
     .numbers > * { flex: 1; text-align: center; }
 
-    .note { max-width: 38em; color: var(--muted); }
+    .note { max-width: 40em; color: var(--muted); }
   </style>
 
   <script>
-    // Exactly the six from slide 4: only H moves.
-    const colors = Array.from({ length: 6 }, (_, i) => hsl({ h: i * 60, c: 0.9, l: 0.5 }));
+    // Slide 2's six, by their OK hue (OKHSL shares OKLCH's hue angles).
+    const hues6 = Array.from({ length: 6 }, (_, i) => toOklch(hsl({ h: i * 60, c: 0.9, l: 0.5 })).h);
 
-    swatches(colorDebug(colors, { model: 'hsl' }), $slide.querySelector('.row'));
+    // Full saturation for every hue. In OKHSL that is always in gamut — the
+    // space does the reasoning slide 8 had to do by hand.
+    const colors = hues6.map((h) => okhsl({ h, c: 1, l: 0.8 }));
+
+    swatches(colorDebug(colors, { model: 'oklch' }), $slide.querySelector('.row'));
     swatches(colors.map(grey), $slide.querySelector('#greys'));
 
-    // lightness() reads OKLab L back from the rendered pixel — no library needed.
     const measured = colors.map((color) => Math.round(lightness(color) * 100));
 
     $slide.querySelector('.numbers').replaceChildren(
@@ -47,7 +54,6 @@
       }),
     );
 
-    // Never let the prose claim a number the demo did not just produce.
     $slide.querySelector('[data-low]').textContent = `${Math.min(...measured)}%`;
     $slide.querySelector('[data-high]').textContent = `${Math.max(...measured)}%`;
   </script>

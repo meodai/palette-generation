@@ -65,5 +65,10 @@
     const shot = $slide.querySelector('img');
     if (shot.complete && shot.naturalWidth) shot.dataset.loaded = '';
     shot.addEventListener('load', () => { shot.dataset.loaded = ''; });
+
+    // The picker's square, sampled: a 10 × 10 grid of saturation × brightness at one hue.
+    const h = rnd(360);
+    const grid = Array.from({ length: 100 }, (_, i) => hsv({ h, c: (i % 10) / 9, l: Math.floor(i / 10) / 9 }));
+    colorDebug(grid, { model: 'hsv' });
   </script>
 </main>

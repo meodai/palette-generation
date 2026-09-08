@@ -18,9 +18,15 @@ export class Inspector {
   #panel; #body; #select; #title; #empty;
   #renderer; #scene; #camera; #controls;
   #group = null; #id = null; #running = false; #shown = null;
+  #preview = false; #model = 'oklab';
 
-  constructor({ panel, body, select, title, empty, closeButton }) {
-    this.#panel = panel; this.#body = body; this.#select = select; this.#title = title; this.#empty = empty;
+  /**
+   * `preview: true` mounts a small self-contained view into `body` — no panel
+   * chrome, no deck shrink — for a slide that wants to show the inspector inline.
+   */
+  constructor({ panel, body, select, title, empty, closeButton, preview = false, model = 'oklab' }) {
+    this.#panel = panel ?? body; this.#body = body; this.#select = select; this.#title = title; this.#empty = empty;
+    this.#preview = preview; this.#model = model;
 
     this.#renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -41,8 +47,8 @@ export class Inspector {
 
     new ResizeObserver(() => this.#resize()).observe(body);
 
-    select.addEventListener('input', () => this.#build());
-    closeButton.addEventListener('click', () => this.close());
+    select?.addEventListener('input', () => this.#build());
+    closeButton?.addEventListener('click', () => this.close());
 
     // A slide that calls colorDebug() again (a slider, a reroll) redraws the
     // view live. Coalesced to one rebuild per frame, so dragging stays smooth.
@@ -58,7 +64,7 @@ export class Inspector {
 
   open(id, file) {
     this.#panel.hidden = false;
-    document.documentElement.dataset.inspecting = '';
+    if (!this.#preview) document.documentElement.dataset.inspecting = '';
     this.show(id, file);
     this.#resize();
     this.#running = true;
@@ -68,26 +74,45 @@ export class Inspector {
   /** Point the inspector at a slide; adopts that slide's default model. */
   show(id, file) {
     this.#id = id;
-    this.#title.textContent = file;
+    if (this.#title) this.#title.textContent = file;
     const entry = getColors(id);
-    if (entry?.model && MODELS[entry.model]) this.#select.value = entry.model;
+    if (entry?.model && MODELS[entry.model]) {
+      if (this.#select) this.#select.value = entry.model;
+      else this.#model = entry.model;
+    }
     this.#build();
   }
 
   close() {
     this.#panel.hidden = true;
-    delete document.documentElement.dataset.inspecting;
+    if (!this.#preview) delete document.documentElement.dataset.inspecting;
     this.#running = false;
   }
 
+  /** Pick the model by name — what the dropdown does, for a view without one. */
+  set model(name) {
+    if (this.#select) this.#select.value = name; else this.#model = name;
+    this.#build();
+  }
+
+  /** Tear a preview down for good: stop rendering, free the GPU context. */
+  dispose() {
+    this.close();
+    this.#controls.dispose();
+    this.#renderer.dispose();
+    this.#renderer.domElement.remove();
+  }
+
   #build() {
-    const model = MODELS[this.#select.value] ?? MODELS.oklab;
+    const model = MODELS[this.#select?.value ?? this.#model] ?? MODELS.oklab;
 
     // A model can ask for its own viewpoint; honour it when the model changes,
     // but leave the camera alone when only the slide does.
     if (model !== this.#shown) {
       const [x, y, z] = model.view ?? [1.3, 0.9, 1.6];
-      this.#camera.position.set(x * SIZE, y * SIZE, z * SIZE);
+      // a preview box is small and nearly square — stand further back so the solid fits
+      const back = this.#preview ? 1.45 : 1;
+      this.#camera.position.set(x * SIZE * back, y * SIZE * back, z * SIZE * back);
       this.#controls.update();
       this.#shown = model;
     }
@@ -102,7 +127,7 @@ export class Inspector {
     const group = new THREE.Group();
     group.add(gamut(model, ink));
 
-    this.#empty.hidden = Boolean(entry?.colors.length);
+    if (this.#empty) this.#empty.hidden = Boolean(entry?.colors.length);
 
     if (entry) {
       const points = entry.colors.map(({ rgb }) => new THREE.Vector3(...model.place(rgb)).multiplyScalar(SIZE));
@@ -118,7 +143,8 @@ export class Inspector {
         group.add(dot);
       });
 
-      if (points.length > 1) {
+      // The path is for palettes; a sampled grid is clearer as dots alone.
+      if (points.length > 1 && points.length <= 16) {
         group.add(new THREE.Line(
           new THREE.BufferGeometry().setFromPoints(points),
           new THREE.LineBasicMaterial({ color: ink, transparent: true, opacity: 0.45 }),

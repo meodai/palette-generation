@@ -162,6 +162,10 @@
       $slide.style.setProperty('--h', slider.value);
       readout.textContent = `${h}°`;
       $slide.querySelectorAll('[data-h]').forEach((el) => { el.textContent = h; });
+
+      // Both squares sampled, 10 × 10 each: HSB's saturation × brightness, HSL's saturation × lightness.
+      const grid = (space) => Array.from({ length: 100 }, (_, i) => space({ h: +h, c: (i % 10) / 9, l: Math.floor(i / 10) / 9 }));
+      colorDebug([...grid(hsv), ...grid(hsl)], { model: 'hsl' });
     }
 
     slider.addEventListener('input', draw);

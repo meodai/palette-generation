@@ -2,6 +2,10 @@
 
 CMU 60-212, 9 September. Vite, no framework.
 
+The talk teaches the color observations I have gathered while making my art
+and tools — by building a simple palette generator, live, from three hues on
+a ring to a finished ramp.
+
 ```
 npm run dev      # localhost:5173, edits write back to src/slides/
 npm run build    # static deck in dist/
@@ -71,12 +75,12 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `reseed()` | new seed for the whole deck; what a "reroll" button calls |
 | `rndInt(a, b)` · `pick(list)` · `shuffle(list)` | |
 | `lerp(t, a, b)` · `clamp(v, min, max)` | |
-| `oklch({h, c, l})` · `hsl({h, c, l})` · `okhsl({h, c, l})` | the same normalised color, three solids (`okhsl` via `src/okhsl.js`, Ottosson's reference) |
+| `oklch({h, c, l})` · `hsl({h, c, l})` · `hsv({h, c, l})` · `okhsl({h, c, l})` | the same normalised color, three solids (`okhsl` via `src/okhsl.js`, Ottosson's reference) |
 | `mix(a, b, t, space?)` | `color-mix`, in oklab unless told otherwise |
 | `rybHue(angle)` | an Itten RYB angle, remapped so a screen can draw it |
 | `ryb({h, c, l}, cube?)` · `rybHsl2rgb` · `cubes` | the same color through [RYBitten](https://rybitten.space/): `cubes` is its Map of historical paint wheels, `cubes.get('munsell').cube` picks one |
-| `spacing(deg?)` | read or set the deck-wide max hue spacing (slide 15's slider) |
-| `shuffled(on?)` | read or set the deck-wide pick mode: first few of the ring, or a random subset (slide 16's toggle) |
+| `spacing(deg?)` | read or set the deck-wide max hue spacing (slide 17's slider) |
+| `shuffled(on?)` | read or set the deck-wide pick mode: first few of the ring, or a random subset (slide 18's toggle) |
 | `rewind()` | rewind the random stream to the current seed — re-pick without re-rolling |
 | `hues(count, maxSpacing?)` | a random **subset** of an evenly spaced ring, back in wheel order; defaults to `spacing()` |
 | `randomRamp(count, maxSpacing)` | `ramp(hues(…))` — farbvelo's `rmp()` in one call |
@@ -89,9 +93,10 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `wheel(items, target?)` | outline circle, one dot per hue, into `[data-wheel]`; an item can be a hue, `{h, c, l}`, `{h, color}` (any CSS color) or `{h, hollow: true}` |
 | `stage(name?)` | find or create `[data-<name>]` in the slide |
 | `colorDebug(colors, {model?})` | register this slide's colors for the inspector; returns them |
+| `inspect3d(target, {model?})` | mount a small live inspector into `target` (async; returns the view — `close()`, `dispose()`) |
 
 Colors are `{ h: 0–360, c: 0–1, l: 0–1 }` throughout, so the same triple can be
-handed to `oklch()` or `hsl()` — which is the whole argument of slide 26.
+handed to `oklch()` or `hsl()` — which is the whole argument of slide 30.
 
 The same names are mirrored on `window`, so they work from the devtools console
 mid-lecture too.
@@ -100,7 +105,7 @@ mid-lecture too.
 
 `rnd()` is a seeded stream, rewound to the deck's seed every time a slide is
 entered. Slides that draw in the same order therefore get the same answer: the
-three hues you pick on slide 15 are the same three that get stretched, named
+three hues you pick on slide 17 are the same three that get stretched, named
 as vomit, shuffled, measured, ramped and finally handed over in the recipe —
 so the sequence reads as one palette being fixed, not eight unrelated demos.
 
