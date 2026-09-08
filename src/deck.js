@@ -46,6 +46,10 @@ export class Deck {
     return this.#entries[this.#index];
   }
 
+  at(index) {
+    return this.#entries[index] ?? null;
+  }
+
   go(next) {
     const target = Math.max(0, Math.min(this.count - 1, next));
     if (target === this.#index) return;

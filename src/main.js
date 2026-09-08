@@ -14,6 +14,7 @@ const el = {
   bar: document.getElementById('progressBar'),
   pen: document.getElementById('pen'),
   cube: document.getElementById('cube'),
+  notes: document.getElementById('notes'),
   peek: document.getElementById('peek'),
   peekBody: document.getElementById('peekBody'),
   previous: document.getElementById('previous'),
@@ -120,6 +121,61 @@ async function closePeek() {
 el.cube.addEventListener('pointerenter', openPeek);
 el.cube.addEventListener('pointerleave', closePeek);
 
+// ------------------------------------------------------------ speaker notes -
+
+/**
+ * Speaker notes live in each slide as <section data-notes>. `s` opens
+ * notes.html in a second window for the other screen; the two tabs talk over a
+ * BroadcastChannel — same origin, no server. While a notes window is alive
+ * (it heartbeats), the deck hides its notes so the room sees only the slide.
+ */
+const channel = new BroadcastChannel('palette-generation');
+let notesAlive = null;
+
+const slideTitle = (entry) => entry?.el.querySelector('h1, h2')?.textContent.replace(/\s+/g, ' ').trim() ?? '';
+
+function broadcast() {
+  const entry = deck.current;
+  channel.postMessage({
+    type: 'slide',
+    index: deck.index,
+    count: deck.count,
+    title: slideTitle(entry),
+    notes: entry.el.querySelector('[data-notes]')?.innerHTML ?? '',
+    next: slideTitle(deck.at(deck.index + 1)),
+  });
+}
+
+function notesSeen() {
+  document.documentElement.dataset.notesAway = '';
+  clearTimeout(notesAlive);
+  notesAlive = setTimeout(notesGone, 2500);
+}
+
+function notesGone() {
+  clearTimeout(notesAlive);
+  delete document.documentElement.dataset.notesAway;
+}
+
+channel.addEventListener('message', ({ data }) => {
+  if (data.type === 'hello') { notesSeen(); broadcast(); }
+  else if (data.type === 'beat') notesSeen();
+  else if (data.type === 'bye') notesGone();
+  else if (data.type === 'next') { deck.next(); render(); }
+  else if (data.type === 'previous') { deck.previous(); render(); }
+  else if (data.type === 'go') { deck.go(data.index); render(); }
+});
+
+// Notes that a script fills in (measured numbers) reach the other screen too.
+const notesWatcher = new MutationObserver(() => broadcast());
+
+function openNotes() {
+  const url = new URL('notes.html', document.baseURI);
+  window.open(url, 'palette-generation-notes');
+}
+
+el.notes.addEventListener('click', openNotes);
+
 el.total.textContent = String(deck.count);
 deck.go(indexFromHash());
 render();
@@ -128,6 +184,11 @@ render();
 
 function render() {
   const human = deck.index + 1;
+
+  broadcast();
+  notesWatcher.disconnect();
+  const notes = deck.current.el.querySelector('[data-notes]');
+  if (notes) notesWatcher.observe(notes, { subtree: true, childList: true, characterData: true });
 
   el.current.textContent = String(human);
   el.bar.style.width = `${(human / deck.count) * 100}%`;
@@ -203,6 +264,7 @@ addEventListener('keydown', (event) => {
   else if (event.key === 'End') deck.go(deck.count - 1);
   else if (event.key === 'e') openEditor();
   else if (event.key === 'c') inspectorIsOpen() ? closeInspector() : openInspector();
+  else if (event.key === 's') openNotes();
   else if (event.key === 'i') document.documentElement.toggleAttribute('data-invert');
   else if (event.key === '?') el.help.hidden = !el.help.hidden;
   else return;

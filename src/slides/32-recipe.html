@@ -20,14 +20,16 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
   </div>
 
   <div class="foot">
-    <p class="note">
-      <code>random</code>, <code>shuffle</code>, <code>min</code>, <code>max</code>,
-      <code>round</code>, <code>floor</code> are p5. <code>chroma.oklch</code> and
-      <code>chroma.mix</code> are the chroma.js you already load;
-      <code>scaleSpreadArray</code> is the stretch from slide 19, in this slide's
-      source. <mark>Three to five random stops, ramped, stretched</mark> —
-      <code>palette(3)</code> for 3.6, <code>palette(40)</code> for a gradient.
-    </p>
+    <section data-notes>
+      <p class="note">
+        <code>random</code>, <code>shuffle</code>, <code>min</code>, <code>max</code>,
+        <code>round</code>, <code>floor</code> are p5. <code>chroma.oklch</code> and
+        <code>chroma.mix</code> are the chroma.js you already load;
+        <code>scaleSpreadArray</code> is the stretch from slide 19, in this slide's
+        source. <mark>Three to five random stops, ramped, stretched</mark> —
+        <code>palette(3)</code> for 3.6, <code>palette(40)</code> for a gradient.
+      </p>
+    </section>
     <button type="button">reroll</button>
   </div>
 
@@ -62,10 +64,13 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
       gap: var(--space-s) var(--space-m);
     }
 
-    .note {
+    [data-notes] {
       flex: 1;
       min-width: 20em;
       max-width: 40em;
+    }
+
+    .note {
       font-size: var(--step--2);
       color: var(--muted);
     }

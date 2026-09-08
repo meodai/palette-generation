@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes — Palette Generation</title>
+  </head>
+  <body>
+    <main class="notes">
+      <header class="notes__head">
+        <span class="notes__count" id="count">– / –</span>
+        <span class="notes__title" id="title"></span>
+        <button class="notes__timer" id="timer" type="button" title="click to reset">00:00</button>
+      </header>
+      <div class="notes__body" id="body">
+        <p class="notes__waiting">Waiting for the deck. Open it in another tab — same browser — and press <kbd>s</kbd>.</p>
+      </div>
+      <footer class="notes__foot">
+        <span>next: <span id="next">–</span></span>
+        <span class="notes__nav">
+          <button type="button" id="previous" aria-label="Previous slide">‹</button>
+          <button type="button" id="next-button" aria-label="Next slide">›</button>
+        </span>
+      </footer>
+    </main>
+
+    <script type="module" src="/src/notes.js"></script>
+  </body>
+</html>

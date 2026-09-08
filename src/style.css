@@ -437,6 +437,12 @@ main[data-slide] {
   transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
 }
 
+/* speaker notes: <section data-notes> lives in the slide, and leaves the
+   screen while a notes window is open on the other display */
+:root[data-notes-away] [data-slide] [data-notes] {
+  display: none !important;
+}
+
 /* the inspector as a tooltip: drops in above the cube while it is hovered */
 .peek {
   position: fixed;
@@ -671,3 +677,82 @@ kbd {
     transition-duration: 0.001ms !important;
   }
 }
+
+
+/* ----------------------------------------------------------- notes window - */
+/* notes.html — the speaker's screen. Big type, nothing else. */
+.notes {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  padding: clamp(1rem, 3vmin, 2.5rem);
+  box-sizing: border-box;
+  gap: clamp(0.75rem, 2vmin, 1.5rem);
+}
+
+.notes__head,
+.notes__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5em 1.5em;
+  font-size: clamp(1rem, 1.2vw + 0.6rem, 1.5rem);
+  color: var(--muted);
+}
+
+.notes__count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+.notes__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--onBg);
+}
+
+.notes__body {
+  overflow: auto;
+  font-size: clamp(1.4rem, 1.6vw + 1rem, 2.6rem);
+  line-height: 1.45;
+  max-width: 34em;
+}
+
+.notes__body p { margin: 0 0 0.6em; }
+.notes__body mark { background: none; color: var(--highlight); }
+.notes__body code { font-family: var(--font-mono); font-size: 0.85em; }
+.notes__body a { color: inherit; }
+
+.notes__empty { color: var(--faint); }
+.notes__waiting { color: var(--muted); }
+
+.notes__timer {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--onBg);
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.notes__nav {
+  display: flex;
+  gap: 0.25em;
+}
+
+.notes__nav button {
+  width: 2.4em;
+  height: 2.4em;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  background: none;
+  color: var(--onBg);
+  font: inherit;
+  cursor: pointer;
+}
+
+.notes__nav button:hover { color: var(--bg); background: var(--onBg); }

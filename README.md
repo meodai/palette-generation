@@ -35,8 +35,20 @@ writes it back to `src/slides/`, so an edit made on stage is a real commit.
 While it is open the deck shrinks and the slide scrolls. `esc` closes.
 
 Keys: `→ space j` next · `← k` previous · `home` `end` · `e` edit · `c` or `⌘I` color
-inspector · `i` invert the deck · `?` help. None of them fire while the editor
+inspector · `s` speaker notes · `i` invert the deck · `?` help. None of them fire while the editor
 has focus.
+
+## Speaker notes
+
+Each slide keeps its prose in `<section data-notes>`. The notes icon (or `s`)
+opens `notes.html` in a second window — drag it to the laptop screen. It shows
+the current slide's title, its notes in large type, the next title, a timer,
+and its arrow keys drive the deck. The two tabs talk over a `BroadcastChannel`
+(same origin, no server, works on the static build). While a notes window is
+alive the deck hides every `[data-notes]`, so the room sees only the slide;
+close the window and the notes come back, so the published deck still reads
+on its own. Notes are sent as HTML, so marks, links and the numbers a slide's
+script fills in carry over live.
 
 ## The color inspector
 
