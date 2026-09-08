@@ -1,0 +1,116 @@
+<main data-slide>
+  <h2>Predictable <em>across</em> hues</h2>
+
+  <div class="pair">
+    <figure>
+      <div class="grid" id="a"></div>
+      <div class="spread" id="a-spread"></div>
+      <figcaption><code>hsl</code> — the same L, eight different brightnesses</figcaption>
+    </figure>
+    <figure>
+      <div class="grid" id="b"></div>
+      <div class="spread" id="b-spread"></div>
+      <figcaption><code>oklch</code> — the same L, one brightness</figcaption>
+    </figure>
+  </div>
+
+  <button type="button">reroll</button>
+
+  <p class="note">
+    Eight hues, the same six-step lightness walk in each row. Under every
+    column: how far the measured lightness drifts across the eight hues.
+    <mark>In OKLCH a number means the same thing whatever the hue</mark> — so
+    a ramp you tuned on one hue survives the reroll.
+  </p>
+
+  <style>
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-m);
+      width: min(100%, 48em);
+    }
+
+    figure { margin: 0; display: grid; gap: 2px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 2px;
+    }
+
+    .grid > * { aspect-ratio: 2.2 / 1; }
+
+    .spread {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 2px;
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+      text-align: center;
+      color: var(--muted);
+    }
+
+    figcaption { font-size: var(--step--1); color: var(--muted); }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      font-size: var(--step--1);
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    .note { max-width: 40em; color: var(--muted); }
+  </style>
+
+  <script>
+    const HUES = 8, STEPS = 6;
+    const button = $slide.querySelector('button');
+    const into = (id) => $slide.querySelector(id);
+
+    function draw() {
+      // Eight evenly spaced hues from a random start; one lightness walk for all of them.
+      const start = rnd(360);
+      const hues = Array.from({ length: HUES }, (_, i) => (start + (i * 360) / HUES) % 360);
+      const walk = Array.from({ length: STEPS }, (_, i) => lerp(i / (STEPS - 1), 0.2, 0.85));
+
+      // The same hue in both: HSL's angle converted. fit() keeps OKLCH inside sRGB.
+      const readings = [
+        [hsl, '#a', (h, l) => ({ h, c: 0.6, l })],
+        [oklch, '#b', (h, l) => fit({ h: toOklch(hsl({ h, c: 0.6, l: 0.55 })).h, c: 0.6, l })],
+      ];
+
+      const seen = [];
+      for (const [space, id, as] of readings) {
+        const rows = hues.map((h) => walk.map((l) => space(as(h, l))));
+        seen.push(...rows.flat());
+        swatches(rows.flat(), into(id));
+
+        // Per column: the measured lightness across the eight hues, min to max.
+        into(`${id}-spread`).replaceChildren(
+          ...walk.map((_, col) => {
+            const measured = rows.map((row) => lightness(row[col]) * 100);
+            const cell = document.createElement('span');
+            cell.textContent = `±${Math.round((Math.max(...measured) - Math.min(...measured)) / 2)}`;
+            return cell;
+          }),
+        );
+      }
+
+      colorDebug(seen, { model: 'oklch' });
+    }
+
+    const next = () => { reseed(); draw(); };
+
+    button.addEventListener('click', next);
+    draw();
+
+    return () => button.removeEventListener('click', next);
+  </script>
+</main>
