@@ -4,3 +4,6 @@ dist/
 
 # private correspondence about the lecture — never commit
 golan.md
+
+# speaker notes — local only
+OUTLINE.md

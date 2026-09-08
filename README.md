@@ -101,7 +101,7 @@ as vomit, shuffled, measured, ramped and finally handed over in the recipe —
 so the sequence reads as one palette being fixed, not eight unrelated demos.
 
 The catch is that it depends on **draw order**. Every slide from 15 (pick
-three) through 22 (ramp), and the recipe on 28, calls `hues(3)` as its first
+three) through 22 (ramp), and the recipe on 27, calls `hues(3)` as its first
 random act. Insert a `rnd()` before that in one of them and it drifts out of
 step with the others. And never call `reseed()` on slide *entry* — only from a
 reroll button — or entering that slide silently moves everyone else's palette.
@@ -120,7 +120,7 @@ restore it.
 
 ## Adding an image
 
-Drop files in `public/`; reference them as `/name.png`. Slide 6 uses
+Drop files in `public/`; reference them as `name.png` (relative — slides are raw HTML, so Vite cannot rewrite `/name.png` for the project page). Slide 6 uses
 `public/picker.png` and falls back to a dashed placeholder if it goes missing.
 
 See `OUTLINE.md` for the talk structure and timings, `golan.md` for context.
