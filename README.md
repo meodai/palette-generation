@@ -124,3 +124,10 @@ Drop files in `public/`; reference them as `name.png` (relative — slides are r
 `public/picker.png` and falls back to a dashed placeholder if it goes missing.
 
 See `OUTLINE.md` for the talk structure and timings, `golan.md` for context.
+
+## License
+
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — use, adapt and
+redistribute the slides and code, as long as you credit
+[David Aerne](https://github.com/meodai) and link back to this repository.
+See [LICENSE](LICENSE).

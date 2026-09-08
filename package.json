@@ -2,6 +2,7 @@
   "name": "palette-generation",
   "private": true,
   "version": "0.0.0",
+  "license": "CC-BY-4.0",
   "type": "module",
   "description": "Lecture slides: palette generation",
   "scripts": {

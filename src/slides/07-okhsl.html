@@ -37,7 +37,7 @@
     const hues6 = Array.from({ length: 6 }, (_, i) => toOklch(hsl({ h: i * 60, c: 0.9, l: 0.5 })).h);
 
     // Full saturation for every hue. In OKHSL that is always in gamut — the
-    // space does the reasoning slide 4 had to do by hand.
+    // space does the reasoning slide 6 had to do by hand.
     const colors = hues6.map((h) => okhsl({ h, c: 1, l: 0.8 }));
 
     swatches(colorDebug(colors, { model: 'oklch' }), $slide.querySelector('.row'));
