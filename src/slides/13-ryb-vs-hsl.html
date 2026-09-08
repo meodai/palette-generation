@@ -26,6 +26,10 @@
       width: min(100%, 46em);
     }
 
+    @media (max-width: 56em) {
+      .wheels { grid-template-columns: minmax(0, 1fr); }
+    }
+
     figure { margin: 0; display: grid; gap: var(--space-2xs); }
 
     .pair { display: flex; height: 9em; }

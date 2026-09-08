@@ -172,6 +172,21 @@ main[data-slide] {
   justify-items: stretch;
   column-gap: var(--space-xl);
 }
+/* Narrow window: the columns stack. !important so a slide's own :scope
+   columns give way too — the breakpoint is the deck's call, not the slide's. */
+@media (max-width: 56em) {
+  [data-slide][data-cols] {
+    grid-template-columns: minmax(0, 1fr) !important;
+    row-gap: var(--space-m);
+  }
+
+  /* stacked content can run taller than the window: scroll rather than clip */
+  main[data-slide] {
+    overflow: auto;
+    align-content: start;
+  }
+}
+
 [data-slide][data-cols] > :where(h1, h2, .full) {
   grid-column: 1 / -1;
 }

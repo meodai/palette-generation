@@ -28,6 +28,10 @@ fragment rooted in `<main data-slide>` and may carry its own `<style>` and
 - Add `data-invert` for a dark slide, `data-align="center"`, `data-cols` for two
   columns, `data-bleed` for no padding.
 
+Below 56em of viewport width, two-column slides (`data-cols`, and the
+`.pair`-style grids inside slides) stack into one column and a slide that
+grows taller than the window scrolls instead of clipping.
+
 ## Editing live
 
 The pen (bottom right, or `e`) opens the slide's source. `⌘S` renders it and

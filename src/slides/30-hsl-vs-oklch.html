@@ -34,6 +34,10 @@
       width: min(100%, 48em);
     }
 
+    @media (max-width: 56em) {
+      .pair { grid-template-columns: minmax(0, 1fr); }
+    }
+
     figure { margin: 0; display: grid; gap: 2px; }
     [data-strip] { height: 4.4em; gap: 2px; }
     .grey { height: 1.6em; }
