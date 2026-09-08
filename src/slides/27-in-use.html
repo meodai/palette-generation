@@ -1,0 +1,108 @@
+<main data-slide>
+  <h2>Perceptual — as long as nothing <em>touches</em></h2>
+
+  <div class="stage">
+    <figure>
+      <div class="isolated"><div></div><div></div><div></div></div>
+      <figcaption>equal, apart, on white — how every number in this talk was measured</figcaption>
+    </figure>
+    <figure>
+      <div class="composed">
+        <div class="mid"><div class="accent"></div></div>
+        <div class="accent accent--alone"></div>
+      </div>
+      <figcaption>in use — 60 · 30 · 10, touching. The two small squares are the same colour.</figcaption>
+    </figure>
+  </div>
+
+  <div class="controls"><button type="button">reroll</button></div>
+
+  <p class="note">
+    Nothing you make looks like the left side. On the right the big colour is
+    the surround and pushes the small ones away from itself — the same accent
+    reads as two colours. <mark><a href="https://colorandcontrast.com/#/simultaneous-contrast">Simultaneous contrast</a>, <a href="https://colorandcontrast.com/">the area
+    effect</a>, Albers.</mark> The spaces get you a palette that is right in isolation;
+    composition is the part your eyes do.
+  </p>
+
+  <style>
+    .stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-l);
+      width: min(100%, 46em);
+    }
+
+    h2 { max-width: none; }
+
+    figure { margin: 0; display: grid; gap: var(--space-2xs); }
+
+    .isolated {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-s);
+      height: 9em;
+    }
+
+    .composed {
+      position: relative;
+      height: 9em;
+      background: var(--a);
+    }
+
+    .mid {
+      position: absolute;
+      inset: 18% 12% 18% 40%;
+      background: var(--b);
+    }
+
+    .accent {
+      position: absolute;
+      width: 22%;
+      aspect-ratio: 1;
+      background: var(--c);
+    }
+
+    .mid .accent { left: 39%; top: 34%; width: 28%; }
+    .accent--alone { left: 9%; top: 36%; width: 14%; }
+
+    figcaption { color: var(--muted); font-size: var(--step--1); }
+
+    .controls { font-size: var(--step--1); }
+
+    button {
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 0.4em 1em;
+      background: none;
+      color: var(--onBg);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover { color: var(--highlight); border-color: var(--highlight); }
+
+    .note { max-width: 42em; color: var(--muted); }
+  </style>
+
+  <script>
+    const cells = $slide.querySelectorAll('.isolated > *');
+    const button = $slide.querySelector('button');
+
+    function draw() {
+      // A real palette from the ramp: darkest first, so it can be the surround.
+      const [a, b, c] = colorDebug(randomRamp(3).map(oklch), { model: 'oklch' });
+
+      [a, b, c].forEach((color, i) => { cells[i].style.background = color; });
+      $slide.style.setProperty('--a', a);
+      $slide.style.setProperty('--b', b);
+      $slide.style.setProperty('--c', c);
+    }
+
+    const next = () => { reseed(); draw(); };
+    button.addEventListener('click', next);
+    draw();
+
+    return () => button.removeEventListener('click', next);
+  </script>
+</main>
