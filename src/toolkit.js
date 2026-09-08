@@ -345,6 +345,22 @@ export function toolkit(slide) {
     return view;
   };
 
+  /**
+   * A QR code for `text`, drawn as SVG into `target` (default `[data-qr]`).
+   * The library's colors are stripped: the quiet zone is `.qr-light` (fill)
+   * and the modules are `.qr-dark` (stroke), so a slide can restyle them —
+   * black on white by default, whatever the slide's own colors are.
+   * The library loads on first use; the promise resolves with the target.
+   */
+  const qr = async (text, target = stage('qr'), { level = 'M', margin = 2 } = {}) => {
+    const { default: QRCode } = await import('qrcode');
+    const svg = await QRCode.toString(text, { type: 'svg', errorCorrectionLevel: level, margin });
+    target.innerHTML = svg
+      .replace(/<path fill="[^"]*"/, '<path class="qr-light"')
+      .replace(/<path stroke="[^"]*"/, '<path class="qr-dark"');
+    return target;
+  };
+
   const colorDebug = (colors, { model = 'oklab' } = {}) => {
     const resolved = colors.map((color) => {
       const css = toCss(color);
@@ -361,6 +377,6 @@ export function toolkit(slide) {
     lerp, clamp,
     oklch, hsl, hsv, okhsl, ryb, rybHsl2rgb, cubes, mix, rybHue, spacing, shuffled, hues, ramp, randomRamp, stretch,
     rgb, luma, lightness, grey, toOklch, fit,
-    stage, swatches, gradient, wheel,
+    stage, swatches, gradient, wheel, qr,
   };
 }

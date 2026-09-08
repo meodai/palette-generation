@@ -310,6 +310,17 @@ main[data-slide] {
   gap: 0;
 }
 
+/* qr() — an SVG QR code, sized by its box. Restyle .qr-light (the quiet
+   zone, a fill) and .qr-dark (the modules, a stroke) from the slide. */
+:where([data-slide]) [data-qr] svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+:where([data-slide]) .qr-light { fill: var(--white); }
+:where([data-slide]) .qr-dark { stroke: var(--black); }
+
 /* wheel() — a bare outline and one dot per hue */
 :where([data-slide]) [data-wheel] svg {
   display: block;

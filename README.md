@@ -105,6 +105,7 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `swatches(colors, target?)` | paint into `[data-strip]` |
 | `gradient(colors, {angle, target, space})` | paint as one gradient |
 | `wheel(items, target?)` | outline circle, one dot per hue, into `[data-wheel]`; an item can be a hue, `{h, c, l}`, `{h, color}` (any CSS color) or `{h, hollow: true}` |
+| `qr(text, target?, {level, margin})` | a QR code as SVG into `[data-qr]` (async, via `qrcode`); style `.qr-light` (fill) and `.qr-dark` (stroke) from the slide |
 | `stage(name?)` | find or create `[data-<name>]` in the slide |
 | `colorDebug(colors, {model?})` | register this slide's colors for the inspector; returns them |
 | `inspect3d(target, {model?})` | mount a small live inspector into `target` (async; returns the view — `close()`, `dispose()`) |
