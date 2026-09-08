@@ -36,10 +36,10 @@
     // Slide 2's six, by their OKLCH hue — HSL's 60° steps are not OKLCH's.
     const hues6 = Array.from({ length: 6 }, (_, i) => toOklch(hsl({ h: i * 60, c: 0.9, l: 0.5 })).h);
 
-    // One lightness, one chroma. The chroma is the largest every one of these
-    // hues can still reach at this lightness inside sRGB — go higher and the
-    // browser pulls blue back in, and it is no longer one chroma.
-    const colors = hues6.map((h) => oklch({ h, c: 0.35, l: 0.75 }));
+    // One lightness, one chroma. c here is chroma 0.128 — blue's ceiling at
+    // L 0.75 inside sRGB, the lowest of the six. Ask for more and the browser pulls
+    // that hue back in, and it is no longer one chroma. Change l, change this.
+    const colors = hues6.map((h) => oklch({ h, c: 0.32, l: 0.75 }));
 
     swatches(colorDebug(colors, { model: 'oklch' }), $slide.querySelector('.row'));
     swatches(colors.map(grey), $slide.querySelector('#greys'));
