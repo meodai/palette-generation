@@ -4,11 +4,13 @@
   <div class="wheel">
     <div class="ring" data-ring></div>
     <div class="disc" data-disc></div>
+    <svg class="split" viewBox="0 0 100 100" aria-hidden="true"></svg>
   </div>
 
   <div class="legend">
     <p><strong>Outer ring — RYB.</strong> Itten's wheel. The one from every color theory class, built out of how paint mixes.</p>
     <p><strong>Inner disc — HSL.</strong> Straight off the RGB cube. The one your code has.</p>
+    <p><strong>The line — warm / cold.</strong> Between yellow and yellow-green, between violet and red-violet. Straight on one wheel, bent on the other.</p>
     <section data-notes>
       <ol class="note">
         <li>They agree at red, at twelve o'clock</li> 
@@ -49,6 +51,27 @@
       inset: 25%;
     }
 
+    /* the split, drawn over both wheels; overflow so it can poke past the rim */
+    .split {
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      border-radius: 0;
+      pointer-events: none;
+    }
+
+    .split line {
+      stroke: var(--bg);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+    }
+
+    .split line.core {
+      stroke: var(--onBg);
+      stroke-width: 0.8;
+    }
+
 
     .legend {
       display: grid;
@@ -74,6 +97,24 @@
 
     $slide.querySelector('[data-ring]').style.background = conic(rybHue);
     $slide.querySelector('[data-disc]').style.background = conic((h) => h);
+
+    // The warm/cold split: between yellow and yellow-green (RYB 135°) and between
+    // violet and red-violet (RYB 315°) — a diameter on Itten's wheel. Mapped onto
+    // HSL the same two boundaries land at different angles, so the line kinks.
+    const SPLIT = [135, 315];
+    const point = (angle, r) => {
+      const a = ((angle - 90) * Math.PI) / 180;
+      return `${(50 + r * Math.cos(a)).toFixed(2)} ${(50 + r * Math.sin(a)).toFixed(2)}`;
+    };
+    const segment = (angle, r0, r1) => {
+      const [x1, y1] = point(angle, r0).split(' ');
+      const [x2, y2] = point(angle, r1).split(' ');
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />`.replace('<line', '<line class="halo"') +
+        `<line class="core" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />`;
+    };
+    $slide.querySelector('.split').innerHTML = SPLIT.map((angle) =>
+      segment(angle, 25, 56) + segment(rybHue(angle), 0, 25), // ring: RYB angle, past the rim · disc: the HSL angle
+    ).join('');
 
     // Both wheels, for the inspector: 24 RYB steps then 24 HSL steps.
     const steps = (hueAt) =>

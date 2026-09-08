@@ -83,7 +83,10 @@ export class Deck {
     this.slides[index] = entry.el;
 
     entry.el.hidden = !isCurrent;
-    if (isCurrent) this.#enter(entry);
+    if (isCurrent) {
+      this.#enter(entry);
+      this.#onChange?.(this); // the notes window and the chrome follow the new source
+    }
 
     return entry;
   }
