@@ -111,7 +111,7 @@ export class Inspector {
     if (model !== this.#shown) {
       const [x, y, z] = model.view ?? [1.3, 0.9, 1.6];
       // a preview box is small and nearly square — stand further back so the solid fits
-      const back = this.#preview ? 1.45 : 1;
+      const back = this.#preview ? 0.8 : 1;
       this.#camera.position.set(x * SIZE * back, y * SIZE * back, z * SIZE * back);
       this.#controls.update();
       this.#shown = model;

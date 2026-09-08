@@ -14,6 +14,8 @@ const el = {
   bar: document.getElementById('progressBar'),
   pen: document.getElementById('pen'),
   cube: document.getElementById('cube'),
+  peek: document.getElementById('peek'),
+  peekBody: document.getElementById('peekBody'),
   previous: document.getElementById('previous'),
   next: document.getElementById('next'),
   help: document.getElementById('help'),
@@ -59,6 +61,7 @@ let inspector = null;
 
 async function openInspector() {
   if (editorIsOpen()) editor.close();
+  if (peek) closePeek();
 
   if (!inspector) {
     const { Inspector } = await import('./inspector.js');
@@ -83,6 +86,39 @@ function closeInspector() {
 }
 
 const inspectorIsOpen = () => Boolean(inspector?.isOpen);
+
+/**
+ * Hovering the cube peeks: a small inspector drops in above it with the
+ * current slide's colors, in the slide's own model. Same class, preview mode.
+ */
+let peek = null;
+let peeking = false;
+
+async function peekView() {
+  if (!peek) {
+    const { Inspector } = await import('./inspector.js');
+    peek = new Inspector({ body: el.peekBody, preview: true });
+  }
+  return peek;
+}
+
+async function openPeek() {
+  if (inspectorIsOpen()) return;
+  peeking = true;
+  const view = await peekView();
+  if (!peeking || inspectorIsOpen()) return;
+  view.open(deck.current.id, '');
+  el.peek.dataset.open = '';
+}
+
+async function closePeek() {
+  peeking = false;
+  delete el.peek.dataset.open;
+  (await peekView()).close();
+}
+
+el.cube.addEventListener('pointerenter', openPeek);
+el.cube.addEventListener('pointerleave', closePeek);
 
 el.total.textContent = String(deck.count);
 deck.go(indexFromHash());

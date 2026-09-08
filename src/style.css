@@ -437,10 +437,33 @@ main[data-slide] {
   transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
 }
 
+/* the inspector as a tooltip: drops in above the cube while it is hovered */
+.peek {
+  position: fixed;
+  right: clamp(1rem, 2.5vmin, 2rem);
+  bottom: calc(clamp(1rem, 2.5vmin, 2rem) + 2.8rem + var(--editor-height));
+  z-index: 10;
+  width: 20rem;
+  height: 14rem;
+  padding: 0.4rem;
+  border: 2px solid var(--onBg);
+  background: var(--bg);
+  transform: translateY(0.6rem);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.25s var(--ease), opacity 0.25s var(--ease);
+}
+
+.peek[data-open] {
+  transform: none;
+  opacity: 1;
+}
+
+.peek__body { width: 100%; height: 100%; }
+.peek__body canvas { display: block; }
+
 /* a slide can ask for the chrome to stand out — the "every slide is live" slide does */
-:root[data-spotlight] .chrome__pen,
-:root[data-spotlight] .chrome__count,
-:root[data-spotlight] .steps button {
+:root[data-spotlight] :where(.chrome__pen, .chrome__count, .steps button) {
   color: var(--onBg);
 }
 
