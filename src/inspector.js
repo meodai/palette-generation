@@ -159,8 +159,13 @@ function gamut(model, ink) {
   for (const sweep of [0, 1, 2]) {
     const [a, b] = [0, 1, 2].filter((axis) => axis !== sweep);
     for (const va of [0, 1]) for (const vb of [0, 1]) {
+      // Stop a hair short of the corners. At exact black and white chroma is
+      // zero and hue is undefined, so a polar model would snap those ends to
+      // hue 0 — three edges converging on one point of the rim. Elsewhere the
+      // gap is a thousandth of an edge and invisible.
+      const EPS = 0.001;
       for (let j = 0; j < STEPS; j += 1) {
-        for (const t of [j / STEPS, (j + 1) / STEPS]) {
+        for (const t of [EPS + (j / STEPS) * (1 - 2 * EPS), EPS + ((j + 1) / STEPS) * (1 - 2 * EPS)]) {
           const rgb = [0, 0, 0];
           rgb[a] = va; rgb[b] = vb; rgb[sweep] = t;
           push(rgb);
