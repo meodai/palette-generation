@@ -152,6 +152,13 @@ addEventListener('keydown', (event) => {
     return;
   }
 
+  // ⌘I / Ctrl+I toggles the colour inspector from anywhere, editor included.
+  if ((event.metaKey || event.ctrlKey) && !event.altKey && event.key.toLowerCase() === 'i') {
+    event.preventDefault();
+    inspectorIsOpen() ? closeInspector() : openInspector();
+    return;
+  }
+
   if (isTyping(event.target) || event.metaKey || event.ctrlKey || event.altKey) return;
 
   if (NEXT.has(event.key)) deck.next();

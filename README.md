@@ -30,13 +30,13 @@ The pen (bottom right, or `e`) opens the slide's source. `⌘S` renders it and
 writes it back to `src/slides/`, so an edit made on stage is a real commit.
 While it is open the deck shrinks and the slide scrolls. `esc` closes.
 
-Keys: `→ space j` next · `← k` previous · `home` `end` · `e` edit · `c` colour
+Keys: `→ space j` next · `← k` previous · `home` `end` · `e` edit · `c` or `⌘I` colour
 inspector · `i` invert the deck · `?` help. None of them fire while the editor
 has focus.
 
 ## The colour inspector
 
-The cube next to the pen (or `c`) opens a 3D view of the current slide's
+The cube next to the pen (or `c`, or `⌘I` from anywhere including the editor) opens a 3D view of the current slide's
 colours inside a wireframe of the sRGB gamut, in a chosen solid: oklab, oklch
 (a terrain — hue round, lightness outward, chroma up, so the cusps are
 mountains), rgb, hsl or hsv (both polar).
