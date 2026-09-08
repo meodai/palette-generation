@@ -18,11 +18,7 @@
     <div class="picked" data-strip></div>
 
     <p class="note">
-      Every paint wheel I could find — Harris 1766, Goethe, Munsell, Itten, a
-      Marvel newsprint chart — as a cube of <mark>eight corner colors</mark>, so
-      I could mix inside each one and get a sense of what colors it actually
-      produces. The tabs are the classic harmony rules: only spacing on the
-      ring, and where they land depends on the wheel.
+      Each wheel produces different harmonies. The layout of the weel dictates the hues of the harmonies.
       <a href="https://rybitten.space/" target="_blank" rel="noopener">RYBitten</a>.
     </p>
   </div>
@@ -131,7 +127,7 @@
     for (const [key, { title, author, year }] of cubes) {
       select.add(new Option(`${author} — ${title} (${year})`, key));
     }
-    select.value = 'itten';
+    select.value = 'rgb';
 
     let rule = 'complementary';
     // Start on the middle of a slice; every rule's angles are multiples of 15°, so all dots stay centered.
