@@ -20,17 +20,6 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
   </div>
 
   <div class="foot">
-    <section data-notes>
-      <p class="note">
-        <code>random</code>, <code>shuffle</code>, <code>min</code>, <code>max</code>,
-        <code>round</code>, <code>floor</code> are p5. <code>chroma.oklch</code> and
-        <code>chroma.mix</code> are the chroma.js you already load;
-        <code>scaleSpreadArray</code> is the stretch from slide 19, in this slide's
-        source — or import it from
-        <a href="https://github.com/meodai/rampensau/blob/main/src/utils.ts#L84" target="_blank" rel="noopener">rampensau</a>. <mark>Three to five random stops, ramped, stretched</mark> —
-        <code>palette(3)</code> for 3.6, <code>palette(40)</code> for a gradient.
-      </p>
-    </section>
     <button type="button">reroll</button>
   </div>
 
@@ -58,22 +47,10 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
 
     [data-strip] { height: 2.4em; }
 
-    .foot {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--space-s) var(--space-m);
-    }
-
     [data-notes] {
       flex: 1;
       min-width: 20em;
       max-width: 40em;
-    }
-
-    .note {
-      font-size: var(--step--2);
-      color: var(--muted);
     }
 
     button {
