@@ -6,13 +6,7 @@
     <div class="half half--c"><div class="inner inner--r"></div></div>
   </div>
 
-  <div class="controls">
-    <label class="slide">
-      <span>separate</span>
-      <input type="range" min="0" max="100" value="0" />
-      <span>together</span>
-    </label>
-  </div>
+  <p class="legend">click the squares to bring them <b>together</b></p>
 
   <section data-notes>
     <p class="note">
@@ -33,7 +27,12 @@
       grid-template-columns: 1fr 1fr;
       width: min(100%, 46em);
       height: 11em;
+      cursor: pointer;
+      user-select: none;
     }
+
+    /* clicked: the squares travel to the shared edge and meet */
+    .demo[data-together] { --t: 1; }
 
     .half { position: relative; }
     .half--a { background: var(--bg1); }
@@ -46,20 +45,19 @@
       top: 30%;
       width: 30%;
       height: 40%;
+      transition: left 0.6s var(--ease);
     }
 
     .inner--l { left: calc(35% + var(--t) * 35%); background: var(--fg1); }
     .inner--r { left: calc(35% - var(--t) * 35%); background: var(--fg2); }
 
-    .controls {
-      display: flex;
-      align-items: center;
+    .legend {
+      margin: 0;
       font-size: var(--step--1);
       color: var(--muted);
     }
 
-    .slide { display: flex; align-items: center; gap: var(--space-2xs); }
-    .slide input { width: 14em; accent-color: var(--highlight); }
+    .legend b { font-weight: var(--weight-medium); color: var(--onBg); }
 
     .note { max-width: 42em; color: var(--muted); }
   </style>
@@ -82,10 +80,15 @@
 
     colorDebug([bg1, fg1, bg2, fg2], { model: 'oklch' });
 
-    const slider = $slide.querySelector('input');
-    const onSlide = () => $slide.style.setProperty('--t', slider.value / 100);
-    slider.addEventListener('input', onSlide);
+    // Click the illustration: together, click again: apart. The legend follows.
+    const demo = $slide.querySelector('.demo');
+    const legend = $slide.querySelector('.legend b');
+    const toggle = () => {
+      demo.toggleAttribute('data-together');
+      legend.textContent = demo.hasAttribute('data-together') ? 'apart' : 'together';
+    };
+    demo.addEventListener('click', toggle);
 
-    return () => slider.removeEventListener('input', onSlide);
+    return () => demo.removeEventListener('click', toggle);
   </script>
 </main>
