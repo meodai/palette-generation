@@ -674,9 +674,6 @@ main[data-slide] {
 
 .inspector__dist canvas {
   display: block;
-  height: 100%;
-  aspect-ratio: 1;
-  width: auto;
 }
 
 .inspector__body canvas {

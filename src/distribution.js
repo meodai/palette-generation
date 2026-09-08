@@ -20,12 +20,29 @@ const VIEWS = {
 };
 
 export class Distribution {
-  #body; #slice; #viz = null; #model = 'oklab'; #id = null;
+  #body; #slice; #viz = null; #model = 'oklab'; #id = null; #side = 0;
 
   constructor({ body, slice }) {
     this.#body = body;
     this.#slice = slice;
     slice.addEventListener('input', () => { if (this.#viz) this.#viz.position = Number(slice.value); });
+
+    // Sized by hand: the largest square that fits the body, only when it has
+    // a size and only when that changed. palette-shader's own observeResize
+    // fed back against CSS sizing and grew the texture past the GPU limit.
+    new ResizeObserver(() => this.#fit()).observe(body);
+  }
+
+  #fit() {
+    if (!this.#viz) return;
+    const { clientWidth: w, clientHeight: h } = this.#body;
+    const side = Math.floor(Math.min(w, h)) - 16;
+    if (side <= 0 || side === this.#side) return;
+    this.#side = side;
+    this.#viz.resize(side);
+    // resize() styles the canvas at backing size; keep the layout size in CSS px so it stays sharp and fits.
+    this.#viz.canvas.style.width = `${side}px`;
+    this.#viz.canvas.style.height = `${side}px`;
   }
 
   /** Draw slide `id` in `model`. Loads the shader on first use. */
@@ -37,13 +54,16 @@ export class Distribution {
       const { PaletteViz } = await import('palette-shader');
       this.#viz = new PaletteViz({
         container: this.#body,
-        observeResize: true,
+        observeResize: false,
+        width: 256,
+        height: 256,
         axis: 'z',
         invertAxes: ['z'],
         position: Number(this.#slice.value),
         ...VIEWS[this.#model],
         palette: this.#palette(),
       });
+      this.#fit();
       return;
     }
 
