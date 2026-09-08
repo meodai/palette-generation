@@ -252,20 +252,6 @@ main[data-slide] {
   padding-left: 0;
 }
 
-:where([data-slide]) ul > li {
-  padding-left: 1.4em;
-  position: relative;
-}
-
-:where([data-slide]) ul > li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 0.5em;
-  border-top: 1px solid var(--highlight);
-}
-
 :where([data-slide]) :where(code, kbd, samp) {
   font-family: var(--font-mono);
   font-size: 0.86em;
