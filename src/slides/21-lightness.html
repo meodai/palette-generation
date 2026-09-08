@@ -18,10 +18,9 @@
   </div>
 
   <p class="note">
-    Same three, same stretch, in OKLCH — so one lightness really is one
-    lightness. Correct, and flat. The only change: instead of one lightness
-    for all three anchors, <mark>walk from a minimum to a maximum</mark>
-    across them, then stretch. Two numbers.
+    Same three, same stretch, still HSL. The only change: instead of one
+    lightness for all three anchors, <mark>walk from a minimum to a
+    maximum</mark> across them, then stretch. Two numbers.
   </p>
 
   <style>
@@ -101,13 +100,13 @@
       wheel(three);
 
       // Rows one and two are the previous slide, unchanged.
-      const flat = three.map((h) => oklch({ h, c: 0.5, l: 0.55 }));
+      const flat = three.map((h) => hsl({ h, c: 0.85, l: 0.55 }));
       swatches(flat, q('#anchors'));
       swatches(stretch(flat, 5, (t, a, b) => mix(a, b, t)), q('#flat'));
 
       // Row three: lightness walks min → max across the anchors. Nothing else moves.
-      const ramped = three.map((h, i) => oklch({ h, c: 0.5, l: lerp(i / 2, min, max) }));
-      swatches(colorDebug(stretch(ramped, 5, (t, a, b) => mix(a, b, t)), { model: 'oklch' }), q('#ramped'));
+      const ramped = three.map((h, i) => hsl({ h, c: 0.85, l: lerp(i / 2, min, max) }));
+      swatches(colorDebug(stretch(ramped, 5, (t, a, b) => mix(a, b, t)), { model: 'hsl' }), q('#ramped'));
     }
 
     // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping

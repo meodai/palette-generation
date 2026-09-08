@@ -1,11 +1,11 @@
 <main data-slide>
-  <h2>Now <em>chroma</em> too</h2>
+  <h2>Same ramp, in <em>OKLCH</em></h2>
 
   <div class="stage">
     <div data-wheel></div>
     <div class="rows">
-      <div class="row"><span>+ L</span><div data-strip id="light"></div></div>
-      <div class="row"><span>+ C</span><div data-strip id="both"></div></div>
+      <div class="row"><span>HSL</span><div data-strip id="light"></div></div>
+      <div class="row"><span>OK</span><div data-strip id="both"></div></div>
     </div>
   </div>
 
@@ -18,9 +18,10 @@
   </div>
 
   <p class="note">
-    Same three, same lightness walk as the slide before. Now chroma walks too —
-    <mark>from a minimum to a maximum, and a coin flip for which way</mark>.
-    Both axes moving, then the stretch. That is the whole ramp — still in HSL.
+    Same three hues, same two walks, same stretch. Only the solid changed.
+    HSL's lightness is a coordinate; OKLCH's is a measurement — so
+    <mark>the walk from min to max is one you can see</mark>, and every step
+    is a step. This is where farbvelo lives.
   </p>
 
   <style>
@@ -44,8 +45,7 @@
       color: var(--muted);
     }
 
-    #light { height: 3.2em; }
-    #both { height: 6em; }
+    #light, #both { height: 4.6em; }
 
     .controls {
       display: flex;
@@ -90,16 +90,17 @@
 
       wheel(three);
 
-      // Row one is the slide before, unchanged: lightness walks, saturation sits at 0.85.
-      const light = three.map((h, i) => hsl({ h, c: 0.85, l: lerp(i / 2, lMin, lMax) }));
+      // Row one is the slide before, unchanged: the ramp in HSL.
+      const walk = (i) => {
+        const t = i / 2;
+        return { c: lerp(flip ? 1 - t : t, cMin, cMax), l: lerp(t, lMin, lMax) };
+      };
+      const light = three.map((h, i) => hsl({ h, ...walk(i) }));
       swatches(stretch(light, 5, (t, a, b) => mix(a, b, t)), q('#light'));
 
-      // Row two: chroma walks as well — the same t, or 1 - t when flipped.
-      const both = three.map((h, i) => {
-        const t = i / 2;
-        return hsl({ h, c: lerp(flip ? 1 - t : t, cMin, cMax), l: lerp(t, lMin, lMax) });
-      });
-      swatches(colorDebug(stretch(both, 5, (t, a, b) => mix(a, b, t)), { model: 'hsl' }), q('#both'));
+      // Row two: the same numbers, read by OKLCH. The hue is the same hue, converted.
+      const both = three.map((h, i) => oklch({ h: toOklch(hsl({ h, c: 0.85, l: 0.55 })).h, ...walk(i) }));
+      swatches(colorDebug(stretch(both, 5, (t, a, b) => mix(a, b, t)), { model: 'oklch' }), q('#both'));
     }
 
     // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
