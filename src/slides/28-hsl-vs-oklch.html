@@ -19,9 +19,9 @@
   <button type="button">reroll</button>
 
   <p class="note">
-    Below each palette, the same palette desaturated. In OKLCH,
-    <mark>L is lightness</mark>, C is chroma, H is hue — your intent is one axis
-    instead of three. HSV is HSL's cousin; LCH is OKLCH's parent.
+    One hue in both, so only lightness and chroma walk; the OKLCH side gives
+    up chroma where sRGB runs out. Below each ramp, the same ramp desaturated.
+    In OKLCH <mark>L gets predictable</mark>.
   </p>
 
   <style>
@@ -67,16 +67,25 @@
     const into = (id) => $slide.querySelector(id);
 
     function draw() {
-      // One palette. Two readings of the very same {h, c, l} triples.
-      const palette = ramp(hues(6, 50), {
+      // One hue, six steps. Two readings of the very same {c, l} walk.
+      const h = rnd(360);
+      const palette = ramp(Array(6).fill(h), {
         lightness: [0.15, 0.9],
         chroma: [0.35, 0.85],
         flip: false,
       });
 
+      // The same hue in both: HSL's angle converted, so OKLCH shows the same color family.
+      // fit() trims chroma to the sRGB gamut — out of gamut the browser clips and the hue drifts.
+      const hOk = toOklch(hsl({ h, c: 0.85, l: 0.55 })).h;
+      const readings = [
+        [hsl, '#a', (step) => step],
+        [oklch, '#b', (step) => fit({ ...step, h: hOk })],
+      ];
+
       const seen = [];
-      for (const [space, id] of [[hsl, '#a'], [oklch, '#b']]) {
-        const colors = palette.map(space);
+      for (const [space, id, as] of readings) {
+        const colors = palette.map((step) => space(as(step)));
         seen.push(...colors);
         swatches(colors, into(id));
         swatches(colors.map(grey), into(`${id}-grey`));

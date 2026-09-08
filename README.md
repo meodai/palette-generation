@@ -52,6 +52,8 @@ colorDebug(colors, { model: 'oklch' });   // model optional, defaults to oklab
 It returns the colors untouched, so it slots inline: `swatches(colorDebug(five))`.
 The model is the one the inspector opens in for that slide; the dropdown can
 change it. Colors can be CSS strings or the toolkit's `{ h, c, l }` triples.
+Calling it again — from a slider, a toggle, a reroll — redraws the open
+inspector live, so keep `colorDebug` inside the slide's `draw()`.
 The wireframe is one drawing for every model — a grid on the six faces of the
 RGB cube, each vertex pushed through the model's transform — which is what
 bends it into the bicone, the cone, or the OKLab blob.
@@ -81,6 +83,7 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `ramp(hues, {lightness, chroma, flip})` | farbvelo's `rmp()` — the stretch |
 | `stretch(list, n, blend)` | farbvelo's `scale()` — grow anchors to n |
 | `rgb(color)` · `luma(color)` · `lightness(color)` · `grey(color)` | read back through a 1px canvas; `grey` desaturates in OKLab (chroma 0, L kept) |
+| `toOklch(color)` · `fit({h, c, l})` | read a color as `{l, c, h}`; trim a triple's chroma to the sRGB gamut at that lightness and hue — browsers clip `oklch()` channel by channel and drift the hue, `fit` gives up chroma instead |
 | `swatches(colors, target?)` | paint into `[data-strip]` |
 | `gradient(colors, {angle, target, space})` | paint as one gradient |
 | `wheel(items, target?)` | outline circle, one dot per hue, into `[data-wheel]`; an item can be a hue, `{h, c, l}`, `{h, color}` (any CSS color) or `{h, hollow: true}` |

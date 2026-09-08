@@ -14,11 +14,17 @@
       <select></select>
     </label>
 
+    <label class="control">
+      <span>start hue</span>
+      <input type="range" min="7.5" max="352.5" step="15" />
+      <output></output>
+    </label>
+
     <div class="corners" data-corners></div>
     <div class="picked" data-strip></div>
 
     <p class="note">
-      Each wheel produces different harmonies. The layout of the weel dictates the hues of the harmonies.
+      Each wheel produces different harmonies. The layout of the wheel dictates the hues of the harmonies.
       <a href="https://rybitten.space/" target="_blank" rel="noopener">RYBitten</a>.
     </p>
   </div>
@@ -77,6 +83,15 @@
       color: var(--muted);
     }
 
+    input[type='range'] { width: 11em; accent-color: var(--highlight); }
+
+    output {
+      min-width: 3em;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--onBg);
+    }
+
     select {
       max-width: 22em;
       font: inherit;
@@ -131,10 +146,13 @@
 
     let rule = 'complementary';
     // Start on the middle of a slice; every rule's angles are multiples of 15°, so all dots stay centered.
-    const base = (rndInt(STEPS) + 0.5) * (360 / STEPS);
+    const startHue = $slide.querySelector('input[type="range"]');
+    startHue.value = (rndInt(STEPS) + 0.5) * (360 / STEPS);
 
     function draw() {
       const { cube } = cubes.get(select.value);
+      const base = Number(startHue.value);
+      $slide.querySelector('output').textContent = `${Math.round(base)}°`;
       tabs.querySelectorAll('button').forEach((b) => b.setAttribute('aria-selected', b.dataset.rule === rule));
 
       // RYB hue is its own angle: 0 red, 120 yellow, 240 blue.
@@ -166,11 +184,13 @@
     };
 
     select.addEventListener('change', draw);
+    startHue.addEventListener('input', draw);
     tabs.addEventListener('click', onTab);
     draw();
 
     return () => {
       select.removeEventListener('change', draw);
+      startHue.removeEventListener('input', draw);
       tabs.removeEventListener('click', onTab);
     };
   </script>

@@ -12,14 +12,6 @@
     return chroma.oklch(minL + t * rangeL, 0.4 * (minC + (flip ? 1 - t : t) * rangeC), h); });
 }
 
-function scaleSpreadArray(initial, n, fill = (t, a, b) =&gt; chroma.mix(a, b, t, 'oklab')) {
-  const chunks = initial.map((v) =&gt; [v]);
-  for (let i = 0; i &lt; n - initial.length; i++) chunks[i % (initial.length - 1)].push(null);
-  for (let i = 0; i &lt; chunks.length - 1; i++)
-    for (let j = 1; j &lt; chunks[i].length; j++) chunks[i][j] = fill(j / chunks[i].length, chunks[i][0], chunks[i + 1][0]);
-  return chunks.flat();
-}
-
 function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(3))), n)</mark>; }</code></pre>
 
   <div class="rows">
@@ -31,9 +23,10 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
     <p class="note">
       <code>random</code>, <code>shuffle</code>, <code>min</code>, <code>max</code>,
       <code>round</code>, <code>floor</code> are p5. <code>chroma.oklch</code> and
-      <code>chroma.mix</code> are the chroma.js you already load. <mark>Three to five
-      random stops, ramped, stretched</mark> — <code>palette(3)</code> for 3.6,
-      <code>palette(40)</code> for a gradient.
+      <code>chroma.mix</code> are the chroma.js you already load;
+      <code>scaleSpreadArray</code> is the stretch from slide 17, in this slide's
+      source. <mark>Three to five random stops, ramped, stretched</mark> —
+      <code>palette(3)</code> for 3.6, <code>palette(40)</code> for a gradient.
     </p>
     <button type="button">reroll</button>
   </div>
@@ -92,13 +85,23 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
   </style>
 
   <script>
+    // scaleSpreadArray, as it is in farbvelo — the stretch from slide 17.
+    // Not on the slide, so it fits; it is here for whoever opens the source.
+    function scaleSpreadArray(initial, n, fill = (t, a, b) => mix(a, b, t)) {
+      const chunks = initial.map((v) => [v]);
+      for (let i = 0; i < n - initial.length; i++) chunks[i % (initial.length - 1)].push(null);
+      for (let i = 0; i < chunks.length - 1; i++)
+        for (let j = 1; j < chunks[i].length; j++) chunks[i][j] = fill(j / chunks[i].length, chunks[i][0], chunks[i + 1][0]);
+      return chunks.flat();
+    }
+
     // The same pipeline, run with the toolkit so the slide shows real output:
-    // randomRamp() is ramp(hues()) with rolled ranges; stretch() is scaleSpreadArray.
+    // randomRamp() is ramp(hues()) with rolled ranges.
     function palette(n) {
       const stops = randomRamp(3 + rndInt(3)).map(oklch);
       swatches(stops, $slide.querySelector('#stops'));
       $slide.querySelector('#k').textContent = `${stops.length} stops`;
-      return stretch(stops, n, (t, a, b) => mix(a, b, t));
+      return scaleSpreadArray(stops, n);
     }
 
     const button = $slide.querySelector('button');

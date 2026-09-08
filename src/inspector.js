@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { MODELS } from './spaces.js';
-import { getColors } from './inspect-registry.js';
+import { getColors, COLORS_EVENT } from './inspect-registry.js';
 
 const SIZE = 100;
 const STEPS = 32;  // samples along each edge — the curve is in the model, not the cube
@@ -43,6 +43,15 @@ export class Inspector {
 
     select.addEventListener('input', () => this.#build());
     closeButton.addEventListener('click', () => this.close());
+
+    // A slide that calls colorDebug() again (a slider, a reroll) redraws the
+    // view live. Coalesced to one rebuild per frame, so dragging stays smooth.
+    let queued = false;
+    document.addEventListener(COLORS_EVENT, ({ detail }) => {
+      if (!this.isOpen || detail.slideId !== this.#id || queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; if (this.isOpen) this.#build(); });
+    });
   }
 
   get isOpen() { return !this.#panel.hidden; }

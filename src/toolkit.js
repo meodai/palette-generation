@@ -2,6 +2,7 @@ import { okhslToRgb } from './okhsl.js';
 import { rybHsl2rgb } from 'rybitten';
 import { cubes } from 'rybitten/cubes';
 import { registerColors } from './inspect-registry.js';
+import { inSrgb } from './spaces.js';
 
 /**
  * One seed for the whole deck, living at module scope. Every slide resets the
@@ -239,6 +240,21 @@ export function toolkit(slide) {
    */
   const grey = (color) => `oklch(${(lightness(color) * 100).toFixed(2)}% 0 0)`;
 
+  /**
+   * The same {h, c, l}, with chroma trimmed to what sRGB can show at that
+   * lightness and hue. Browsers clip out-of-gamut oklch() channel by channel,
+   * which drifts the hue; this keeps L and h and gives up chroma instead.
+   */
+  const fit = ({ h, c, l }) => {
+    if (inSrgb(l, 0.4 * c, h)) return { h, c, l };
+    let lo = 0, hi = c;
+    for (let i = 0; i < 20; i += 1) {
+      const mid = (lo + hi) / 2;
+      if (inSrgb(l, 0.4 * mid, h)) lo = mid; else hi = mid;
+    }
+    return { h, c: lo, l };
+  };
+
   // -- output -------------------------------------------------------------
 
   const toCss = (color) => (typeof color === 'string' ? color : oklch(color));
@@ -324,7 +340,7 @@ export function toolkit(slide) {
     colorDebug,
     lerp, clamp,
     oklch, hsl, okhsl, ryb, rybHsl2rgb, cubes, mix, rybHue, spacing, shuffled, hues, ramp, randomRamp, stretch,
-    rgb, luma, lightness, grey, toOklch,
+    rgb, luma, lightness, grey, toOklch, fit,
     stage, swatches, gradient, wheel,
   };
 }

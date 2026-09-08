@@ -7,6 +7,7 @@
   </div>
 
   <div class="controls">
+    <label><span>min angle</span><input data-angle type="range" min="10" max="120" step="1" /><output></output></label>
     <label class="check"><input data-shuffled type="checkbox" /><span>shuffled</span></label>
     <button type="button">reroll</button>
     <p class="sum"></p>
@@ -15,7 +16,7 @@
   <pre><code>const hues = <mark>shuffle(ring).slice(0, count).sort((a, b) =&gt; a - b)</mark>;</code></pre>
 
   <p class="note">
-    Using hues in sequence often produces predictable outcomes. Over time you will start recognizing them on every color generator you will find online. Shuffeling the hues, makes the palettes more intersting.
+    Using hues in sequence often produces predictable outcomes. Over time you will start recognizing them on every color generator you will find online. Shuffling the hues makes the palettes more interesting.
   </p>
 
   <style>
@@ -38,7 +39,10 @@
       color: var(--muted);
     }
 
-    .check { display: flex; align-items: center; gap: var(--space-3xs); }
+    label { display: flex; align-items: center; gap: var(--space-2xs); }
+    input[type='range'] { width: 9em; accent-color: var(--highlight); }
+    output { min-width: 2.6em; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--onBg); }
+    .check { gap: var(--space-3xs); }
     .sum { margin: 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--onBg); }
 
     button {
@@ -62,6 +66,11 @@
   <script>
     const button = $slide.querySelector('button');
     const sum = $slide.querySelector('.sum');
+    const angle = $slide.querySelector('[data-angle]');
+    const readout = $slide.querySelector('output');
+
+    // Deck-wide spacing, same slider as the slide before.
+    angle.value = spacing();
 
     // hues() in the open again — this time with both branches.
     function hues(count, maxSpacing = spacing()) {
@@ -84,6 +93,7 @@
     let three = hues(3);
 
     function draw() {
+      readout.textContent = `${angle.value}°`;
       // The ring's other candidates as white dots; the picked three on top.
       wheel([
         ...three.ring.filter((h) => !three.includes(h)).map((h) => ({ h, hollow: true })),
@@ -100,11 +110,16 @@
     const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); three = hues(3); draw(); };
     shuffleBox.addEventListener('input', onShuffle);
 
+    // Same roll, new spacing: rewind so the start hue stays where it was.
+    const onAngle = () => { spacing(+angle.value); rewind(); three = hues(3); draw(); };
+    angle.addEventListener('input', onAngle);
+
     const next = () => { reseed(); three = hues(3); draw(); };
     button.addEventListener('click', next);
     draw();
 
     return () => {
+      angle.removeEventListener('input', onAngle);
       shuffleBox.removeEventListener('input', onShuffle);
       button.removeEventListener('click', next);
     };
