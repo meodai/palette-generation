@@ -1,9 +1,12 @@
 <main data-slide data-cols>
   <h2 class="full">RYBitten, my <em>playground</em></h2>
 
-  <div class="wheel">
-    <div class="ring" data-ring></div>
-    <div data-wheel></div>
+  <div class="wheel-col">
+    <div class="wheel">
+      <div class="ring" data-ring></div>
+      <div data-wheel></div>
+    </div>
+    <p class="hint">click or drag the wheel: <b>start hue</b> <output></output></p>
   </div>
 
   <div class="legend">
@@ -12,12 +15,6 @@
     <label class="control">
       <span>wheel</span>
       <select></select>
-    </label>
-
-    <label class="control">
-      <span>start hue</span>
-      <input type="range" min="7.5" max="352.5" step="15" />
-      <output></output>
     </label>
 
     <div class="corners" data-corners></div>
@@ -38,10 +35,33 @@
       column-gap: var(--space-2xl);
     }
 
+    .wheel-col {
+      display: grid;
+      gap: var(--space-xs);
+      justify-items: center;
+      align-content: center;
+    }
+
+    .hint {
+      margin: 0;
+      font-size: var(--step--2);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .hint b { font-weight: var(--weight-medium); color: var(--onBg); }
+    .hint output { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--onBg); }
+
+    /* the start dot: the white ring every dot has, plus a black outline */
+    .wheel-start { fill: none; stroke: var(--onBg); stroke-width: 1; }
+
     .wheel {
       position: relative;
       width: min(100%, 17em);
       aspect-ratio: 1;
+      cursor: crosshair;
+      touch-action: none;
+      user-select: none;
       justify-self: center;
     }
 
@@ -84,8 +104,6 @@
       font-size: var(--step--1);
       color: var(--muted);
     }
-
-    input[type='range'] { width: 11em; accent-color: var(--highlight); }
 
     output {
       min-width: 3em;
@@ -148,12 +166,13 @@
 
     let rule = 'complementary';
     // Start on the middle of a slice; every rule's angles are multiples of 15°, so all dots stay centered.
-    const startHue = $slide.querySelector('input[type="range"]');
-    startHue.value = (rndInt(STEPS) + 0.5) * (360 / STEPS);
+    // Start on the middle of a slice; click or drag on the wheel moves it, snapped to slices.
+    const wheelEl = $slide.querySelector('.wheel');
+    const snap = (angle) => (Math.floor((((angle % 360) + 360) % 360) / (360 / STEPS)) + 0.5) * (360 / STEPS);
+    let base = snap(rnd(360));
 
     function draw() {
       const { cube } = cubes.get(select.value);
-      const base = Number(startHue.value);
       $slide.querySelector('output').textContent = `${Math.round(base)}°`;
       tabs.querySelectorAll('button').forEach((b) => b.setAttribute('aria-selected', b.dataset.rule === rule));
 
@@ -168,7 +187,15 @@
         const h = (base + a + 360) % 360;
         return { h, color: ryb({ h, c: 1, l: 0.5 }, cube) };
       });
-      wheel(picked);
+      const svg = wheel(picked).querySelector('svg');
+      // The start hue is the first pick: give its dot a black outline on top of the white ring.
+      const first = svg.querySelector('.wheel-dot');
+      const outline = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      outline.setAttribute('class', 'wheel-start');
+      outline.setAttribute('cx', first.getAttribute('cx'));
+      outline.setAttribute('cy', first.getAttribute('cy'));
+      outline.setAttribute('r', String(Number(first.getAttribute('r')) + 1.1));
+      svg.append(outline);
       swatches(picked.map((p) => p.color));
 
       // The cube itself, in wheel order: white, red, orange, yellow, green, blue, violet, black.
@@ -185,15 +212,41 @@
       draw();
     };
 
+    // 0° at twelve o'clock, clockwise — the same convention as the conic gradient.
+    const angleAt = (event) => {
+      const { left, top, width, height } = wheelEl.getBoundingClientRect();
+      const x = event.clientX - (left + width / 2);
+      const y = event.clientY - (top + height / 2);
+      return (Math.atan2(x, -y) * 180) / Math.PI;
+    };
+    let held = false;
+    const onPointer = (event) => {
+      if (event.type === 'pointerdown') {
+        held = true;
+        try { wheelEl.setPointerCapture(event.pointerId); } catch {}
+      } else if (!held) return;
+      const next = snap(angleAt(event));
+      if (next === base) return;
+      base = next;
+      draw();
+    };
+    const release = () => { held = false; };
+
     select.addEventListener('change', draw);
-    startHue.addEventListener('input', draw);
     tabs.addEventListener('click', onTab);
+    wheelEl.addEventListener('pointerdown', onPointer);
+    wheelEl.addEventListener('pointermove', onPointer);
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
     draw();
 
     return () => {
       select.removeEventListener('change', draw);
-      startHue.removeEventListener('input', draw);
       tabs.removeEventListener('click', onTab);
+      wheelEl.removeEventListener('pointerdown', onPointer);
+      wheelEl.removeEventListener('pointermove', onPointer);
+      removeEventListener('pointerup', release);
+      removeEventListener('pointercancel', release);
     };
   </script>
 </main>
