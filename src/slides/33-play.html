@@ -72,7 +72,6 @@
     const world = $slide.querySelector('[data-w]');
     const blendModes = ['multiply', 'normal'];
 
-    // The whole talk in one call: a ramp of 2–4 stops, stretched to 5–10 colors.
     function draw() {
       const stops = randomRamp(2 + rndInt(3)).map(oklch);
       const colors = stretch(stops, 5 + rndInt(6), (t, a, b) => mix(a, b, t));
