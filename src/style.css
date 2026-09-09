@@ -543,10 +543,8 @@ main[data-slide] {
 .beam__token:disabled { color: var(--muted); cursor: default; }
 .beam__token:not(:disabled):hover { color: var(--highlight); }
 
-.beam__status, .beam__hint { margin: 0; }
+.beam__status { margin: 0; }
 .beam__status:empty { display: none; }
-.beam__hint { color: var(--faint); }
-.beam__hint a { color: inherit; }
 
 /* the inspector as a tooltip: drops in above the cube while it is hovered */
 .peek {
