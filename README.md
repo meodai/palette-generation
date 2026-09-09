@@ -162,8 +162,6 @@ restore it.
 Drop files in `public/`; reference them as `name.png` (relative — slides are raw HTML, so Vite cannot rewrite `/name.png` for the project page). Slide 6 uses
 `public/picker.png` and falls back to a dashed placeholder if it goes missing.
 
-See `OUTLINE.md` for the talk structure and timings, `golan.md` for context.
-
 ## How AI was used
 
 Two things: to improve some of my broken English, and to build the slide
