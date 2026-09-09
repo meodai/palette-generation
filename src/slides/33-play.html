@@ -25,8 +25,9 @@
       }
     }
 
+    /* not positioned on purpose: each bar's ::before then fills the whole
+       world box, so the blurred copies stack into one glow behind all the bars */
     .c {
-      position: relative;
       flex: 1 1 100%;
       background: var(--c);
       outline: 1px solid var(--c);
