@@ -142,6 +142,9 @@ el.cube.addEventListener('pointerleave', closePeek);
 const beam = new Beam({ onChange: renderBeam });
 beam.connect();
 
+// Slides can read it as $beam and follow it through the 'beam' document event.
+window.$beam = beam;
+
 const PEER_NAMES = { figma: 'Figma', sketch: 'Sketch', web: 'a page' };
 
 function renderBeam() {
@@ -152,6 +155,7 @@ function renderBeam() {
   el.beamStatus.textContent = live
     ? `beaming to ${peers.map((p) => PEER_NAMES[p.clientType] ?? p.clientType).join(', ')}`
     : token ? 'paste this token into the plugin' : state === 'error' ? 'tokenbeam.dev is not reachable' : '';
+  document.dispatchEvent(new CustomEvent('beam', { detail: { token, state, live } }));
 }
 
 const beamCardIsOpen = () => !el.beamCard.hidden;

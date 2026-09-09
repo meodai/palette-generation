@@ -103,7 +103,9 @@ slide's colors as a `palette` collection of color variables — `color/1`,
 slide change. It is the same list `colorDebug()` registers, so what the cube
 shows is what the plugin gets. Nothing is sent while nobody is paired; a tool
 that joins mid-talk receives the current palette at once. The icon turns
-into the highlight color while a tool is listening.
+into the highlight color while a tool is listening. A slide can read the
+session as `$beam` (`token`, `state`, `live`, `peers`) and follow it through
+the `beam` event on `document` — slide 2 prints the token that way.
 
 ## What is in scope on every slide
 
