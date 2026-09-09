@@ -6,6 +6,7 @@ import './style.css';
 
 import { Deck } from './deck.js';
 import { loadSlides } from './slides.js';
+import { Beam } from './beam.js';
 
 const el = {
   deck: document.getElementById('deck'),
@@ -14,6 +15,10 @@ const el = {
   bar: document.getElementById('progressBar'),
   pen: document.getElementById('pen'),
   cube: document.getElementById('cube'),
+  beam: document.getElementById('beam'),
+  beamCard: document.getElementById('beamCard'),
+  beamToken: document.getElementById('beamToken'),
+  beamStatus: document.getElementById('beamStatus'),
   notes: document.getElementById('notes'),
   offer: document.getElementById('offer'),
   peek: document.getElementById('peek'),
@@ -127,6 +132,44 @@ async function closePeek() {
 el.cube.addEventListener('pointerenter', openPeek);
 el.cube.addEventListener('pointerleave', closePeek);
 
+// --------------------------------------------------------------- token beam -
+
+/**
+ * Whatever the inspector holds is beamed to any design tool that has paired
+ * with this deck's session token (see beam.js). The card shows the token big
+ * enough for the room; `b` or the icon toggles it, clicking the token copies.
+ */
+const beam = new Beam({ onChange: renderBeam });
+beam.connect();
+
+const PEER_NAMES = { figma: 'Figma', sketch: 'Sketch', web: 'a page' };
+
+function renderBeam() {
+  const { token, state, live, peers } = beam;
+  el.beam.dataset.beam = live ? 'live' : token ? 'ready' : state;
+  el.beamToken.textContent = token ?? (state === 'error' ? 'no connection' : 'connecting…');
+  el.beamToken.disabled = !token;
+  el.beamStatus.textContent = live
+    ? `beaming to ${peers.map((p) => PEER_NAMES[p.clientType] ?? p.clientType).join(', ')}`
+    : token ? 'paste this token into the plugin' : state === 'error' ? 'tokenbeam.dev is not reachable' : '';
+}
+
+const beamCardIsOpen = () => !el.beamCard.hidden;
+const toggleBeamCard = () => { el.beamCard.hidden = beamCardIsOpen(); render(); };
+
+el.beam.addEventListener('click', toggleBeamCard);
+
+let copiedTimer = null;
+el.beamToken.addEventListener('click', async () => {
+  if (!beam.token) return;
+  try { await navigator.clipboard.writeText(beam.token); } catch { return; }
+  el.beamStatus.textContent = 'copied';
+  clearTimeout(copiedTimer);
+  copiedTimer = setTimeout(renderBeam, 1500);
+});
+
+renderBeam();
+
 // ------------------------------------------------------------ speaker notes -
 
 /**
@@ -221,6 +264,8 @@ function render() {
   el.bar.style.width = `${(human / deck.count) * 100}%`;
   el.pen.setAttribute('aria-pressed', String(editorIsOpen()));
   el.cube.setAttribute('aria-pressed', String(inspectorIsOpen()));
+  el.beam.setAttribute('aria-pressed', String(beamCardIsOpen()));
+  beam.follow(deck.current.id);
   if (inspectorIsOpen()) inspector.show(deck.current.id, `src/slides/${deck.current.file}`);
   el.previous.disabled = deck.index === 0;
   el.next.disabled = deck.index === deck.count - 1;
@@ -271,6 +316,7 @@ addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     if (editorIsOpen()) closeEditor();
     else if (inspectorIsOpen()) closeInspector();
+    else if (beamCardIsOpen()) el.beamCard.hidden = true;
     else el.help.hidden = true;
     render();
     return;
@@ -291,6 +337,7 @@ addEventListener('keydown', (event) => {
   else if (event.key === 'End') deck.go(deck.count - 1);
   else if (event.key === 'e') openEditor();
   else if (event.key === 'c') inspectorIsOpen() ? closeInspector() : openInspector();
+  else if (event.key === 'b') el.beamCard.hidden = beamCardIsOpen();
   else if (event.key === 's') openNotes();
   else if (event.key === 'i') document.documentElement.toggleAttribute('data-invert');
   else if (event.key === '?') el.help.hidden = !el.help.hidden;

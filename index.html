@@ -20,6 +20,13 @@
     <!-- a link sent from the notes window that the browser would not let us open by itself -->
     <a class="offer" id="offer" target="_blank" rel="noopener" hidden></a>
 
+    <!-- the token beam card: the session token for the room to type into the plugin -->
+    <div class="beam" id="beamCard" hidden>
+      <button class="beam__token" id="beamToken" type="button" title="Click to copy">connecting…</button>
+      <p class="beam__status" id="beamStatus"></p>
+      <p class="beam__hint">the inspector's colors, live in <a href="https://tokenbeam.dev" target="_blank" rel="noopener">tokenbeam.dev</a> plugins</p>
+    </div>
+
     <!-- hover the cube: the current slide's colors, in 3D, as a tooltip -->
     <div class="peek" id="peek" aria-hidden="true"><div class="peek__body" id="peekBody"></div></div>
 
@@ -27,6 +34,13 @@
       <p class="chrome__count">
         <span id="chromeCurrent">1</span><span class="chrome__slash">/</span><span id="chromeTotal">1</span>
       </p>
+      <button class="chrome__pen" id="beam" type="button" title="Token beam — b" aria-label="Token beam" data-beam="idle">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="5.5" cy="12" r="2.5" />
+          <circle cx="18.5" cy="12" r="2.5" />
+          <path d="M8 12h8" />
+        </svg>
+      </button>
       <button class="chrome__pen" id="cube" type="button" title="Color inspector — c" aria-label="Color inspector">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 3 4 7.5v9l8 4.5 8-4.5v-9L12 3Z" />
@@ -101,6 +115,7 @@
         <dt><kbd>home</kbd> <kbd>end</kbd></dt><dd>first / last</dd>
         <dt><kbd>e</kbd></dt><dd>edit this slide</dd>
         <dt><kbd>c</kbd> <kbd>⌘I</kbd></dt><dd>color inspector</dd>
+        <dt><kbd>b</kbd></dt><dd>token beam — the inspector's colors, live in a design tool</dd>
         <dt><kbd>s</kbd></dt><dd>speaker notes, in a window for the other screen</dd>
         <dt><kbd>i</kbd></dt><dd>invert the deck</dd>
         <dt><kbd>?</kbd></dt><dd>this list</dd>

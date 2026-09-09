@@ -26,6 +26,7 @@
     "palette-shader": "^0.21.0",
     "qrcode": "^1.5.4",
     "rybitten": "^1.2.0",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "token-beam": "^1.32.0"
   }
 }

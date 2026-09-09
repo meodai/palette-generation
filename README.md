@@ -91,6 +91,20 @@ The wireframe is one drawing for every model — a grid on the six faces of the
 RGB cube, each vertex pushed through the model's transform — which is what
 bends it into the bicone, the cone, or the OKLab blob.
 
+## Token beam
+
+Whatever the inspector holds is also beamed out of the deck, live, through
+[token-beam](https://github.com/meodai/token-beam). The deck opens a session
+on tokenbeam.dev when it boots and gets a short token; `b` (or the ⊷ icon)
+shows it big enough for the room, and clicking it copies. Anyone who pastes
+that token into the token-beam plugin for Figma or Sketch gets the current
+slide's colors as a `palette` collection of color variables — `color/1`,
+`color/2`, … in registration order — resent on every slider drag, reroll and
+slide change. It is the same list `colorDebug()` registers, so what the cube
+shows is what the plugin gets. Nothing is sent while nobody is paired; a tool
+that joins mid-talk receives the current palette at once. The icon turns
+into the highlight color while a tool is listening.
+
 ## What is in scope on every slide
 
 No imports needed — these are already bound inside every slide `<script>`.

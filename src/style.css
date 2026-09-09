@@ -508,6 +508,46 @@ main[data-slide] {
 
 .offer::before { content: '↗ '; color: var(--highlight); }
 
+/* the beam icon: a hairline while pairing, the highlight once a tool listens */
+.chrome__pen[data-beam='ready'] { color: var(--onBg); }
+.chrome__pen[data-beam='live'] { color: var(--highlight); }
+.chrome__pen[data-beam='error'] { color: var(--faint); }
+
+/* the token card: drops in above the chrome, sized for the back row */
+.beam {
+  position: fixed;
+  right: clamp(1rem, 2.5vmin, 2rem);
+  bottom: calc(clamp(1rem, 2.5vmin, 2rem) + 2.8rem + var(--editor-height));
+  z-index: 10;
+  display: grid;
+  gap: 0.4rem;
+  padding: 1rem 1.2rem;
+  border: 2px solid var(--onBg);
+  background: var(--bg);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.beam__token {
+  padding: 0.2em 0;
+  border: 0;
+  background: none;
+  color: var(--onBg);
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  letter-spacing: 0.08em;
+  text-align: left;
+  cursor: pointer;
+}
+
+.beam__token:disabled { color: var(--muted); cursor: default; }
+.beam__token:not(:disabled):hover { color: var(--highlight); }
+
+.beam__status, .beam__hint { margin: 0; }
+.beam__status:empty { display: none; }
+.beam__hint { color: var(--faint); }
+.beam__hint a { color: inherit; }
+
 /* the inspector as a tooltip: drops in above the cube while it is hovered */
 .peek {
   position: fixed;
