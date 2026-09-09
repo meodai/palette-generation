@@ -15,12 +15,6 @@
 const percent = j / currentChunk.<mark>length</mark>;          <span class="c">// stop just short of the next anchor</span></code></pre>
 
   <p class="note">
-    Two details carry the whole function. <strong>Only the first n−1 anchors get
-    spares</strong> — the last one is the endpoint, it has nothing to walk
-    toward. And dividing by the chunk's <em>full</em> length instead of
-    <code>length − 1</code> means a run never quite arrives:
-    <mark>the next anchor supplies its own color</mark>, so nothing is ever
-    duplicated at the join.
   </p>
 
   <style>
