@@ -108,8 +108,8 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `mix(a, b, t, space?)` | `color-mix`, in oklab unless told otherwise |
 | `rybHue(angle)` | an Itten RYB angle, remapped so a screen can draw it |
 | `ryb({h, c, l}, cube?)` · `rybHsl2rgb` · `cubes` | the same color through [RYBitten](https://rybitten.space/): `cubes` is its Map of historical paint wheels, `cubes.get('munsell').cube` picks one |
-| `spacing(deg?)` | read or set the deck-wide max hue spacing (slide 16's slider) |
-| `shuffled(on?)` | read or set the deck-wide pick mode: first few of the ring, or a random subset (slide 17's toggle) |
+| `spacing(deg?)` | read or set the deck-wide max hue spacing (slide 17's slider) |
+| `shuffled(on?)` | read or set the deck-wide pick mode: first few of the ring, or a random subset (slide 18's toggle) |
 | `rewind()` | rewind the random stream to the current seed — re-pick without re-rolling |
 | `hues(count, maxSpacing?)` | a random **subset** of an evenly spaced ring, back in wheel order; defaults to `spacing()` |
 | `randomRamp(count, maxSpacing)` | `ramp(hues(…))` — farbvelo's `rmp()` in one call |
@@ -126,7 +126,7 @@ No imports needed — these are already bound inside every slide `<script>`.
 | `inspect3d(target, {model?})` | mount a small live inspector into `target` (async; returns the view — `close()`, `dispose()`) |
 
 Colors are `{ h: 0–360, c: 0–1, l: 0–1 }` throughout, so the same triple can be
-handed to `oklch()` or `hsl()` — which is the whole argument of slide 29.
+handed to `oklch()` or `hsl()` — which is the whole argument of slide 30.
 
 The same names are mirrored on `window`, so they work from the devtools console
 mid-lecture too.
@@ -135,7 +135,7 @@ mid-lecture too.
 
 `rnd()` is a seeded stream, rewound to the deck's seed every time a slide is
 entered. Slides that draw in the same order therefore get the same answer: the
-three hues you pick on slide 16 are the same three that get stretched, named
+three hues you pick on slide 17 are the same three that get stretched, named
 as vomit, shuffled, measured, ramped and finally handed over in the recipe —
 so the sequence reads as one palette being fixed, not eight unrelated demos.
 
