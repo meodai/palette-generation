@@ -64,10 +64,8 @@
   </style>
 
   <script>
-    // Point at the real icons: darken the chrome while this slide is up.
     document.documentElement.dataset.spotlight = '';
 
-    // Something for the preview to show: the deck's own palette, seeded like everywhere else.
     colorDebug(randomRamp(5).map(oklch), { model: 'oklch' });
 
     return () => { delete document.documentElement.dataset.spotlight; };
