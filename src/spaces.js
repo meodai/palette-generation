@@ -2,7 +2,8 @@
  * Where a color sits in each solid the inspector can show. Every model maps
  * an sRGB triple (0–1) to a point in a unit cube centred on the origin, y up,
  * so the same scene code draws all of them. Polar models put lightness on y
- * and hue round it.
+ * and hue round it. Each model also names its axes: a guide line per axis,
+ * with the label sitting at its far end.
  */
 
 const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
@@ -62,6 +63,17 @@ const polar = (radius, degrees, y) => {
   return [radius * Math.cos(t), y, radius * Math.sin(t)];
 };
 
+/** A short arc round the y axis — the hue direction, drawn as a guide. */
+const arc = (radius, from, to, y, n = 16) =>
+  Array.from({ length: n + 1 }, (_, i) => polar(radius, from + ((to - from) * i) / n, y));
+
+/** Three axes out of one corner of the box: the frame of a cartesian model. */
+const triad = (x, y, z, corner = [-0.5, -0.5, -0.5]) => [
+  { label: x, line: [corner, [0.62, corner[1], corner[2]]] },
+  { label: y, line: [corner, [corner[0], 0.62, corner[2]]] },
+  { label: z, line: [corner, [corner[0], corner[1], 0.62]] },
+];
+
 /** OKLab's a/b reach about ±0.32 inside sRGB; this puts that at the cube walls. */
 const AB = 0.32;
 
@@ -72,6 +84,7 @@ export const MODELS = {
   oklab: {
     label: 'oklab',
     place: (rgb) => { const [L, a, b] = srgbToOklab(rgb); return [a / AB / 2, L - 0.5, b / AB / 2]; },
+    axes: triad('a', 'L', 'b'),
   },
   oklch: {
     label: 'oklch',
@@ -86,19 +99,35 @@ export const MODELS = {
     },
     // The rim of the floor — white, all the way round — since no cube edge draws it.
     guides: () => [Array.from({ length: 96 }, (_, i) => polar(0.5, (i / 96) * 360, -0.5))],
+    axes: [
+      { label: 'C', line: [[0, -0.5, 0], [0, 0.62, 0]] },
+      { label: 'L', line: [[0, -0.5, 0], polar(0.62, 200, -0.5)] },
+      { label: 'hue', line: arc(0.56, 15, 75, -0.5) },
+    ],
   },
   rgb: {
     label: 'rgb',
     place: ([r, g, b]) => [r - 0.5, g - 0.5, b - 0.5],
+    axes: triad('R', 'G', 'B'),
   },
   hsl: {
     label: 'hsl',
     // Bicone: full radius only at l = 0.5.
     place: (rgb) => { const [h, s, l] = rgbToHsl(rgb); return polar(s * (l < 0.5 ? l : 1 - l), h, l - 0.5); },
+    axes: [
+      { label: 'L', line: [[0, -0.5, 0], [0, 0.62, 0]] },
+      { label: 'S', line: [[0, 0, 0], polar(0.62, 0, 0)] },
+      { label: 'hue', line: arc(0.56, 15, 75, 0) },
+    ],
   },
   hsv: {
     label: 'hsv',
     // Cone: radius grows with value, apex at black.
     place: (rgb) => { const [h, s, v] = rgbToHsv(rgb); return polar(s * v * 0.5, h, v - 0.5); },
+    axes: [
+      { label: 'V', line: [[0, -0.5, 0], [0, 0.62, 0]] },
+      { label: 'S', line: [[0, 0.5, 0], polar(0.62, 0, 0.5)] },
+      { label: 'hue', line: arc(0.56, 15, 75, 0.5) },
+    ],
   },
 };

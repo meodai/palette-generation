@@ -66,7 +66,9 @@ colors inside a wireframe of the sRGB gamut, in a chosen solid: oklab, oklch
 (a terrain — hue round, lightness outward, chroma up, so the cusps are
 mountains), rgb, hsl or hsv (both polar).
 Drag to orbit, scroll to zoom. The palette is also drawn as a path, in the
-order it was registered, because that is what a palette is.
+order it was registered, because that is what a palette is. Each solid names
+its axes — dashed guide lines with the letter at the far end, and an arc for
+hue — declared per model in `spaces.js`.
 
 The panel has two tabs. **3d** is the solid above. **distribution** is
 [palette-shader](https://github.com/meodai/color-palette-shader): the same

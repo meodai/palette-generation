@@ -19,6 +19,7 @@ export class Inspector {
   #panel; #body; #select; #title; #empty;
   #renderer; #scene; #camera; #controls;
   #group = null; #id = null; #running = false; #shown = null;
+  #labels = []; #proj = new THREE.Vector3();
   #preview = false; #model = 'oklab';
   #tabs; #dist = null; #distBody; #sliceLabel; #status; #view = '3d';
 
@@ -152,6 +153,8 @@ export class Inspector {
 
     const group = new THREE.Group();
     group.add(gamut(model, ink));
+    group.add(axes(model, ink));
+    this.#label(model);
 
     if (this.#empty) this.#empty.hidden = Boolean(entry?.colors.length);
 
@@ -182,6 +185,29 @@ export class Inspector {
     this.#scene.add(group);
   }
 
+  /** One HTML label per axis, placed over the canvas by #place() each frame. */
+  #label(model) {
+    for (const { el } of this.#labels) el.remove();
+    this.#labels = (model.axes ?? []).map(({ label, line }) => {
+      const el = document.createElement('span');
+      el.className = 'inspector__axis';
+      el.textContent = label;
+      this.#body.append(el);
+      return { el, at: new THREE.Vector3(...line.at(-1)).multiplyScalar(SIZE) };
+    });
+  }
+
+  #place() {
+    if (!this.#labels.length) return;
+    const { clientWidth: w, clientHeight: h } = this.#body;
+    for (const { el, at } of this.#labels) {
+      const p = this.#proj.copy(at).project(this.#camera);
+      const behind = p.z > 1;
+      el.hidden = behind;
+      if (!behind) el.style.transform = `translate(-50%, -50%) translate(${(((p.x + 1) / 2) * w).toFixed(1)}px, ${(((1 - p.y) / 2) * h).toFixed(1)}px)`;
+    }
+  }
+
   #resize() {
     const { clientWidth: w, clientHeight: h } = this.#body;
     if (!w || !h) return;
@@ -196,8 +222,23 @@ export class Inspector {
     if (!this.#running) return;
     this.#controls.update();
     this.#renderer.render(this.#scene, this.#camera);
+    this.#place();
     requestAnimationFrame(this.#loop);
   };
+}
+
+/** The model's axes as dashed guide lines; the names are HTML, see #label(). */
+function axes(model, ink) {
+  const group = new THREE.Group();
+  for (const { line } of model.axes ?? []) {
+    const guide = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(line.map((p) => new THREE.Vector3(...p).multiplyScalar(SIZE))),
+      new THREE.LineDashedMaterial({ color: ink, dashSize: SIZE * 0.02, gapSize: SIZE * 0.015, transparent: true, opacity: 0.55 }),
+    );
+    guide.computeLineDistances();
+    group.add(guide);
+  }
+  return group;
 }
 
 function cssVar(name) {
