@@ -1,0 +1,100 @@
+<main data-slide data-align="center">
+  <div class="world" data-w></div>
+
+  <section data-notes>
+    <p class="note">Leave this running. Click it: new palette.</p>
+  </section>
+
+  <style>
+    .world {
+      --angle: 0deg;
+      position: relative;
+      width: 60vmin;
+      height: 80vmin;
+      display: flex;
+      flex-direction: column-reverse;
+      cursor: pointer;
+    }
+
+    @media (orientation: landscape) {
+      .world {
+        --angle: 90deg;
+        width: 80vmin;
+        height: 35vmin;
+        flex-direction: row-reverse;
+      }
+    }
+
+    .c {
+      position: relative;
+      flex: 1 1 100%;
+      background: var(--c);
+      outline: 1px solid var(--c);
+      outline-offset: -1px;
+      mix-blend-mode: var(--mbm, multiply);
+      animation: 0.56s world-move linear(0, 0.029 1.6%, 0.123 3.5%, 0.651 10.6%, 0.862 14.1%, 1.002 17.7%, 1.046 19.6%, 1.074 21.6%, 1.087 23.9%, 1.086 26.6%, 1.014 38.5%, 0.994 46.3%, 1) forwards;
+      animation-delay: calc(0.3s + (1 - var(--iR)) * 0.3s);
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: inherit;
+        opacity: 0;
+        transform: scale(0.925) translateZ(0);
+        animation: 1s world-show linear(0, 0.029 1.6%, 0.123 3.5%, 0.651 10.6%, 0.862 14.1%, 1.002 17.7%, 1.046 19.6%, 1.074 21.6%, 1.087 23.9%, 1.086 26.6%, 1.014 38.5%, 0.994 46.3%, 1) forwards;
+        animation-delay: calc(0.3s + (1 - var(--iR)) * 0.3s);
+      }
+    }
+
+    @keyframes world-move {
+      100% {
+        transform: rotate(calc(var(--rnd) * 5deg)) translateX(calc(var(--rnd) * 10%)) translateY(calc(var(--rnd2) * 40%));
+        outline-offset: 2px;
+      }
+    }
+
+    @keyframes world-show {
+      100% {
+        opacity: 1;
+        filter: blur(6vmin);
+      }
+    }
+
+    /* clear the bars' jitter, which reaches 40% below the box */
+    [data-notes] { margin-top: var(--space-2xl); }
+    .note { color: var(--muted); }
+  </style>
+
+  <script>
+    const world = $slide.querySelector('[data-w]');
+    const blendModes = ['multiply', 'hard-light', 'soft-light', 'plus-lighter', 'normal'];
+
+    // The whole talk in one call: a ramp of 2–4 stops, stretched to 5–10 colors.
+    function draw() {
+      const stops = randomRamp(2 + rndInt(3)).map(oklch);
+      const colors = stretch(stops, 5 + rndInt(6), (t, a, b) => mix(a, b, t));
+
+      world.style.setProperty('--mbm', pick(blendModes));
+      world.replaceChildren(
+        ...colors.map((c, i) => {
+          const bar = document.createElement('i');
+          bar.className = 'c';
+          bar.style.setProperty('--c', c);
+          bar.style.setProperty('--rnd', rnd(-1, 1));
+          bar.style.setProperty('--rnd2', rnd(-1, 1));
+          bar.style.setProperty('--iR', i / colors.length);
+          return bar;
+        }),
+      );
+      colorDebug(colors, { model: 'oklch' });
+    }
+
+    const reroll = () => { reseed(); draw(); };
+    world.addEventListener('click', reroll);
+    draw();
+
+    return () => world.removeEventListener('click', reroll);
+  </script>
+</main>
