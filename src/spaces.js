@@ -80,6 +80,10 @@ const AB = 0.32;
 /** The most chroma sRGB holds (blue's cusp); this puts it at the top of the box. */
 const CMAX = 0.33;
 
+/** The terrain's floor radius (white at the rim). Wider than the box, so the
+ * range reads as a landscape rather than a bowl. */
+const FLOOR = 0.75;
+
 export const MODELS = {
   oklab: {
     label: 'oklab',
@@ -89,20 +93,20 @@ export const MODELS = {
   oklch: {
     label: 'oklch',
     // Looked at from high up, so it reads as a disc with peaks, not a bowl.
-    view: [0.5, 1.9, 1.0],
+    view: [0.7, 2.7, 1.4],
     // A terrain: hue round the circle, lightness outward from black at the
     // centre to white at the rim, and chroma as height — so every hue's cusp
     // is a peak, and the sRGB gamut is a mountain range.
     place: (rgb) => {
       const [L, a, b] = srgbToOklab(rgb);
-      return polar(L * 0.5, (Math.atan2(b, a) * 180) / Math.PI, Math.hypot(a, b) / CMAX - 0.5);
+      return polar(L * FLOOR, (Math.atan2(b, a) * 180) / Math.PI, Math.hypot(a, b) / CMAX - 0.5);
     },
     // The rim of the floor — white, all the way round — since no cube edge draws it.
-    guides: () => [Array.from({ length: 96 }, (_, i) => polar(0.5, (i / 96) * 360, -0.5))],
+    guides: () => [Array.from({ length: 96 }, (_, i) => polar(FLOOR, (i / 96) * 360, -0.5))],
     axes: [
       { label: 'C', line: [[0, -0.5, 0], [0, 0.62, 0]] },
-      { label: 'L', line: [[0, -0.5, 0], polar(0.62, 200, -0.5)] },
-      { label: 'hue', line: arc(0.56, 15, 75, -0.5) },
+      { label: 'L', line: [[0, -0.5, 0], polar(FLOOR + 0.12, 200, -0.5)] },
+      { label: 'hue', line: arc(FLOOR + 0.06, 15, 75, -0.5) },
     ],
   },
   rgb: {
