@@ -121,11 +121,12 @@ body {
 main[data-slide] {
   position: absolute;
   inset: 0;
-  /* Presenting must never scroll: a scrollbar here would narrow the slide,
-     rewrap the balanced headings, shrink the height, remove the scrollbar,
-     and start over. Scrolling is only offered while the pen is open, and the
-     gutter is reserved there so the width cannot oscillate. */
-  overflow: hidden;
+  /* Content taller than the window scrolls. The gutter is reserved so a
+     classic scrollbar cannot narrow the slide, rewrap the balanced headings,
+     shrink the height, remove itself, and start over. */
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   display: grid;
   align-content: safe center;
   justify-items: start;
@@ -146,13 +147,6 @@ main[data-slide] {
     opacity: 0;
     transform: translateY(0.6em);
   }
-}
-
-:root[data-editing] main[data-slide],
-:root[data-inspecting] main[data-slide] {
-  overflow: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
 }
 
 /* layout modifiers */
@@ -182,9 +176,8 @@ main[data-slide] {
     row-gap: var(--space-m);
   }
 
-  /* stacked content can run taller than the window: scroll rather than clip */
+  /* stacked content runs tall: read from the top */
   main[data-slide] {
-    overflow: auto;
     align-content: start;
   }
 }
