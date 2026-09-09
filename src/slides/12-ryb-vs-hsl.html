@@ -56,7 +56,6 @@
       const h = Number(slider.value);
       readout.textContent = `${String(h).padStart(3, '0')}°`;
 
-      // Complements: 180° apart on each wheel, then read in HSL for the screen.
       paint('[data-ryb]', [rybHue(h), rybHue(h + 180)]);
       paint('[data-hsl]', [h, (h + 180) % 360]);
 

@@ -72,10 +72,8 @@
     const angle = $slide.querySelector('[data-angle]');
     const readout = $slide.querySelector('output');
 
-    // Deck-wide spacing, same slider as the slide before.
     angle.value = spacing();
 
-    // hues() in the open again — this time with both branches.
     function hues(count, maxSpacing = spacing()) {
       const step = Math.min(maxSpacing, 360 / count);
       const start = rnd(360);
@@ -97,7 +95,6 @@
 
     function draw() {
       readout.textContent = `${angle.value}°`;
-      // The ring's other candidates as white dots; the picked three on top.
       wheel([
         ...three.ring.filter((h) => !three.includes(h)).map((h) => ({ h, hollow: true })),
         ...three,

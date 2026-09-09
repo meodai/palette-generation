@@ -58,7 +58,6 @@
     let palette = [];
     let scattered = [];
 
-    // Still the exact five from the slide before — nothing else has changed yet.
     function build() {
       const anchors = hues(3).map((h) => hsl({ h, c: 0.85, l: 0.55 }));
       palette = stretch(anchors, 5, (t, a, b) => mix(a, b, t));

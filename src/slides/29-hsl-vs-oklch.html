@@ -65,7 +65,6 @@
     const into = (id) => $slide.querySelector(id);
 
     function draw() {
-      // One hue, six steps. Two readings of the very same {c, l} walk.
       const h = rnd(360);
       const palette = ramp(Array(6).fill(h), {
         lightness: [0.15, 0.9],
@@ -88,7 +87,6 @@
         swatches(colors, into(id));
         swatches(colors.map(grey), into(`${id}-grey`));
 
-        // The step sizes are the argument. Print them; don't claim them.
         const measured = colors.map((color) => Math.round(lightness(color) * 100));
         into(`${id}-num`).replaceChildren(
           ...measured.map((value, i) => {

@@ -32,7 +32,6 @@
   </style>
 
   <script>
-    // Exactly the six from slide 6: only H moves.
     const colors = Array.from({ length: 6 }, (_, i) => hsl({ h: i * 60, c: 0.9, l: 0.5 }));
 
     swatches(colorDebug(colors, { model: 'hsl' }), $slide.querySelector('.row'));
@@ -49,7 +48,6 @@
       }),
     );
 
-    // Never let the prose claim a number the demo did not just produce.
     $slide.querySelector('[data-low]').textContent = `${Math.min(...measured)}%`;
     $slide.querySelector('[data-high]').textContent = `${Math.max(...measured)}%`;
   </script>

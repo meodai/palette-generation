@@ -133,7 +133,6 @@
   <script>
     const STEPS = 24;
 
-    // Every "harmony rule" is a set of angles. Nothing else.
     const RULES = {
       complementary: [0, 180],
       split: [0, 150, 210],
@@ -146,7 +145,6 @@
     const tabs = $slide.querySelector('.tabs');
     const ring = $slide.querySelector('[data-ring]');
 
-    // The rule as an icon: a ring, a dot per angle, no words.
     const icon = (angles) =>
       `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="0.8" />${angles
         .map((a) => {
@@ -166,8 +164,6 @@
     select.value = 'rgb';
 
     let rule = 'complementary';
-    // Start on the middle of a slice; every rule's angles are multiples of 15°, so all dots stay centered.
-    // Start on the middle of a slice; click or drag on the wheel moves it, snapped to slices.
     const wheelEl = $slide.querySelector('.wheel');
     const snap = (angle) => (Math.floor((((angle % 360) + 360) % 360) / (360 / STEPS)) + 0.5) * (360 / STEPS);
     let base = snap(rnd(360));
@@ -183,13 +179,11 @@
         .map((color, i) => `${color} ${(i / STEPS) * 360}deg ${((i + 1) / STEPS) * 360}deg`)
         .join(', ')})`;
 
-      // The rule, on this wheel: same angles, whatever colors the cube puts there.
       const picked = RULES[rule].map((a) => {
         const h = (base + a + 360) % 360;
         return { h, color: ryb({ h, c: 1, l: 0.5 }, cube) };
       });
       const svg = wheel(picked).querySelector('svg');
-      // The start hue is the first pick: give its dot a black outline on top of the white ring.
       const first = svg.querySelector('.wheel-dot');
       const outline = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       outline.setAttribute('class', 'wheel-start');

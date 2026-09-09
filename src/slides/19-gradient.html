@@ -87,7 +87,6 @@
 
     function draw() {
       wheel(three);
-      // The five from the slide before, as stops of one gradient.
       const anchors = three.map((h) => hsl({ h, c: 0.85, l: 0.55 }));
       const five = stretch(anchors, 5, (t, a, b) => mix(a, b, t, space.value));
       gradient(colorDebug(five), { target: out, space: space.value });

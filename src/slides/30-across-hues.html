@@ -68,12 +68,10 @@
     const into = (id) => $slide.querySelector(id);
 
     function draw() {
-      // Eight evenly spaced hues from a random start; one lightness walk for all of them.
       const start = rnd(360);
       const hues = Array.from({ length: HUES }, (_, i) => (start + (i * 360) / HUES) % 360);
       const walk = Array.from({ length: STEPS }, (_, i) => lerp(i / (STEPS - 1), 0.2, 0.85));
 
-      // The same hue in both: HSL's angle converted.
       const okHues = hues.map((h) => toOklch(hsl({ h, c: 0.6, l: 0.55 })).h);
 
       // One chroma per step, shared by all eight hues: the most every hue can
@@ -91,7 +89,6 @@
         seen.push(...rows.flat());
         swatches(rows.flat(), into(id));
 
-        // Per column: the measured lightness across the eight hues, min to max.
         into(`${id}-spread`).replaceChildren(
           ...walk.map((_, col) => {
             const measured = rows.map((row) => lightness(row[col]) * 100);

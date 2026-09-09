@@ -72,7 +72,6 @@
       stroke-width: 0.8;
     }
 
-
     .legend {
       display: grid;
       gap: var(--space-s);
@@ -86,7 +85,6 @@
   <script>
     const STEPS = 24;
 
-    // One segment per step, colored from the middle of the segment.
     const conic = (hueAt) =>
       `conic-gradient(${Array.from({ length: STEPS }, (_, i) => {
         const from = (i / STEPS) * 360;
@@ -116,7 +114,6 @@
       segment(angle, 25, 56) + segment(rybHue(angle), 0, 25), // ring: RYB angle, past the rim · disc: the HSL angle
     ).join('');
 
-    // Both wheels, for the inspector: 24 RYB steps then 24 HSL steps.
     const steps = (hueAt) =>
       Array.from({ length: STEPS }, (_, i) => hsl({ h: hueAt(((i + 0.5) / STEPS) * 360), c: 0.85, l: 0.5 }));
     colorDebug([...steps(rybHue), ...steps((h) => h)], { model: 'hsl' });

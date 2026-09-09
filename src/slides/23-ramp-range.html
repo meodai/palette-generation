@@ -92,11 +92,9 @@
 
       wheel(three);
 
-      // Row one is the slide before, unchanged: lightness walks, saturation sits at 0.85.
       const light = three.map((h, i) => hsl({ h, c: 0.85, l: lerp(i / 2, lMin, lMax) }));
       swatches(stretch(light, 5, (t, a, b) => mix(a, b, t)), q('#light'));
 
-      // Row two: chroma walks as well — the same t, or 1 - t when flipped.
       const both = three.map((h, i) => {
         const t = i / 2;
         return hsl({ h, c: lerp(flip ? 1 - t : t, cMin, cMax), l: lerp(t, lMin, lMax) });

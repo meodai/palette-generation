@@ -77,17 +77,9 @@
     const readout = $slide.querySelector('output');
     const RUNGS = 10;
 
-    // Half of each shape, cut through the axis: x is saturation (axis on the
-    // left = grey/white, edge on the right = the pure hue), y is lightness or
-    // brightness (bottom = black). The other half would be the complementary
-    // hue, so it is left out and this half is stretched to a square. The fill
-    // is one gradient per shape; the shape itself is a clip path.
     const SHAPES = {
-      // the cylinder: what the coordinates claim — every lightness, the full width
       cylinder: { path: 'M5 5 H95 V95 H5 Z', width: (t) => 1 },
-      // HSB: a cone — brightness 0 is a single point on the axis
       cone: { path: 'M5 5 H95 L5 95 Z', width: (t) => 1 - t },
-      // HSL: a double cone — lightness 0 and lightness 1 are single points on the axis
       bicone: { path: 'M5 5 L95 50 L5 95 Z', width: (t) => 1 - Math.abs(2 * t - 1) },
     };
 
@@ -97,8 +89,6 @@
       readout.textContent = `${String(h).padStart(3, '0')}°`;
       const hue = `hsl(${h} 100% 50%)`;
 
-      // The shapes sampled, 10 × 10 each: the cone (HSB) and the double cone (HSL).
-      // The cylinder is the same HSL numbers — the inspector shows where they really land.
       const grid = (space) => Array.from({ length: 100 }, (_, i) => space({ h: +h, c: (i % 10) / 9, l: Math.floor(i / 10) / 9 }));
       colorDebug([...grid(hsv), ...grid(hsl)], { model: 'hsl' });
 
@@ -110,7 +100,6 @@
           : `<stop offset="0" stop-color="#000" stop-opacity="0" /><stop offset="1" stop-color="#000" />`;
         const centre = name === 'bicone' ? '#808080' : '#fff';
 
-        // t runs top (0) to bottom (1); a rung runs from the axis out to the shape's edge there.
         const rungs = Array.from({ length: RUNGS - 1 }, (_, i) => {
           const t = (i + 1) / RUNGS;
           const y = 5 + t * 90;

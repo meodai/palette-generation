@@ -77,8 +77,6 @@
     // picks the same three.
     angle.value = spacing();
 
-    // The whole of hues(), in the open — so the source answers the question.
-    // Evenly spaced candidates from a random start; take the first few.
     function hues(count, maxSpacing = spacing()) {
       const step = Math.min(maxSpacing, 360 / count);
       const start = rnd(360);
@@ -97,7 +95,6 @@
       readout.textContent = `${angle.value}°`;
 
       const three = hues(3);
-      // The ring's other candidates as white dots; the picked three on top.
       wheel([
         ...three.ring.filter((h) => !three.includes(h)).map((h) => ({ h, hollow: true })),
         ...three,

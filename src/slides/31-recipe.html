@@ -78,8 +78,6 @@ function palette(n) { return <mark>scaleSpreadArray(randomRamp(3 + floor(random(
       return chunks.flat();
     }
 
-    // The same pipeline, run with the toolkit so the slide shows real output:
-    // randomRamp() is ramp(hues()) with rolled ranges.
     function palette(n) {
       const stops = randomRamp(3 + rndInt(3)).map(oklch);
       swatches(stops, $slide.querySelector('#stops'));
