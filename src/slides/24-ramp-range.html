@@ -93,13 +93,18 @@
       wheel(three);
 
       const light = three.map((h, i) => hsl({ h, c: 0.85, l: lerp(i / 2, lMin, lMax) }));
-      swatches(stretch(light, 5, (t, a, b) => mix(a, b, t)), q('#light'));
+      const lightRamp = stretch(light, 5, (t, a, b) => mix(a, b, t));
+      swatches(lightRamp, q('#light'));
 
       const both = three.map((h, i) => {
         const t = i / 2;
         return hsl({ h, c: lerp(flip ? 1 - t : t, cMin, cMax), l: lerp(t, lMin, lMax) });
       });
-      swatches(colorDebug(stretch(both, 5, (t, a, b) => mix(a, b, t)), { model: 'hsl' }), q('#both'));
+      const bothRamp = stretch(both, 5, (t, a, b) => mix(a, b, t));
+      swatches(bothRamp, q('#both'));
+
+      // both ramps in the inspector: the lightness five, then the lightness + chroma five
+      colorDebug([...lightRamp, ...bothRamp], { model: 'hsl' });
     }
 
     // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping

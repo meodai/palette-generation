@@ -103,10 +103,15 @@
 
       const flat = three.map((h) => hsl({ h, c: 0.85, l: 0.55 }));
       swatches(flat, q('#anchors'));
-      swatches(stretch(flat, 5, (t, a, b) => mix(a, b, t)), q('#flat'));
+      const flatRamp = stretch(flat, 5, (t, a, b) => mix(a, b, t));
+      swatches(flatRamp, q('#flat'));
 
       const ramped = three.map((h, i) => hsl({ h, c: 0.85, l: lerp(i / 2, min, max) }));
-      swatches(colorDebug(stretch(ramped, 5, (t, a, b) => mix(a, b, t)), { model: 'hsl' }), q('#ramped'));
+      const rampedRamp = stretch(ramped, 5, (t, a, b) => mix(a, b, t));
+      swatches(rampedRamp, q('#ramped'));
+
+      // both ramps in the inspector: the flat five, then the ramped five
+      colorDebug([...flatRamp, ...rampedRamp], { model: 'hsl' });
     }
 
     // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
