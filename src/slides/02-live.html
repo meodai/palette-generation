@@ -20,6 +20,17 @@
     </p>
   </div>
 
+  <div class="codes">
+    <a class="code" href="https://palettarium.color.pizza/" target="_blank" rel="noopener">
+      <div class="qr" data-qr-palettarium></div>
+      <span>palettarium.color.pizza</span>
+    </a>
+    <a class="code" href="https://meodai.github.io/color-palette-shader/" target="_blank" rel="noopener">
+      <div class="qr" data-qr-shader></div>
+      <span>meodai.github.io/color-palette-shader</span>
+    </a>
+  </div>
+
   <section data-notes>
     <p class="note">Everything is editable / inspectable</p>
     <ul class="note">
@@ -68,6 +79,29 @@
       color: var(--onBg);
     }
 
+    /* two things to take home, small enough to sit under the hints */
+    .codes {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-l);
+      margin-top: var(--space-m);
+    }
+
+    .code {
+      display: grid;
+      justify-items: center;
+      gap: var(--space-2xs);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .code:hover { color: var(--highlight); }
+    .qr { width: min(6.5em, 14vh); }
+    .qr-light { fill: var(--bg); }
+    .qr-dark { stroke: var(--onBg); }
+
     code[data-token] {
       font-family: var(--font-mono);
       color: var(--highlight);
@@ -83,6 +117,9 @@
     document.documentElement.dataset.spotlight = '';
 
     colorDebug(randomRamp(5).map(oklch), { model: 'oklch' });
+
+    qr('https://palettarium.color.pizza/', $slide.querySelector('[data-qr-palettarium]'));
+    qr('https://meodai.github.io/color-palette-shader/', $slide.querySelector('[data-qr-shader]'));
 
     // The beam token, live: it changes if the session reconnects.
     const token = $slide.querySelector('[data-token]');
