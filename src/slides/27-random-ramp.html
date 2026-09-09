@@ -16,7 +16,7 @@
     <ol class="note">
       <li><code>randomRamp()</code> function from the slide before</li>
       <li>Stripes, and the gradient with stops thrown out of order — farbvelo's last step</li>
-      <li>Random <mark>HSL or OKLCH</mark></li>
+      <li>Random <mark>HSL, OKLCH or a RYBitten wheel</mark></li>
     </ol>
   </section>
 
@@ -107,11 +107,15 @@
     let palette = [];
     let scattered = [];
     let space = 'oklch';
+    let profile = null; // one of RYBitten's wheels, when the roll lands on ryb
 
     function build() {
-      // A coin flip: the same numbers read by HSL or by OKLCH.
-      space = rnd() < 0.5 ? 'hsl' : 'oklch';
-      const solid = space === 'hsl' ? hsl : oklch;
+      // A three-way roll: the same numbers read by HSL, by OKLCH, or by one
+      // of RYBitten's historical paint wheels.
+      const roll = rnd();
+      space = roll < 1 / 3 ? 'hsl' : roll < 2 / 3 ? 'oklch' : 'ryb';
+      profile = space === 'ryb' ? cubes.get(pick([...cubes.keys()])) : null;
+      const solid = space === 'hsl' ? hsl : space === 'oklch' ? oklch : (triple) => ryb(triple, profile.cube);
 
       // { h, li, ch } → the same triple the toolkit reads: { h, c, l }.
       palette = randomRamp(3 + Math.floor(rnd() * 3)).map(({ h, li, ch }) => solid({ h, c: ch, l: li }));
@@ -127,8 +131,11 @@
 
     function draw() {
       $slide.querySelector('#k').textContent = `${palette.length} stops`;
-      $slide.querySelector('[data-space]').textContent = space;
-      swatches(colorDebug(palette, { model: space }), $slide.querySelector('#stripes'));
+      $slide.querySelector('[data-space]').textContent = profile
+        ? `ryb · ${profile.author || profile.title}${profile.year ? ` ${profile.year}` : ''}`
+        : space;
+      // The inspector has no paint-wheel solid; RYB is an HSL-shaped reading.
+      swatches(colorDebug(palette, { model: space === 'ryb' ? 'hsl' : space }), $slide.querySelector('#stripes'));
 
       const stops = scatter.checked
         ? scattered
