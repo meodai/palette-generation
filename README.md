@@ -164,6 +164,12 @@ Drop files in `public/`; reference them as `name.png` (relative — slides are r
 
 See `OUTLINE.md` for the talk structure and timings, `golan.md` for context.
 
+## How AI was used
+
+Two things: to improve some of my broken English, and to build the slide
+deck itself — the Vite setup, the editor, the inspector. The content, the
+ideas and the code examples are my own, and predate AI :D
+
 ## License
 
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — use, adapt and
