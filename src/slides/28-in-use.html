@@ -9,12 +9,14 @@
   <p class="legend">click the squares to bring them <b>together</b></p>
 
   <section data-notes>
-    <p class="note">
-      The two squares look like the same color. But are they?
-      <a href="https://colorandcontrast.com/#/simultaneous-contrast" target="_blank" rel="noopener">Simultaneous
-      contrast</a> Color does not exist in a vacuum. Many effects affect our perception of color. Explore the other effects at
-      <a href="https://colorandcontrast.com/" target="_blank" rel="noopener">colorandcontrast.com</a>.
-    </p>
+    <ul class="note">
+      <li>Look like the same color. But are they? - <a href="https://colorandcontrast.com/#/simultaneous-contrast" target="_blank" rel="noopener">Simultaneous
+      contrast</a></li>
+      
+      <li>Color does not exist in a vacuum.</li>
+      <li>Many effects affect our perception of color. Explore the other effects at
+      <a href="https://colorandcontrast.com/" target="_blank" rel="noopener">colorandcontrast.com</a>.</li>
+    </ul>
   </section>
 
   <style>
@@ -38,8 +40,6 @@
     .half--a { background: var(--bg1); }
     .half--c { background: var(--bg2); }
 
-    /* The squares start centred in their halves and travel to the shared edge
-       as --t goes 0 → 1, where they meet — and stop matching. */
     .inner {
       position: absolute;
       top: 30%;
@@ -67,9 +67,6 @@
     const bg2 = 'rgb(193 0 74)';     // crimson
     const fg2 = 'rgb(246 122 2)';    // orange, on the crimson
 
-    // The other square is NOT the same orange: a touch darker and redder, so
-    // that on the teal it reads like fg2 on the crimson. Tune these two numbers
-    // until they match by eye on the projector.
     const o = toOklch(fg2);
     const fg1 = oklch({ h: o.h - 3, c: o.c * 0.96, l: o.l - 0.045 });
 
