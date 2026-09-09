@@ -96,10 +96,15 @@
         return { c: lerp(flip ? 1 - t : t, cMin, cMax), l: lerp(t, lMin, lMax) };
       };
       const light = three.map((h, i) => hsl({ h, ...walk(i) }));
-      swatches(stretch(light, 5, (t, a, b) => mix(a, b, t)), q('#light'));
+      const hslRamp = stretch(light, 5, (t, a, b) => mix(a, b, t));
+      swatches(hslRamp, q('#light'));
 
       const both = three.map((h, i) => oklch({ h: toOklch(hsl({ h, c: 0.85, l: 0.55 })).h, ...walk(i) }));
-      swatches(colorDebug(stretch(both, 5, (t, a, b) => mix(a, b, t)), { model: 'oklch' }), q('#both'));
+      const okRamp = stretch(both, 5, (t, a, b) => mix(a, b, t));
+      swatches(okRamp, q('#both'));
+
+      // both ramps in the inspector: the HSL five, then the OKLCH five
+      colorDebug([...hslRamp, ...okRamp], { model: 'oklch' });
     }
 
     // Deck-wide pick mode. rewind() re-picks from the same seed, so flipping
