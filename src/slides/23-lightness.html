@@ -11,6 +11,7 @@
   </div>
 
   <div class="controls">
+    <label><span>min angle</span><input data-angle type="range" min="10" max="120" step="1" /><output data-angle-out></output></label>
     <label><span>min</span><input data-l0 type="range" min="0" max="100" value="15" /><output></output></label>
     <label><span>max</span><input data-l1 type="range" min="0" max="100" value="90" /><output></output></label>
     <label class="check"><input data-shuffled type="checkbox" /><span>shuffled</span></label>
@@ -88,7 +89,7 @@
     const q = (sel) => $slide.querySelector(sel);
     const l0 = q('[data-l0]');
     const l1 = q('[data-l1]');
-    const outs = $slide.querySelectorAll('output');
+    const outs = $slide.querySelectorAll('output:not([data-angle-out])');
     const button = q('button');
 
     let three = hues(3);
@@ -120,6 +121,15 @@
     shuffleBox.checked = shuffled();
     const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); three = hues(3); draw(); };
     shuffleBox.addEventListener('input', onShuffle);
+
+    // Deck-wide min angle, the slider from slide 17: same roll, new spacing.
+    const angle = $slide.querySelector('[data-angle]');
+    const angleOut = $slide.querySelector('[data-angle-out]');
+    const showAngle = () => { angleOut.textContent = `${angle.value}°`; };
+    angle.value = spacing();
+    showAngle();
+    const onAngle = () => { spacing(+angle.value); rewind(); three = hues(3); draw(); showAngle(); };
+    angle.addEventListener('input', onAngle);
     const next = () => { reseed(); three = hues(3); draw(); };
 
     l0.addEventListener('input', draw);
@@ -127,6 +137,10 @@
     button.addEventListener('click', next);
     draw();
 
-    return () => button.removeEventListener('click', next);
+    return () => {
+      angle.removeEventListener('input', onAngle);
+      shuffleBox.removeEventListener('input', onShuffle);
+      button.removeEventListener('click', next);
+    };
   </script>
 </main>

@@ -10,6 +10,7 @@
   </div>
 
   <div class="controls">
+    <label><span>min angle</span><input data-angle type="range" min="10" max="120" step="1" /><output data-angle-out></output></label>
     <label><span>steps</span><input type="range" min="3" max="12" value="5" /></label>
     <label class="check"><input data-shuffled type="checkbox" /><span>shuffled</span></label>
     <button type="button">reroll</button>
@@ -60,6 +61,7 @@
 
     label { display: flex; align-items: center; gap: var(--space-2xs); }
     input[type='range'] { width: 12em; accent-color: var(--highlight); }
+    output { min-width: 2.6em; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--onBg); }
     .check { gap: var(--space-3xs); }
 
     button {
@@ -79,7 +81,7 @@
   </style>
 
   <script>
-    const steps = $slide.querySelector('input[type="range"]');
+    const steps = $slide.querySelector('input[type="range"]:not([data-angle])');
     const button = $slide.querySelector('button');
     const label = $slide.querySelector('#n');
     const out = $slide.querySelector('#out');
@@ -102,12 +104,25 @@
     shuffleBox.checked = shuffled();
     const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); three = hues(3); draw(); };
     shuffleBox.addEventListener('input', onShuffle);
+
+    // Deck-wide min angle, the slider from slide 17: same roll, new spacing.
+    const angle = $slide.querySelector('[data-angle]');
+    const angleOut = $slide.querySelector('[data-angle-out]');
+    const showAngle = () => { angleOut.textContent = `${angle.value}°`; };
+    angle.value = spacing();
+    showAngle();
+    const onAngle = () => { spacing(+angle.value); rewind(); three = hues(3); draw(); showAngle(); };
+    angle.addEventListener('input', onAngle);
     const next = () => { reseed(); three = hues(3); draw(); };
 
     steps.addEventListener('input', draw);
     button.addEventListener('click', next);
     draw();
 
-    return () => button.removeEventListener('click', next);
+    return () => {
+      angle.removeEventListener('input', onAngle);
+      shuffleBox.removeEventListener('input', onShuffle);
+      button.removeEventListener('click', next);
+    };
   </script>
 </main>

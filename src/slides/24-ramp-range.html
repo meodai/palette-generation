@@ -10,6 +10,7 @@
   </div>
 
   <div class="controls">
+    <label><span>min angle</span><input data-angle type="range" min="10" max="120" step="1" /><output data-angle-out></output></label>
     <label><span>lightness</span><input data-l0 type="range" min="0" max="100" value="15" /><input data-l1 type="range" min="0" max="100" value="90" /></label>
     <label><span>chroma</span><input data-c0 type="range" min="0" max="100" value="15" /><input data-c1 type="range" min="0" max="100" value="90" /></label>
     <label class="check"><input data-flip type="checkbox" /><span>flip saturation</span></label>
@@ -60,6 +61,7 @@
 
     label { display: flex; align-items: center; gap: var(--space-2xs); }
     input[type='range'] { width: 7em; accent-color: var(--highlight); }
+    output { min-width: 2.6em; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--onBg); }
     .check { gap: var(--space-3xs); }
 
     button {
@@ -80,7 +82,7 @@
   <script>
     const q = (sel) => $slide.querySelector(sel);
     const value = (sel) => Number(q(sel).value) / 100;
-    const sliders = [...$slide.querySelectorAll('input[type="range"]')];
+    const sliders = [...$slide.querySelectorAll('input[type="range"]:not([data-angle])')];
     const flipBox = q('[data-flip]');
 
     let three = hues(3);
@@ -114,6 +116,15 @@
     const onShuffle = () => { shuffled(shuffleBox.checked); rewind(); three = hues(3); draw(); };
     shuffleBox.addEventListener('input', onShuffle);
 
+    // Deck-wide min angle, the slider from slide 17: same roll, new spacing.
+    const angle = $slide.querySelector('[data-angle]');
+    const angleOut = $slide.querySelector('[data-angle-out]');
+    const showAngle = () => { angleOut.textContent = `${angle.value}°`; };
+    angle.value = spacing();
+    showAngle();
+    const onAngle = () => { spacing(+angle.value); rewind(); three = hues(3); draw(); showAngle(); };
+    angle.addEventListener('input', onAngle);
+
     const reroll = () => { reseed(); three = hues(3); draw(); };
 
     sliders.forEach((input) => input.addEventListener('input', draw));
@@ -123,6 +134,7 @@
 
     return () => {
       sliders.forEach((input) => input.removeEventListener('input', draw));
+      angle.removeEventListener('input', onAngle);
       shuffleBox.removeEventListener('input', onShuffle);
     };
   </script>
